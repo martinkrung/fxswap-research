@@ -3,6 +3,10 @@
 
 ## some helper contract to help with fxswap research
 
+Results are in plot folder:
+
+<img width="787" height="1377" alt="USDC_WETHA5-5_pool_price_analysis_48h" src="https://github.com/user-attachments/assets/fb9a86cf-be45-4156-8875-3a0a821d3217" />
+
 
 ## Installation
 
