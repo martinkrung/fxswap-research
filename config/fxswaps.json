@@ -1,0 +1,56 @@
+{
+    "0": {
+        "chain_id": 8453,
+        "chain_name": "base",
+        "name": "USDC/WETH A2-5",
+        "address": "0x4de88ecfa7f6548aA0d5C6D01b381Ea917E71F73"
+    },
+    "1": {
+        "chain_id": 8453,
+        "chain_name": "base",
+        "name": "USDC/WETH A5-5",
+        "address": "0xC88768B569902e1A67E54b090bA4969fde1204FA"
+    },
+    "2": {
+        "chain_id": 8453,
+        "chain_name": "base",
+        "name": "USDC/WETH A20-5",
+        "address": "0x3D0143f6453a707b840b6565F959D6cbBA86F23e"
+    },
+    "3": {
+        "chain_id": 8453,
+        "chain_name": "base",
+        "name": "USDC/WETH A40-5",
+        "address": "0x993a0D30FfA321D32eD0E8272Ded0108eBb1099A"
+    },
+    "4": {
+        "chain_id": 8453,
+        "chain_name": "base",
+        "name": "USDC/AERO A20-15",
+        "address": "0x3CeA080D303bD105c48cA4C24D8426da99f75524"
+    },
+    "5": {
+        "chain_id": 8453,
+        "chain_name": "base",
+        "name": "USDC/WETH A80-5",
+        "address": "0xd3E3B0FE036295A9e531bd72b024F7B308bca4f7"
+    },
+    "6": {
+        "chain_id": 8453,
+        "chain_name": "base",
+        "name": "USDC/WETH A80-5 2",
+        "address": "0xF30fcb00b7C3d2f6e12043157011bea7f848049D"
+    },
+    "7": {
+        "chain_name": "ethereum",
+        "name": "YB crvUSD/tBTC",
+        "chain_id": 1,
+        "address": "0xf1F435B05D255a5dBdE37333C0f61DA6F69c6127"
+    },
+    "8": {
+        "chain_name": "ethereum",
+        "name": "crvUSD/ZCHF",
+        "chain_id": 1,
+        "address": "0x027B40F5917FCd0eac57d7015e120096A5F92ca9"
+    }
+}

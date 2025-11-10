@@ -1,0 +1,53 @@
+timestamp;pool_address;message
+2025-11-05 16:50:39;;XSCAN_API_KEY; 1PGSZY9IIIZXYWV6QMFQ53GNMZSUEF7FCB
+2025-11-05 16:50:39;;XSCAN_API_URI; https://api.etherscan.io/v2/api?chainid=8453
+2025-11-05 16:50:39;;RPC; https://base-mainnet.g.alchemy.com/v2/w7_49FmABSt5CsCuxt3lPpUBWYtbD9ng
+2025-11-05 16:51:20;;Iteration 0
+2025-11-05 16:54:43;;XSCAN_API_KEY; 1PGSZY9IIIZXYWV6QMFQ53GNMZSUEF7FCB
+2025-11-05 16:54:43;;XSCAN_API_URI; https://api.etherscan.io/v2/api?chainid=8453
+2025-11-05 16:54:43;;RPC; https://base-mainnet.g.alchemy.com/v2/w7_49FmABSt5CsCuxt3lPpUBWYtbD9ng
+2025-11-05 16:55:00;;Iteration 0
+2025-11-05 18:46:02;;XSCAN_API_KEY; 1PGSZY9IIIZXYWV6QMFQ53GNMZSUEF7FCB
+2025-11-05 18:46:02;;XSCAN_API_URI; https://api.etherscan.io/v2/api?chainid=8453
+2025-11-05 18:46:02;;RPC; https://base-mainnet.g.alchemy.com/v2/w7_49FmABSt5CsCuxt3lPpUBWYtbD9ng
+2025-11-05 18:46:18;;Iteration 0
+2025-11-05 18:59:32;;XSCAN_API_KEY; 1PGSZY9IIIZXYWV6QMFQ53GNMZSUEF7FCB
+2025-11-05 18:59:32;;XSCAN_API_URI; https://api.etherscan.io/v2/api?chainid=8453
+2025-11-05 18:59:32;;RPC; https://base-mainnet.g.alchemy.com/v2/w7_49FmABSt5CsCuxt3lPpUBWYtbD9ng
+2025-11-05 19:00:26;;Iteration 0
+2025-11-05 19:07:32;;XSCAN_API_KEY; 1PGSZY9IIIZXYWV6QMFQ53GNMZSUEF7FCB
+2025-11-05 19:07:32;;XSCAN_API_URI; https://api.etherscan.io/v2/api?chainid=8453
+2025-11-05 19:07:32;;RPC; https://base-mainnet.g.alchemy.com/v2/w7_49FmABSt5CsCuxt3lPpUBWYtbD9ng
+2025-11-05 19:07:45;;Iteration 0
+2025-11-05 19:14:06;;XSCAN_API_KEY; 1PGSZY9IIIZXYWV6QMFQ53GNMZSUEF7FCB
+2025-11-05 19:14:06;;XSCAN_API_URI; https://api.etherscan.io/v2/api?chainid=8453
+2025-11-05 19:14:06;;RPC; https://base-mainnet.g.alchemy.com/v2/w7_49FmABSt5CsCuxt3lPpUBWYtbD9ng
+2025-11-05 19:14:10;;Iteration 0
+2025-11-05 19:14:10;;Error setting block: 'Env' object has no attribute 'set_block'
+2025-11-05 19:14:55;;XSCAN_API_KEY; 1PGSZY9IIIZXYWV6QMFQ53GNMZSUEF7FCB
+2025-11-05 19:14:55;;XSCAN_API_URI; https://api.etherscan.io/v2/api?chainid=8453
+2025-11-05 19:14:55;;RPC; https://base-mainnet.g.alchemy.com/v2/w7_49FmABSt5CsCuxt3lPpUBWYtbD9ng
+2025-11-05 19:14:59;;Iteration 0
+2025-11-05 19:14:59;;Error setting block: 'Env' object has no attribute 'set_block'
+2025-11-05 19:16:23;;XSCAN_API_KEY; 1PGSZY9IIIZXYWV6QMFQ53GNMZSUEF7FCB
+2025-11-05 19:16:23;;XSCAN_API_URI; https://api.etherscan.io/v2/api?chainid=8453
+2025-11-05 19:16:23;;RPC; https://base-mainnet.g.alchemy.com/v2/w7_49FmABSt5CsCuxt3lPpUBWYtbD9ng
+2025-11-05 19:16:31;;Iteration 0
+2025-11-05 19:16:31;;Error setting block: 'Env' object has no attribute 'set_block'
+2025-11-05 19:17:46;;XSCAN_API_KEY; 1PGSZY9IIIZXYWV6QMFQ53GNMZSUEF7FCB
+2025-11-05 19:17:46;;XSCAN_API_URI; https://api.etherscan.io/v2/api?chainid=8453
+2025-11-05 19:17:46;;RPC; https://base-mainnet.g.alchemy.com/v2/w7_49FmABSt5CsCuxt3lPpUBWYtbD9ng
+2025-11-05 19:17:50;;Iteration 0
+2025-11-05 19:20:09;;XSCAN_API_KEY; 1PGSZY9IIIZXYWV6QMFQ53GNMZSUEF7FCB
+2025-11-05 19:20:09;;XSCAN_API_URI; https://api.etherscan.io/v2/api?chainid=8453
+2025-11-05 19:20:09;;RPC; https://base-mainnet.g.alchemy.com/v2/w7_49FmABSt5CsCuxt3lPpUBWYtbD9ng
+2025-11-05 19:20:13;;Iteration 0
+2025-11-05 19:23:59;;XSCAN_API_KEY; 1PGSZY9IIIZXYWV6QMFQ53GNMZSUEF7FCB
+2025-11-05 19:23:59;;XSCAN_API_URI; https://api.etherscan.io/v2/api?chainid=8453
+2025-11-05 19:23:59;;RPC; https://base-mainnet.g.alchemy.com/v2/w7_49FmABSt5CsCuxt3lPpUBWYtbD9ng
+2025-11-05 19:25:47;;XSCAN_API_KEY; 1PGSZY9IIIZXYWV6QMFQ53GNMZSUEF7FCB
+2025-11-05 19:25:47;;XSCAN_API_URI; https://api.etherscan.io/v2/api?chainid=8453
+2025-11-05 19:25:47;;RPC; https://base-mainnet.g.alchemy.com/v2/w7_49FmABSt5CsCuxt3lPpUBWYtbD9ng
+2025-11-05 20:03:42;;XSCAN_API_KEY; 1PGSZY9IIIZXYWV6QMFQ53GNMZSUEF7FCB
+2025-11-05 20:03:42;;XSCAN_API_URI; https://api.etherscan.io/v2/api?chainid=8453
+2025-11-05 20:03:42;;RPC; https://base-mainnet.g.alchemy.com/v2/w7_49FmABSt5CsCuxt3lPpUBWYtbD9ng
