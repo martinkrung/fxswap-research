@@ -57,6 +57,11 @@ print(f"Querying {name} on chain {chain_name} ({chain_id})")
 latest_block = w3.eth.get_block('latest').number
 
 print(f"Latest block: {latest_block}")
+block = w3.eth.get_block(latest_block)
+timestamp = block['timestamp']
+human_readable_time = datetime.fromtimestamp(timestamp, timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')
+print(f"Latest block {latest_block} timestamp: {timestamp} ({human_readable_time})")
+
 
 match chain_id:
     case 8453:
@@ -64,6 +69,8 @@ match chain_id:
         min_block_threshold = 37524600  # Base chain minimum block
     case 1:
         block_number = latest_block - (latest_block % 20)
+        # force to pull data at a specific block
+        # block_number = 23736660
         # Ethereum: set to 0 or a reasonable minimum (e.g., deployment block)
         # 200 iterations * 20 blocks = 4000 blocks ≈ 1.5 days at 14s block time
         min_block_threshold = 0  # No minimum for Ethereum
@@ -103,6 +110,17 @@ def has_USDC(name):
     if "USDC" in name:
         return True
     return False
+
+def has_EURC(name):
+    """
+    Returns True if 'EURC' appears anywhere in the input pool name, else returns False.
+    """
+    if not isinstance(name, str):
+        return False
+    if "EURC" in name:
+        return True
+    return False
+
 
 def load_cache():
     """Load cache from file (only called once at startup)"""
@@ -249,18 +267,20 @@ cache = load_cache()
 print(f"Loaded cache with {len(cache)} blocks")
 
 # Save interval: save every N blocks (constant interval)
-SAVE_INTERVAL = 20  # Save every 20 blocks processed
+SAVE_INTERVAL = 100  # Save every 20 blocks processed
 
 # Counter for consecutive blocks with all functions cached
 consecutive_cached_blocks = 0
 # Increase threshold to allow more blocks to be processed
 # For Ethereum: 400 iterations * 20 blocks = 8000 blocks ≈ 3 days at 14s block time
-MAX_CONSECUTIVE_CACHED = 1600  # Increased from 10 to allow more cached blocks before stopping
+MAX_CONSECUTIVE_CACHED = 50  # Increased from 10 to allow more cached blocks before stopping
 
 # override decimals if USDC is in the name
 if has_USDC(name):
     token0_decimals = 6
     token1_decimals = 18
+if has_EURC(name):
+    token1_decimals = 6
 
 print(f"token0_decimals: {token0_decimals}")
 print(f"token1_decimals: {token1_decimals}")   
@@ -324,16 +344,23 @@ for i in range(3000):
         consecutive_cached_blocks = 0
     
     # Process cached functions first (no network calls needed)
+    # Extract epoch and human_readable once per block (from first cached function)
+    cached_epoch = None
+    cached_human_readable = None
+    if cached_functions:
+        # Get epoch/time from first cached function (all should have same values for same block)
+        first_function = list(cached_functions.keys())[0]
+        cached_entry = get_cached_entry(fxswap_address, block_number, first_function, cache=cache)
+        if isinstance(cached_entry, dict):
+            cached_epoch = cached_entry.get('epoch')
+            cached_human_readable = cached_entry.get('human_readable')
+            if cached_epoch and cached_human_readable:
+                print(f"  Block {block_number}: Cached epoch: {cached_epoch}, time: {cached_human_readable}")
+    
     for function_name, result in cached_functions.items():
         if PRINT_CACHED_VALUES:
             print(f"\n  Function: {function_name}")
             print(f"    Using cached value for {function_name}")
-        cached_entry = get_cached_entry(fxswap_address, block_number, function_name, cache=cache)
-        if isinstance(cached_entry, dict):
-            epoch = cached_entry.get('epoch')
-            human_readable = cached_entry.get('human_readable')
-            if epoch and human_readable:
-                print(f"    Cached epoch: {epoch}, time: {human_readable}")
         if PRINT_CACHED_VALUES:
             print(f"    {function_name}: {result}")
     

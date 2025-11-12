@@ -1,0 +1,10 @@
+
+
+USDC/EURC A50-5
+
+0.0073 fee an aerodrome
+
+
+https://www.geckoterminal.com/de/base/pools/0xe846373c1a92b167b4e9cd5d8e4d6b1db9e90ec7
+
+https://www.aerodrome.finance/deposit?token0=0x60a3e35cc302bfa44cb288bc5a4f316fdb1adb42&token1=0x833589fcd6edb6e08f4c7c32d4f71b54bda02913&type=50&chain0=8453&chain1=8453&factory=0x5e7BB104d84c7CB9B682AaC2F3d509f5F406809A

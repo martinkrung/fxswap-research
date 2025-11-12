@@ -1,14 +1,10 @@
 #!/usr/bin/env python3
 """
 Plot donation_shares, user_supply, and totalSupply over time.
-Creates 7 charts:
+Creates 3 charts:
 1. donation_shares (absolute)
-2. donation_shares (normalized)
-3. user_supply (absolute)
-4. user_supply (normalized)
-5. totalSupply (absolute)
-6. totalSupply (normalized)
-7. All three normalized to 100% (stacked)
+2. donation_shares delta (filtered: only negative)
+3. USD Value Distribution and Ratio
 """
 
 import pandas as pd
@@ -28,6 +24,8 @@ PIXELS_PER_DAY = 288  # 1 day = 288 pixels width in the actual plot area
 _INTERNAL_DPI = 100  # Used only to convert pixels to cm for matplotlib figsize
 PLOT_AREA_RATIO = 0.87  # Plot area takes up 87% of figure width with our margins
 FIGURE_HEIGHT_CM = 20  # Height in cm for individual charts
+MARKER_SIZE = 1  # Size of markers for all data points
+MAKER = "."  # Use this constant instead of the literal maker string
 
 # Load fxswap_addresses from fxswaps.json if file exists, else use default.
 fxswaps_path = Path(__file__).parent.parent / "config" / "fxswaps.json"
@@ -281,15 +279,15 @@ if not donation_shares_df.empty:
     donation_shares_df['delta_usd_4h_ma'] = donation_shares_df['delta_usd'].rolling(window='4h', min_periods=1).mean()
     donation_shares_df.reset_index(inplace=True)
 
-# Create subplots: 7 charts total (removed chart 3 and 5)
-fig = plt.figure(figsize=(figure_width_cm/2.54, (FIGURE_HEIGHT_CM * 7)/2.54))
-gs = fig.add_gridspec(7, 1, hspace=0.3)
+# Create subplots: 3 charts total
+fig = plt.figure(figsize=(figure_width_cm/2.54, (FIGURE_HEIGHT_CM * 3)/2.54))
+gs = fig.add_gridspec(3, 1, hspace=0.3)
 
 # Chart 1: donation_shares (absolute)
 ax1 = fig.add_subplot(gs[0, 0])
 if not donation_shares_df.empty:
     ax1.plot(donation_shares_df['timestamp'], donation_shares_df['donation_shares'], 
-             'purple', linewidth=2, label='donation_shares', marker='o', markersize=1)
+             'purple', linestyle='None', label='donation_shares', marker=MAKER, markersize=MARKER_SIZE)
 ax1.set_ylabel('donation_shares (absolute)', fontsize=12)
 ax1.set_title(f'{name}: donation_shares Over Time (Absolute)', fontsize=14, fontweight='bold')
 ax1.legend(bbox_to_anchor=(1.0, 1.15), loc='upper right', fontsize=10, ncol=1, frameon=False)
@@ -333,59 +331,10 @@ if not donation_shares_df.empty and 'delta_filtered' in donation_shares_df.colum
         ax2_twin = ax2.twinx()
         # Plot moving average line
         ax2_twin.plot(donation_shares_df['timestamp'], donation_shares_df['delta_usd_4h_ma'], 
-                      'orange', linewidth=2, label='4h MA USD Spend', linestyle='-', alpha=0.8)
-        ax2_twin.set_ylabel('4h Moving Average USD Spend', fontsize=12, color='orange')
-        ax2_twin.tick_params(axis='y', labelcolor='orange')
-        ax2_twin.legend(bbox_to_anchor=(1.0, 1.15), loc='upper left', fontsize=10, ncol=1, frameon=False)
-    
-ax2.set_ylabel('donation_shares delta (absolute, filtered)', fontsize=12)
-ax2.set_title(f'{name}: donation_shares Delta Over Time (Filtered: Negative Only)', fontsize=14, fontweight='bold')
-ax2.legend(bbox_to_anchor=(1.0, 1.15), loc='upper right', fontsize=10, ncol=1, frameon=False)
-ax2.grid(True, alpha=0.3)
-ax2.axhline(y=0, color='black', linestyle='--', linewidth=0.5, alpha=0.5)
+                      'orange', linestyle='None', label='4h MA USD Spend', marker=MAKER, markersize=MARKER_SIZE, alpha=0.8)
 
-# Chart 3: totalSupply (absolute)
-ax4 = fig.add_subplot(gs[2, 0])
-if not total_supply_df.empty:
-    ax4.plot(total_supply_df['timestamp'], total_supply_df['totalSupply'], 
-             'green', linewidth=2, label='totalSupply', marker='^', markersize=1)
-ax4.set_ylabel('totalSupply (absolute)', fontsize=12)
-ax4.set_title(f'{name}: totalSupply Over Time (Absolute)', fontsize=14, fontweight='bold')
-ax4.legend(bbox_to_anchor=(1.0, 1.15), loc='upper right', fontsize=10, ncol=1, frameon=False)
-ax4.grid(True, alpha=0.3)
-
-# Chart 4: balance_0 (USDC) - absolute
-ax6 = fig.add_subplot(gs[3, 0])
-if not balance_0_df.empty:
-    ax6.plot(balance_0_df['timestamp'], balance_0_df['balance_0'], 
-             'cyan', linewidth=2, label='balance_0 (USDC)', marker='o', markersize=1)
-ax6.set_ylabel('balance_0 (USDC) - absolute', fontsize=12)
-ax6.set_title(f'{name}: Balance 0 (USDC) Over Time (Absolute)', fontsize=14, fontweight='bold')
-ax6.legend(bbox_to_anchor=(1.0, 1.15), loc='upper right', fontsize=10, ncol=1, frameon=False)
-ax6.grid(True, alpha=0.3)
-
-# Chart 5: balance_1 (WETH) - USD
-ax8 = fig.add_subplot(gs[4, 0])
-if not balance_usd_df.empty:
-    ax8.plot(balance_usd_df['timestamp'], balance_usd_df['balance_1_usd'], 
-              'orange', linewidth=2, label='balance_1 (USD)', marker='s', markersize=1)
-ax8.set_ylabel('balance_1 (USD)', fontsize=12)
-ax8.set_title(f'{name}: Balance 1 (WETH) Over Time (USD)', fontsize=14, fontweight='bold')
-ax8.legend(bbox_to_anchor=(1.0, 1.15), loc='upper right', fontsize=10, ncol=1, frameon=False)
-ax8.grid(True, alpha=0.3)
-
-# Chart 6: fee (absolute)
-ax9 = fig.add_subplot(gs[5, 0])
-if not fee_df.empty:
-    ax9.plot(fee_df['timestamp'], fee_df['fee'], 
-             'red', linewidth=2, label='fee', marker='d', markersize=1)
-ax9.set_ylabel('fee (absolute)', fontsize=12)
-ax9.set_title(f'{name}: Fee Over Time (Absolute)', fontsize=14, fontweight='bold')
-ax9.legend(bbox_to_anchor=(1.0, 1.15), loc='upper right', fontsize=10, ncol=1, frameon=False)
-ax9.grid(True, alpha=0.3)
-
-# Chart 7: USD Value Ratio (stacked area showing percentage of total USD)
-ax10 = fig.add_subplot(gs[6, 0])
+# Chart 3: USD Value Ratio (stacked area showing percentage of total USD)
+ax10 = fig.add_subplot(gs[2, 0])
 if not balance_usd_df.empty:
     timestamps_ratio = balance_usd_df['timestamp'].tolist()
     ratio_0 = balance_usd_df['ratio_0_to_total'].tolist()
@@ -398,7 +347,7 @@ if not balance_usd_df.empty:
     # Also plot the ratio line (balance_0_usd / balance_1_usd)
     ax10_twin = ax10.twinx()
     ratio_line = balance_usd_df['ratio_0_to_1'].tolist()
-    ax10_twin.plot(timestamps_ratio, ratio_line, 'red', linewidth=2, label='USDC/WETH Ratio', linestyle='--')
+    ax10_twin.plot(timestamps_ratio, ratio_line, 'red', linestyle='None', label='USDC/WETH Ratio', marker=MAKER, markersize=MARKER_SIZE)
     ax10_twin.set_ylabel('USDC/WETH Ratio', fontsize=12, color='red')
     ax10_twin.tick_params(axis='y', labelcolor='red')
     ax10_twin.legend(bbox_to_anchor=(1.0, 1.15), loc='upper left', fontsize=10, ncol=1, frameon=False)
@@ -410,7 +359,7 @@ if not balance_usd_df.empty:
     ax10.set_ylim(0, 100)
 
 # Format x-axis for all subplots and set common time range
-for ax in [ax1, ax2, ax4, ax6, ax8, ax9, ax10]:
+for ax in [ax1, ax2, ax10]:
     # Set the same x-axis limits for all charts so they align vertically
     if min_time is not None and max_time is not None:
         ax.set_xlim(min_time, max_time)
@@ -446,9 +395,9 @@ plot_dir = Path("plots") / chain_name
 plot_dir.mkdir(parents=True, exist_ok=True)
 
 
-output_path = plot_dir / f'{name.replace("/", "_").replace(" ", "")}_supply_shares_analysis.png'
+output_path = plot_dir / f'{name.replace("/", "_").replace(" ", "")}_secondary_refuel_analysis.png' 
 plt.savefig(output_path, dpi=_INTERNAL_DPI, bbox_inches=None)
-print(f"Chart saved to: {output_path} ({figure_width_pixels:.0f} x {int((FIGURE_HEIGHT_CM*7/2.54)*_INTERNAL_DPI)} px)")
+print(f"Chart saved to: {output_path} ({figure_width_pixels:.0f} x {int((FIGURE_HEIGHT_CM*3/2.54)*_INTERNAL_DPI)} px)")
 
 # Print summary statistics
 print("\n=== Summary Statistics ===")

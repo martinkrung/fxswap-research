@@ -9,8 +9,7 @@ import sys
 import math
 from eth_utils import keccak
 """
-This script is used to deploy a Curve pool using the stablepool factory contract.
-It unpacks the packed parameters from deployment data and calls the deploy_pool function.
+This script is used to refule a USD a pool.
 """
 
 # Load environment variables with `source .env_optimism`

@@ -9,6 +9,8 @@ import sys
 import math
 from eth_utils import keccak
 import requests
+from pathlib import Path
+
 """
 This script is used to refuel a Curve pool by adding liquidity.
 Rewritten to use web3.py instead of boa.
@@ -97,38 +99,27 @@ def get_abi_from_etherscan(address):
 fxswap_address = "0x3CeA080D303bD105c48cA4C24D8426da99f75524"
 # https://basescan.org/address/0x3CeA080D303bD105c48cA4C24D8426da99f75524
 
-fxswap_addresses = {
-    0: {
-        "name": "USDC/WETH A2-5",
-        "address": "0x4de88ecfa7f6548aA0d5C6D01b381Ea917E71F73"
-    },
-    1: {
-        "name": "USDC/WETH A5-5",
-        "address": "0xC88768B569902e1A67E54b090bA4969fde1204FA"
-    },
-    2: {
-        "name": "USDC/WETH A20-5",
-        "address": "0x3D0143f6453a707b840b6565F959D6cbBA86F23e"
-    },
-    3: {
-        "name": "USDC/WETH A40-5",
-        "address": "0x993a0D30FfA321D32eD0E8272Ded0108eBb1099A"
-    },
-    4: {
-        "name": "USDC/AERO A20-15",
-        "address": "0x3CeA080D303bD105c48cA4C24D8426da99f75524"
-    },
-    5: {
-        "name": "USDC/WETH A80-5",
-        "address": "0xd3E3B0FE036295A9e531bd72b024F7B308bca4f7"
-    },
-    6: {
-        "name": "USDC/WETH A80-5 2",
-        "address": "0xF30fcb00b7C3d2f6e12043157011bea7f848049D"
-    }
-}
+# Load fxswap_addresses from fxswaps.json if file exists, else use default.
+fxswaps_path = Path(__file__).parent.parent / "config" / "fxswaps.json"
+print(f"fxswaps_path: {fxswaps_path}")
+fxswap_addresses = {}
+if fxswaps_path.exists():
+    try:
+        with open(fxswaps_path, 'r') as f:
+            fxswap_addresses_raw = json.load(f)
+            # Convert string keys to integers (JSON requires string keys)
+            fxswap_addresses = {int(k): v for k, v in fxswap_addresses_raw.items()}
+        print(f"Loaded {len(fxswap_addresses)} pools from fxswaps.json")
+    except (json.JSONDecodeError, ValueError, KeyError) as e:
+        print(f"Error loading fxswaps.json: {e}")
+        print("Using empty fxswap_addresses dictionary")
+        fxswap_addresses = {}
+else:
+    print(f"fxswaps.json not found at {fxswaps_path}, using empty dictionary")
+    fxswap_addresses = {}
 
-index = 2
+
+index = 9
 fxswap_address = fxswap_addresses[index]["address"]
 
 # Get fxswap contract ABI and create contract instance
