@@ -81,6 +81,7 @@ price_oracle_data = []
 donation_shares_data = []
 donation_releases = []
 donation_reset_timestamps = []  # Track when last_donation_release_ts resets
+refuel_events = []  # Track refuel events with date, token amount, and USD value
 delta_price_data = []
 balance_data = []
 donation_shares_usd_data = []
@@ -431,6 +432,38 @@ if not donation_shares_df.empty:
     # Calculate rolling mean
     donation_shares_df['delta_usd_ma'] = donation_shares_df['delta_usd'].rolling(window='2h', min_periods=1).mean()
     donation_shares_df.reset_index(inplace=True)
+    
+    # Track refuel events: find all positive deltas (when donation_shares increases)
+    # This catches all increases, even if they happen across multiple blocks
+    positive_deltas = donation_shares_df[donation_shares_df['delta'] > 0].copy()
+    if not positive_deltas.empty:
+        for idx, row in positive_deltas.iterrows():
+            shares_added = row['delta']
+            timestamp = row['timestamp']
+            
+            # Get the values needed for USD calculation
+            total_supply = row.get('totalSupply', None)
+            balance_0 = row.get('balance_0', None)
+            balance_1 = row.get('balance_1', None)
+            last_price = row.get('last_price', None)
+            
+            # Calculate USD value of the shares that were added
+            if (total_supply is not None and total_supply > 0 and 
+                balance_0 is not None and balance_1 is not None and last_price is not None and
+                pd.notna(total_supply) and pd.notna(balance_0) and pd.notna(balance_1) and pd.notna(last_price)):
+                # Shares added as ratio of total supply
+                added_ratio = shares_added / total_supply
+                added_token0_amount = added_ratio * balance_0
+                added_token1_amount = added_ratio * balance_1
+                added_token0_usd = added_token0_amount
+                added_token1_usd = added_token1_amount * last_price
+                shares_added_usd = added_token0_usd + added_token1_usd
+                
+                refuel_events.append({
+                    'date': timestamp,
+                    'token_amount': shares_added,
+                    'usd_value': shares_added_usd
+                })
 
 # Calculate time range to determine figure width
 # Find the earliest and latest timestamps from all dataframes
@@ -1144,3 +1177,21 @@ if not donation_shares_df.empty:
 if not donation_releases_df.empty:
     print(f"\nRefule Releases:")
     print(f"  Number of unique releases detected: {len(donation_releases_df['release_time'].unique())}")
+
+# Print all refuel events
+if refuel_events:
+    print(f"\n=== Refuel Events ===")
+    print(f"Total refuel events: {len(refuel_events)}")
+    print(f"\n{'Date':<20} {'Token Amount':<20} {'USD Value':<15}")
+    print("-" * 55)
+    for event in refuel_events:
+        date_str = event['date'].strftime('%Y-%m-%d %H:%M:%S')
+        token_amount = event['token_amount']
+        usd_value = event['usd_value']
+        print(f"{date_str:<20} {token_amount:<20.6f} ${usd_value:<14.2f}")
+    print("-" * 55)
+    total_usd = sum(event['usd_value'] for event in refuel_events)
+    print(f"{'Total USD Value':<20} {'':<20} ${total_usd:.2f}")
+else:
+    print(f"\n=== Refuel Events ===")
+    print("No refuel events found.")
