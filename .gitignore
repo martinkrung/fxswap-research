@@ -1,2 +1,10 @@
 .venv
 .env*
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Generated plots (output files)
+plots/
