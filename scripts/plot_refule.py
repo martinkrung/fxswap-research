@@ -432,656 +432,398 @@ if not donation_shares_df.empty:
     donation_shares_df['delta_usd_ma'] = donation_shares_df['delta_usd'].rolling(window='2h', min_periods=1).mean()
     donation_shares_df.reset_index(inplace=True)
 
-# Calculate time range to determine figure width
-# Find the earliest and latest timestamps from all dataframes
-all_timestamps = []
-for df in [last_prices_df, price_scale_df, price_oracle_df, donation_shares_df, 
-           delta_price_df, balance_df, donation_shares_usd_df, virtual_price_df, total_supply_df]:
-    if not df.empty and 'timestamp' in df.columns:
-        all_timestamps.extend(df['timestamp'].tolist())
+def calculate_figure_dimensions(dataframes_list):
+    """
+    Calculate figure width based on time range in the data.
 
-if all_timestamps:
-    min_time = min(all_timestamps)
-    max_time = max(all_timestamps)
-    time_range = max_time - min_time
-    time_range_days = time_range.total_seconds() / (24 * 3600)
-    # Calculate plot area width in pixels: time_range_days * PIXELS_PER_DAY
-    plot_area_width_pixels = time_range_days * PIXELS_PER_DAY
-    # Calculate figure width in pixels: plot_area / PLOT_AREA_RATIO (to account for margins)
-    figure_width_pixels = plot_area_width_pixels / PLOT_AREA_RATIO
-    # Convert pixels to cm for matplotlib figsize: (pixels / DPI) * 2.54
-    figure_width_cm = (figure_width_pixels / _INTERNAL_DPI) * 2.54
-    # Ensure minimum width for readability (minimum ~20 cm)
-    figure_width_cm = max(figure_width_cm, 20.0)
-    print(f"Full plot: {time_range_days:.2f} days, width: {figure_width_pixels:.0f} px ({figure_width_cm:.1f} cm)")
-else:
-    # Fallback to default if no data (~35 cm width)
-    figure_width_cm = 35.0
-    figure_width_pixels = (figure_width_cm / 2.54) * _INTERNAL_DPI
+    Args:
+        dataframes_list: List of dataframes to analyze for time range
 
-# Create the plot with more subplots
-# Width is calculated to maintain 288 pixels per day, height stays constant
-# Order: Chart 0 = Price, Chart 1 = xcp_profit, Chart 2 = Refueling (40px), Chart 3 = donation shares, Chart 4 = delta price
-# Calculate height ratio: 40px at 100 DPI = 0.4 inches = 1.016 cm
-# Total height is FIGURE_HEIGHT_CM (35cm = 1378px), so 40px is ~2.9% of total
-# Use height_ratios [18, 18, 2, 18, 18] gives 2/74 = 2.7% ≈ 37px, close to 40px
-refueling_chart_height_ratio = 2
-regular_chart_height_ratio = 18
-fig, axes = plt.subplots(5, 1, figsize=(figure_width_cm/2.54, FIGURE_HEIGHT_CM/2.54), 
-                         sharex=True, height_ratios=[regular_chart_height_ratio, regular_chart_height_ratio, 
-                                                     refueling_chart_height_ratio, regular_chart_height_ratio, regular_chart_height_ratio])
-ax0, ax1, ax2, ax3, ax4 = axes
+    Returns:
+        tuple: (figure_width_cm, figure_width_pixels, time_info_str)
+    """
+    all_timestamps = []
+    for df in dataframes_list:
+        if not df.empty and 'timestamp' in df.columns:
+            all_timestamps.extend(df['timestamp'].tolist())
 
-# Chart 0: Plot last_prices and price_scale
-if not last_prices_df.empty:
-    ax0.plot(last_prices_df['timestamp'], last_prices_df['last_price'], color=BLUE, label='spot price', linestyle='None', marker=MAKER, markersize=MARKER_SIZE)
-if not price_scale_df.empty:
-    ax0.plot(price_scale_df['timestamp'], price_scale_df['price_scale'], color=GREEN, label='price scale', linestyle='None', marker=MAKER, markersize=MARKER_SIZE)
+    if all_timestamps:
+        min_time = min(all_timestamps)
+        max_time = max(all_timestamps)
+        time_range = max_time - min_time
+        time_range_days = time_range.total_seconds() / (24 * 3600)
+        time_range_hours = time_range.total_seconds() / 3600
 
-# Calculate max price as baseline (100% at the top) and add Price % of Max to chart 0
-ax1_twin = None
-if not last_prices_df.empty:
-    max_price = last_prices_df['last_price'].max()
-    # Calculate price as percentage of max price (100% = max price, shows deviation down)
-    last_prices_df_copy = last_prices_df.copy()
-    last_prices_df_copy['price_change_pct'] = (last_prices_df_copy['last_price'] / max_price) * 100
-    
-    # Create twin axis for price change percentage
-    ax1_twin = ax0.twinx()
-    
-    # Plot price as percentage of max price on right axis
-    ax1_twin.axhline(y=100, color='gray', linestyle='--', linewidth=0.5, alpha=0.5)
-    ax1_twin.set_ylabel('Price % of Max', fontsize=12, color='black')
-    ax1_twin.tick_params(axis='y', labelcolor='black')
-
-ax0.set_ylabel('Price (USD)', fontsize=12)
-ax0.set_title(f'{name}: Spot and Scale Prices Over Time', fontsize=14, fontweight='bold')
-# Collect legend handles and labels from ax0 and twin axes
-handles1, labels1 = ax0.get_legend_handles_labels()
-if ax1_twin is not None:
-    handles_twin, labels_twin = ax1_twin.get_legend_handles_labels()
-    if handles_twin:  # Only extend if there are actually handles from twin
-        handles1.extend(handles_twin)
-        labels1.extend(labels_twin)
-if handles1:
-    # Place legend at bottom, all in one line
-    # Use loc='lower center' with bbox_to_anchor to ensure it's visible
-    # markerscale=15 makes legend markers 15x15 pixels while plot markers stay at 1px
-    ax0.legend(handles1, labels1, bbox_to_anchor=(1, -0.02), loc='upper right', 
-               fontsize=9, ncol=len(handles1), frameon=False, columnspacing=1.0, handlelength=2.0, markerscale=15)
-else:
-    # Debug: if no handles, try to create legend anyway with explicit labels
-    print("Warning: No legend handles found for chart 0")
-    print(f"  last_prices_df empty: {last_prices_df.empty}, price_scale_df empty: {price_scale_df.empty}")
-ax0.grid(True, alpha=0.3)
-
-# Chart 1: xcp_profit (green) and virtual_price (red) on same scale
-# Plot xcp_profit in green
-if not xcp_profit_df.empty:
-    ax1.plot(xcp_profit_df['timestamp'], xcp_profit_df['xcp_profit'], 
-             'green', linestyle='None', marker=MAKER, markersize=MARKER_SIZE, alpha=0.7, label='xcp_profit')
-
-# Plot virtual_price in red on same axis
-if not virtual_price_df.empty:
-    # Find where values change (only show markers where value changed)
-    virtual_price_df_sorted = virtual_price_df.sort_values('timestamp')
-    value_changed = virtual_price_df_sorted['virtual_price'].diff().abs() > 1e-10
-    # First point always shows a marker
-    value_changed.iloc[0] = True
-    
-    # Plot markers only where value changed
-    changed_data = virtual_price_df_sorted[value_changed]
-    if not changed_data.empty:
-        ax1.plot(changed_data['timestamp'], changed_data['virtual_price'], 
-                 'red', marker=MAKER, markersize=MARKER_SIZE, linestyle='None', label='virtual_price / 2', alpha=0.7)
-
-ax1.set_ylabel('Value', fontsize=12)
-ax1.set_title(f'{name}: xcp_profit and virtual_price / 2', fontsize=14, fontweight='bold')
-# Collect all legend handles and labels from ax1
-handles2_new, labels2_new = ax1.get_legend_handles_labels()
-if handles2_new:
-    # Place legend at bottom, all in one line
-    ax1.legend(handles2_new, labels2_new, bbox_to_anchor=(1, -0.02), loc='upper right', 
-               fontsize=9, ncol=len(handles2_new), frameon=False, columnspacing=1.0, handlelength=2.0, markerscale=15)
-ax1.grid(True, alpha=0.3)
-
-# Chart 2: Refueling chart - shows vertical lines for donation share resets
-ax2.set_title('Refueling events (vertical lines)', fontsize=12, fontweight='bold')
-ax2.set_ylim(0, 1)  # Set a simple y-axis range
-ax2.set_yticks([])  # Hide y-axis ticks
-
-# Show border like the other charts (all spines except right, which is invisible for all)
-ax2.spines['top'].set_visible(True)
-ax2.spines['left'].set_visible(True)
-ax2.spines['bottom'].set_visible(True)
-ax2.spines['right'].set_visible(True)
-
-ax2.tick_params(axis='x', which='both', bottom=False, labelbottom=False)  # Hide x-axis
-
-# Add donation release markers
-if not donation_releases_df.empty:
-    unique_releases = donation_releases_df['release_time'].unique()
-    for release_time in unique_releases:
-        # Find the closest timestamp in price data
-        if not last_prices_df.empty:
-            closest_idx = (last_prices_df['timestamp'] - release_time).abs().idxmin()
-            closest_time = last_prices_df.loc[closest_idx, 'timestamp']
-            closest_price = last_prices_df.loc[closest_idx, 'last_price']
-            
-            #ax1.axvline(x=release_time, color='green', linestyle='--', alpha=0.5)
-            '''
-            ax1.annotate(f'Refule Release\n{release_time.strftime("%H:%M:%S")}', 
-                        xy=(release_time, closest_price),
-                        xytext=(10, 20), textcoords='offset points',
-                        fontsize=8, color='green',
-                        bbox=dict(boxstyle='round,pad=0.5', fc='yellow', alpha=0.3),
-                        arrowprops=dict(arrowstyle='->', connectionstyle='arc3,rad=0'))
-            '''
-
-# Chart 3: Plot donation shares delta (absolute) - filtered (only negative, zero excluded) - same as plot_supply_shares.py
-ax3_twin_delta = None
-ax3_twin_normalized = None
-if not donation_shares_df.empty and 'delta_filtered' in donation_shares_df.columns:
-    # Only plot non-zero values (negative deltas) as bars
-    filtered_data = donation_shares_df[donation_shares_df['delta_filtered'] != 0].copy()
-    if not filtered_data.empty:
-        # Calculate bar width based on time spacing
-        # Use a small width that represents about 2 pixels at the output DPI
-        # Convert 2 pixels to days: 2px / PIXELS_PER_DAY
-        bar_width_days = 2 / PIXELS_PER_DAY
-        bar_width = timedelta(days=bar_width_days)
-        
-        ax3.bar(filtered_data['timestamp'], filtered_data['delta_filtered'], 
-                width=bar_width, color='purple', label='refuel in USD', 
-                align='center', edgecolor='purple', linewidth=0.1)
-        
-        # Add USD value labels for bars with delta < -0.001
-        if 'delta_usd' in filtered_data.columns:
-            # Label only bars where delta is less than -0.001 (more negative)
-            for idx, row in filtered_data.iterrows():
-                delta_value = row['delta_filtered']
-                delta_usd = row.get('delta_usd', 0)
-                
-                # Only label if delta is less than -0.001
-                if delta_value < -0.001 and delta_usd > 0:
-                    # Format USD value (tiny amounts, show cents or less)
-                    usd_label = f"${delta_usd:.4f}"
-                    
-                    # Add label at the end of the bar (bottom since delta is negative)
-                    ax3.text(row['timestamp'], delta_value, usd_label, 
-                            fontsize=6, ha='center', va='top', rotation=0,
-                            bbox=dict(boxstyle='round,pad=0.2', facecolor='white', alpha=0.7, edgecolor='none'))
-    
-    # Add donation shares (raw values) as black line on separate twin axis
-    if not donation_shares_df.empty and 'donation_shares' in donation_shares_df.columns:
-        ax3_twin_normalized = ax3.twinx()
-        # Offset the position of this twin axis to the right
-        ax3_twin_normalized.spines['right'].set_position(('outward', 60))
-        # Plot donation shares as black line
-        ax3_twin_normalized.plot(donation_shares_df['timestamp'], donation_shares_df['donation_shares'], 
-                                 'black', label='refuel_shares', linestyle='-', linewidth=1.0, alpha=0.7)
-        # Set y-axis: 0 at bottom, max at top, and hide axis info
-        max_shares = donation_shares_df['donation_shares'].max()
-        ax3_twin_normalized.set_ylim(0, max_shares)  # 0 at bottom, max at top
-        ax3_twin_normalized.set_yticks([])  # Hide tick labels
-        ax3_twin_normalized.spines['right'].set_visible(False)  # Hide the spine
-    
-    # Add moving average of USD spend on right y-axis (if donation shares axis exists, create from it)
-    if 'delta_usd_ma' in donation_shares_df.columns:
-        if ax3_twin_normalized is not None:
-            # Create another twin axis from the normalized axis for moving average
-            ax3_twin_delta = ax3_twin_normalized.twinx()
-            ax3_twin_delta.spines['right'].set_position(('outward', 0))
+        # Calculate plot area width in pixels
+        if time_range_days >= 1:
+            # For ranges >= 1 day: use days * PIXELS_PER_DAY
+            plot_area_width_pixels = time_range_days * PIXELS_PER_DAY
+            time_info = f"{time_range_days:.2f} days"
         else:
-            ax3_twin_delta = ax3.twinx()
-        # Plot moving average line
-        ax3_twin_delta.plot(donation_shares_df['timestamp'], donation_shares_df['delta_usd_ma'], 
-                      'orange', label='2h MA USD Spend', linestyle='None', marker=MAKER, markersize=MARKER_SIZE, alpha=0.8)
-        ax3_twin_delta.set_ylabel('2h Moving Average USD Spend', fontsize=12, color='orange')
-        ax3_twin_delta.tick_params(axis='y', labelcolor='orange')
-    
-    ax3.set_ylabel('refuel in shares', fontsize=12)
-    ax3.set_title(f'{name}: refuel shares used to rebalance', fontsize=12, fontweight='bold')
-    # Collect all legend handles and labels from ax3 and twin axes
-    handles3, labels3 = ax3.get_legend_handles_labels()
-    if ax3_twin_normalized is not None:
-        handles_twin_norm, labels_twin_norm = ax3_twin_normalized.get_legend_handles_labels()
-        handles3.extend(handles_twin_norm)
-        labels3.extend(labels_twin_norm)
-    if ax3_twin_delta is not None:
-        handles_twin3, labels_twin3 = ax3_twin_delta.get_legend_handles_labels()
-        handles3.extend(handles_twin3)
-        labels3.extend(labels_twin3)
-    if handles3:
-        ax3.legend(handles3, labels3, bbox_to_anchor=(1, -0.02), loc='upper right',
-                   fontsize=9, ncol=len(handles3), frameon=False, columnspacing=1.0, handlelength=2.0, markerscale=15)
-    ax3.grid(True, alpha=0.3)
-    ax3.axhline(y=0, color='black', linestyle='--', linewidth=0.5, alpha=0.5)
-else:
-    # Plot donation shares (raw values) as black line even if delta_filtered is not available
+            # For ranges < 1 day: use hours * 12 (5 min = 1 px)
+            plot_area_width_pixels = time_range_hours * 12
+            time_info = f"{time_range_hours:.2f} hours of data"
+
+        # Calculate figure width
+        figure_width_pixels = plot_area_width_pixels / PLOT_AREA_RATIO
+        figure_width_cm = (figure_width_pixels / _INTERNAL_DPI) * 2.54
+        figure_width_cm = max(figure_width_cm, 20.0)
+
+        return figure_width_cm, figure_width_pixels, time_info
+    else:
+        # Fallback
+        figure_width_cm = 35.0
+        figure_width_pixels = (figure_width_cm / 2.54) * _INTERNAL_DPI
+        return figure_width_cm, figure_width_pixels, "0 days"
+
+
+def create_refuel_chart(
+    last_prices_df, price_scale_df, xcp_profit_df, virtual_price_df,
+    donation_shares_df, delta_price_df, donation_reset_timestamps,
+    figure_width_cm, name, output_path, plot_description=""
+):
+    """
+    Create a 5-subplot refuel analysis chart.
+
+    Args:
+        last_prices_df: DataFrame with last_prices data
+        price_scale_df: DataFrame with price_scale data
+        xcp_profit_df: DataFrame with xcp_profit data
+        virtual_price_df: DataFrame with virtual_price data
+        donation_shares_df: DataFrame with donation_shares data
+        delta_price_df: DataFrame with delta_price data
+        donation_reset_timestamps: List of timestamps for refueling events
+        figure_width_cm: Width of figure in cm
+        name: Pool name for titles
+        output_path: Path to save the chart
+        plot_description: Optional description for logging (e.g., "Full plot", "48-hour plot")
+
+    Returns:
+        tuple: (figure, figure_width_pixels) - The matplotlib figure object and width in pixels
+    """
+    # Chart height ratios
+    refueling_chart_height_ratio = 2
+    regular_chart_height_ratio = 18
+
+    # Create figure with 5 subplots
+    fig, axes = plt.subplots(
+        5, 1,
+        figsize=(figure_width_cm/2.54, FIGURE_HEIGHT_CM/2.54),
+        sharex=True,
+        height_ratios=[regular_chart_height_ratio, regular_chart_height_ratio,
+                      refueling_chart_height_ratio, regular_chart_height_ratio,
+                      regular_chart_height_ratio]
+    )
+    ax0, ax1, ax2, ax3, ax4 = axes
+
+    # ===== Chart 0: Spot and Scale Prices =====
+    if not last_prices_df.empty:
+        ax0.plot(last_prices_df['timestamp'], last_prices_df['last_price'],
+                color=BLUE, label='spot price', linestyle='None', marker=MAKER, markersize=MARKER_SIZE)
+    if not price_scale_df.empty:
+        ax0.plot(price_scale_df['timestamp'], price_scale_df['price_scale'],
+                color=GREEN, label='price scale', linestyle='None', marker=MAKER, markersize=MARKER_SIZE)
+
+    # Add Price % of Max to chart 0
+    ax1_twin = None
+    if not last_prices_df.empty:
+        max_price = last_prices_df['last_price'].max()
+        last_prices_df_copy = last_prices_df.copy()
+        last_prices_df_copy['price_change_pct'] = (last_prices_df_copy['last_price'] / max_price) * 100
+
+        ax1_twin = ax0.twinx()
+        ax1_twin.axhline(y=100, color='gray', linestyle='--', linewidth=0.5, alpha=0.5)
+        ax1_twin.set_ylabel('Price % of Max', fontsize=12, color='black')
+        ax1_twin.tick_params(axis='y', labelcolor='black')
+
+    ax0.set_ylabel('Price (USD)', fontsize=12)
+    ax0.set_title(f'{name}: Spot and Scale Prices Over Time', fontsize=14, fontweight='bold')
+
+    # Chart 0 legend
+    handles1, labels1 = ax0.get_legend_handles_labels()
+    if ax1_twin is not None:
+        handles_twin, labels_twin = ax1_twin.get_legend_handles_labels()
+        if handles_twin:
+            handles1.extend(handles_twin)
+            labels1.extend(labels_twin)
+    if handles1:
+        ax0.legend(handles1, labels1, bbox_to_anchor=(1, -0.02), loc='upper right',
+                  fontsize=9, ncol=len(handles1), frameon=False, columnspacing=1.0,
+                  handlelength=2.0, markerscale=15)
+    ax0.grid(True, alpha=0.3)
+
+    # ===== Chart 1: xcp_profit and virtual_price =====
+    if not xcp_profit_df.empty:
+        ax1.plot(xcp_profit_df['timestamp'], xcp_profit_df['xcp_profit'],
+                'green', linestyle='None', marker=MAKER, markersize=MARKER_SIZE,
+                alpha=0.7, label='xcp_profit')
+
+    if not virtual_price_df.empty:
+        virtual_price_df_sorted = virtual_price_df.sort_values('timestamp')
+        value_changed = virtual_price_df_sorted['virtual_price'].diff().abs() > 1e-10
+        value_changed.iloc[0] = True
+
+        changed_data = virtual_price_df_sorted[value_changed]
+        if not changed_data.empty:
+            ax1.plot(changed_data['timestamp'], changed_data['virtual_price'],
+                    'red', marker=MAKER, markersize=MARKER_SIZE, linestyle='None',
+                    label='virtual_price / 2', alpha=0.7)
+
+    ax1.set_ylabel('Value', fontsize=12)
+    ax1.set_title(f'{name}: xcp_profit and virtual_price / 2', fontsize=14, fontweight='bold')
+
+    # Chart 1 legend
+    handles2_new, labels2_new = ax1.get_legend_handles_labels()
+    if handles2_new:
+        ax1.legend(handles2_new, labels2_new, bbox_to_anchor=(1, -0.02), loc='upper right',
+                  fontsize=9, ncol=len(handles2_new), frameon=False, columnspacing=1.0,
+                  handlelength=2.0, markerscale=15)
+    ax1.grid(True, alpha=0.3)
+
+    # ===== Chart 2: Refueling events =====
+    ax2.set_title('Refueling events (vertical lines)', fontsize=12, fontweight='bold')
+    ax2.set_ylim(0, 1)
+    ax2.set_yticks([])
+    ax2.spines['top'].set_visible(True)
+    ax2.spines['left'].set_visible(True)
+    ax2.spines['bottom'].set_visible(True)
+    ax2.spines['right'].set_visible(True)
+    ax2.tick_params(axis='x', which='both', bottom=False, labelbottom=False)
+
+    # ===== Chart 3: Donation shares =====
+    ax3_twin_delta = None
     ax3_twin_normalized = None
-    if not donation_shares_df.empty and 'donation_shares' in donation_shares_df.columns:
-        ax3_twin_normalized = ax3.twinx()
-        ax3_twin_normalized.plot(donation_shares_df['timestamp'], donation_shares_df['donation_shares'], 
-                                 'black', label='refuel_shares', linestyle='-', linewidth=1.0, alpha=0.7)
-        # Set y-axis: 0 at bottom, max at top, and hide axis info
-        max_shares = donation_shares_df['donation_shares'].max()
-        ax3_twin_normalized.set_ylim(0, max_shares)  # 0 at bottom, max at top
-        ax3_twin_normalized.set_yticks([])  # Hide tick labels
-        ax3_twin_normalized.spines['right'].set_visible(False)  # Hide the spine
+
+    if not donation_shares_df.empty and 'delta_filtered' in donation_shares_df.columns:
+        filtered_data = donation_shares_df[donation_shares_df['delta_filtered'] != 0].copy()
+        if not filtered_data.empty:
+            bar_width_days = 2 / PIXELS_PER_DAY
+            bar_width = timedelta(days=bar_width_days)
+
+            ax3.bar(filtered_data['timestamp'], filtered_data['delta_filtered'],
+                   width=bar_width, color='purple', label='refuel in USD',
+                   align='center', edgecolor='purple', linewidth=0.1)
+
+            # Add USD value labels
+            if 'delta_usd' in filtered_data.columns:
+                for idx, row in filtered_data.iterrows():
+                    delta_value = row['delta_filtered']
+                    delta_usd = row.get('delta_usd', 0)
+
+                    if delta_value < -0.001 and delta_usd > 0:
+                        usd_label = f"${delta_usd:.4f}"
+                        ax3.text(row['timestamp'], delta_value, usd_label,
+                               fontsize=6, ha='center', va='top', rotation=0,
+                               bbox=dict(boxstyle='round,pad=0.2', facecolor='white',
+                                       alpha=0.7, edgecolor='none'))
+
+        # Add donation shares as black line
+        if not donation_shares_df.empty and 'donation_shares' in donation_shares_df.columns:
+            ax3_twin_normalized = ax3.twinx()
+            ax3_twin_normalized.spines['right'].set_position(('outward', 60))
+            ax3_twin_normalized.plot(donation_shares_df['timestamp'],
+                                   donation_shares_df['donation_shares'],
+                                   'black', label='refuel_shares', linestyle='-',
+                                   linewidth=1.0, alpha=0.7)
+            max_shares = donation_shares_df['donation_shares'].max()
+            ax3_twin_normalized.set_ylim(0, max_shares)
+            ax3_twin_normalized.set_yticks([])
+            ax3_twin_normalized.spines['right'].set_visible(False)
+
+        # Add moving average
+        if 'delta_usd_ma' in donation_shares_df.columns:
+            if ax3_twin_normalized is not None:
+                ax3_twin_delta = ax3_twin_normalized.twinx()
+                ax3_twin_delta.spines['right'].set_position(('outward', 0))
+            else:
+                ax3_twin_delta = ax3.twinx()
+            ax3_twin_delta.plot(donation_shares_df['timestamp'],
+                              donation_shares_df['delta_usd_ma'],
+                              'orange', label='2h MA USD Spend', linestyle='None',
+                              marker=MAKER, markersize=MARKER_SIZE, alpha=0.8)
+            ax3_twin_delta.set_ylabel('2h Moving Average USD Spend', fontsize=12, color='orange')
+            ax3_twin_delta.tick_params(axis='y', labelcolor='orange')
+
+        ax3.set_ylabel('refuel in shares', fontsize=12)
+        ax3.set_title(f'{name}: refuel shares used to rebalance', fontsize=12, fontweight='bold')
+
+        # Chart 3 legend
         handles3, labels3 = ax3.get_legend_handles_labels()
         if ax3_twin_normalized is not None:
             handles_twin_norm, labels_twin_norm = ax3_twin_normalized.get_legend_handles_labels()
             handles3.extend(handles_twin_norm)
             labels3.extend(labels_twin_norm)
+        if ax3_twin_delta is not None:
+            handles_twin3, labels_twin3 = ax3_twin_delta.get_legend_handles_labels()
+            handles3.extend(handles_twin3)
+            labels3.extend(labels_twin3)
         if handles3:
-            ax3.legend(handles3, labels3, bbox_to_anchor=(0.5, -0.15), loc='upper center', 
-                       fontsize=9, ncol=len(handles3), frameon=False, columnspacing=1.0, handlelength=2.0, markerscale=15)
-    ax3.set_ylabel('refuel_shares used', fontsize=12)
-    ax3.set_title(f'{name}: refuel_shares used in USD', fontsize=12, fontweight='bold')
-    ax3.grid(True, alpha=0.3)
+            ax3.legend(handles3, labels3, bbox_to_anchor=(1, -0.02), loc='upper right',
+                      fontsize=9, ncol=len(handles3), frameon=False, columnspacing=1.0,
+                      handlelength=2.0, markerscale=15)
+        ax3.grid(True, alpha=0.3)
+        ax3.axhline(y=0, color='black', linestyle='--', linewidth=0.5, alpha=0.5)
+    else:
+        # Fallback: plot donation shares even if delta_filtered not available
+        ax3_twin_normalized = None
+        if not donation_shares_df.empty and 'donation_shares' in donation_shares_df.columns:
+            ax3_twin_normalized = ax3.twinx()
+            ax3_twin_normalized.plot(donation_shares_df['timestamp'],
+                                   donation_shares_df['donation_shares'],
+                                   'black', label='refuel_shares', linestyle='-',
+                                   linewidth=1.0, alpha=0.7)
+            max_shares = donation_shares_df['donation_shares'].max()
+            ax3_twin_normalized.set_ylim(0, max_shares)
+            ax3_twin_normalized.set_yticks([])
+            ax3_twin_normalized.spines['right'].set_visible(False)
 
-# Chart 4: Plot delta_price_last_to_scale in USD and %
-ax4_twin = None
-if not delta_price_df.empty:
-    # Plot delta in USD
-    delta_usd_data = delta_price_df[delta_price_df['delta_usd'].notna()]
-    if not delta_usd_data.empty:
-        ax4.plot(delta_usd_data['timestamp'], delta_usd_data['delta_usd'], 
-                 'c', label='Delta (USD)', linestyle='None', marker=MAKER, markersize=MARKER_SIZE)
-    
-    # Plot delta in % on twin axis
-    delta_percent_data = delta_price_df[delta_price_df['delta_percent'].notna()]
-    if not delta_percent_data.empty:
-        ax4_twin = ax4.twinx()
-        # Add blue transparent band from -2% to +2%
-        ax4_twin.axhspan(-2, 2, color='blue', alpha=0.2, zorder=0)
-        ax4_twin.plot(delta_percent_data['timestamp'], delta_percent_data['delta_percent'], 
-                     'm', label='Delta (%)', linestyle='None', marker=MAKER, markersize=MARKER_SIZE)
-        ax4_twin.set_ylabel('Delta Price Last to Scale (%)', fontsize=10, color='m')
-        ax4_twin.tick_params(axis='y', labelcolor='m')
-    
-    ax4.set_ylabel('Delta Price Last to Scale (USD)', fontsize=10, color='c')
-    ax4.tick_params(axis='y', labelcolor='c')
-    ax4.set_title('Price Delta: last_prices() - price_scale()', fontsize=12, fontweight='bold')
-    ax4.grid(True, alpha=0.3)
-    # Combine legends from both axes
-    handles4, labels4 = ax4.get_legend_handles_labels()
-    if ax4_twin is not None:
-        handles_twin4, labels_twin4 = ax4_twin.get_legend_handles_labels()
-        handles4.extend(handles_twin4)
-        labels4.extend(labels_twin4)
-    if handles4:
-        ax4.legend(handles4, labels4, bbox_to_anchor=(0.5, -0.15), loc='upper center', 
-                  fontsize=9, ncol=len(handles4), frameon=False, columnspacing=1.0, handlelength=2.0, markerscale=15)
-else:
-    ax4.set_ylabel('Delta Price (USD)', fontsize=12)
-    ax4.set_title('Price Delta: last_prices() - price_scale()', fontsize=12, fontweight='bold')
-    ax4.grid(True, alpha=0.3)
+            handles3, labels3 = ax3.get_legend_handles_labels()
+            if ax3_twin_normalized is not None:
+                handles_twin_norm, labels_twin_norm = ax3_twin_normalized.get_legend_handles_labels()
+                handles3.extend(handles_twin_norm)
+                labels3.extend(labels_twin_norm)
+            if handles3:
+                ax3.legend(handles3, labels3, bbox_to_anchor=(1, -0.02), loc='upper right',
+                          fontsize=9, ncol=len(handles3), frameon=False, columnspacing=1.0,
+                          handlelength=2.0, markerscale=15)
+        ax3.set_ylabel('refuel in shares', fontsize=12)
+        ax3.set_title(f'{name}: refuel shares used to rebalance', fontsize=12, fontweight='bold')
+        ax3.grid(True, alpha=0.3)
 
-# Add thin black vertical lines for donation share resets (after all twin axes are created)
-# Note: Chart 3 (ax3) does not show these lines
-if donation_reset_timestamps:
-    for reset_time in donation_reset_timestamps:
-        #ax0.axvline(x=reset_time, color='black', linestyle='-', linewidth=0.5, alpha=0.7)
-        #ax1.axvline(x=reset_time, color='black', linestyle='-', linewidth=0.5, alpha=0.7)
-        ax2.axvline(x=reset_time, color='black', linestyle='-', linewidth=1, alpha=0.7)
-        # ax3.axvline removed - user requested no refueling lines on chart 3
-        #ax4.axvline(x=reset_time, color='black', linestyle='-', linewidth=0.5, alpha=0.7)
+    # ===== Chart 4: Delta price =====
+    ax4_twin = None
+    if not delta_price_df.empty:
+        delta_usd_data = delta_price_df[delta_price_df['delta_usd'].notna()]
+        if not delta_usd_data.empty:
+            ax4.plot(delta_usd_data['timestamp'], delta_usd_data['delta_usd'],
+                    'c', label='Delta (USD)', linestyle='None', marker=MAKER, markersize=MARKER_SIZE)
+
+        delta_percent_data = delta_price_df[delta_price_df['delta_percent'].notna()]
+        if not delta_percent_data.empty:
+            ax4_twin = ax4.twinx()
+            ax4_twin.axhspan(-2, 2, color='blue', alpha=0.2, zorder=0)
+            ax4_twin.plot(delta_percent_data['timestamp'], delta_percent_data['delta_percent'],
+                        'm', label='Delta (%)', linestyle='None', marker=MAKER, markersize=MARKER_SIZE)
+            ax4_twin.set_ylabel('Delta Price Last to Scale (%)', fontsize=10, color='m')
+            ax4_twin.tick_params(axis='y', labelcolor='m')
+
+        ax4.set_ylabel('Delta Price Last to Scale (USD)', fontsize=10, color='c')
+        ax4.tick_params(axis='y', labelcolor='c')
+        ax4.set_title('Price Delta: last_prices() - price_scale()', fontsize=12, fontweight='bold')
+        ax4.grid(True, alpha=0.3)
+
+        # Chart 4 legend
+        handles4, labels4 = ax4.get_legend_handles_labels()
+        if ax4_twin is not None:
+            handles_twin4, labels_twin4 = ax4_twin.get_legend_handles_labels()
+            handles4.extend(handles_twin4)
+            labels4.extend(labels_twin4)
+        if handles4:
+            ax4.legend(handles4, labels4, bbox_to_anchor=(0.5, -0.15), loc='upper center',
+                      fontsize=9, ncol=len(handles4), frameon=False, columnspacing=1.0,
+                      handlelength=2.0, markerscale=15)
+    else:
+        ax4.set_ylabel('Delta Price (USD)', fontsize=12)
+        ax4.set_title('Price Delta: last_prices() - price_scale()', fontsize=12, fontweight='bold')
+        ax4.grid(True, alpha=0.3)
+
+    # ===== Add refueling event lines =====
+    if donation_reset_timestamps:
+        for reset_time in donation_reset_timestamps:
+            ax2.axvline(x=reset_time, color='black', linestyle='-', linewidth=1, alpha=0.7)
+
+    # ===== Format x-axis =====
+    ax4.set_xlabel('Time', fontsize=12)
+
+    for ax in [ax0, ax1, ax3, ax4]:
+        ax.xaxis.set_major_locator(mdates.HourLocator(byhour=[0, 6, 12, 18]))
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%m/%d %H:%M'))
+        plt.setp(ax.xaxis.get_majorticklabels(), rotation=45, ha='right')
+        ax.grid(True, alpha=0.3, which='major')
+        ax.xaxis.set_minor_locator(mdates.HourLocator(byhour=[0]))
+        ax.grid(True, alpha=0.6, which='minor', linewidth=1.5, linestyle='-')
+
+    # ===== Add title and adjust layout =====
+    if not last_prices_df.empty:
+        date_str = last_prices_df['timestamp'].min().strftime('%Y-%m-%d')
+    else:
+        date_str = datetime.now().strftime('%Y-%m-%d')
+
+    plt.suptitle(f'Data from {date_str} (Values from JSON cache)', fontsize=10, y=1.02)
+    plt.subplots_adjust(left=0.08, bottom=0.15, right=0.95, top=0.92, hspace=0.3)
+
+    # ===== Save the plot =====
+    figure_width_pixels = (figure_width_cm / 2.54) * _INTERNAL_DPI
+    plt.savefig(output_path, dpi=_INTERNAL_DPI, bbox_inches=None)
+
+    if plot_description:
+        print(f"{plot_description} saved to: {output_path} ({figure_width_pixels:.0f} x {int((FIGURE_HEIGHT_CM/2.54)*_INTERNAL_DPI)} px)")
+    else:
+        print(f"Chart saved to: {output_path} ({figure_width_pixels:.0f} x {int((FIGURE_HEIGHT_CM/2.54)*_INTERNAL_DPI)} px)")
+
+    return fig, figure_width_pixels
 
 
-ax4.set_xlabel('Time', fontsize=12)
+# Calculate time range to determine figure width
+# Find the earliest and latest timestamps from all dataframes
+dataframes_for_dimension_calc = [
+    last_prices_df, price_scale_df, price_oracle_df, donation_shares_df,
+    delta_price_df, balance_df, donation_shares_usd_df, virtual_price_df, total_supply_df
+]
+figure_width_cm, figure_width_pixels, time_info = calculate_figure_dimensions(dataframes_for_dimension_calc)
+print(f"Full plot: {time_info}, width: {figure_width_pixels:.0f} px ({figure_width_cm:.1f} cm)")
 
-# Format x-axis - use 6-hour intervals at fixed times (00:00, 6:00, 12:00, 18:00)
-# Note: ax2 (refueling chart) doesn't need x-axis formatting as it's hidden
-for ax in [ax0, ax1, ax3, ax4]:
-    # Use HourLocator with byhour to set fixed hours: 0, 6, 12, 18
-    ax.xaxis.set_major_locator(mdates.HourLocator(byhour=[0, 6, 12, 18]))
-    # Format to show date and time for 6-hour intervals
-    ax.xaxis.set_major_formatter(mdates.DateFormatter('%m/%d %H:%M'))
-    plt.setp(ax.xaxis.get_majorticklabels(), rotation=45, ha='right')
-    # Ensure grid is enabled and follows major ticks (6-hour intervals)
-    ax.grid(True, alpha=0.3, which='major')
-    
-    # Add thicker grid lines at midnight (00:00)
-    ax.xaxis.set_minor_locator(mdates.HourLocator(byhour=[0]))
-    ax.grid(True, alpha=0.6, which='minor', linewidth=1.5, linestyle='-')
-
-# Get date range from data
-if not last_prices_df.empty:
-    date_str = last_prices_df['timestamp'].min().strftime('%Y-%m-%d')
-else:
-    date_str = datetime.now().strftime('%Y-%m-%d')
-
-plt.suptitle(f'Data from {date_str} (Values from JSON cache)', 
-             fontsize=10, y=1.02)
-
-# Use subplots_adjust to set consistent margins (left, bottom, right, top)
-# This ensures the plot area has the correct width regardless of labels
-# Increased bottom margin to accommodate legends below the plots
-plt.subplots_adjust(left=0.08, bottom=0.15, right=0.95, top=0.92, hspace=0.3)
-
-# Save the plot
-# Don't use bbox_inches='tight' as it crops the image and reduces the actual size
-# Use the full figure size to preserve our calculated pixel-per-day ratio
-
+# ===== Create full version chart =====
 plot_dir = Path("plots") / chain_name
 plot_dir.mkdir(parents=True, exist_ok=True)
 
 output_path = plot_dir / f'{name.replace("/", "_").replace(" ", "")}_refuel_analysis_all.png'
-plt.savefig(output_path, dpi=_INTERNAL_DPI, bbox_inches=None)
-print(f"Chart saved to: {output_path} ({figure_width_pixels:.0f} x {int((FIGURE_HEIGHT_CM/2.54)*_INTERNAL_DPI)} px)")
+fig, _ = create_refuel_chart(
+    last_prices_df, price_scale_df, xcp_profit_df, virtual_price_df,
+    donation_shares_df, delta_price_df, donation_reset_timestamps,
+    figure_width_cm, name, output_path, plot_description="Full chart"
+)
 
-# Create second plot for time window
+# ===== Create TIME_WINDOW version chart =====
+# Calculate timestamps for filtering
+all_timestamps = []
+for df in dataframes_for_dimension_calc:
+    if not df.empty and 'timestamp' in df.columns:
+        all_timestamps.extend(df['timestamp'].tolist())
+
 if all_timestamps:
     max_time_window = max(all_timestamps)
     min_time_window = max_time_window - timedelta(hours=TIME_WINDOW_HOURS)
-    
+
     # Filter all dataframes to time window
     last_prices_df_window = last_prices_df[last_prices_df['timestamp'] >= min_time_window].copy() if not last_prices_df.empty else pd.DataFrame()
     price_scale_df_window = price_scale_df[price_scale_df['timestamp'] >= min_time_window].copy() if not price_scale_df.empty else pd.DataFrame()
-    price_oracle_df_window = price_oracle_df[price_oracle_df['timestamp'] >= min_time_window].copy() if not price_oracle_df.empty else pd.DataFrame()
+    xcp_profit_df_window = xcp_profit_df[xcp_profit_df['timestamp'] >= min_time_window].copy() if not xcp_profit_df.empty else pd.DataFrame()
+    virtual_price_df_window = virtual_price_df[virtual_price_df['timestamp'] >= min_time_window].copy() if not virtual_price_df.empty else pd.DataFrame()
     donation_shares_df_window = donation_shares_df[donation_shares_df['timestamp'] >= min_time_window].copy() if not donation_shares_df.empty else pd.DataFrame()
     delta_price_df_window = delta_price_df[delta_price_df['timestamp'] >= min_time_window].copy() if not delta_price_df.empty else pd.DataFrame()
-    balance_df_window = balance_df[balance_df['timestamp'] >= min_time_window].copy() if not balance_df.empty else pd.DataFrame()
-    donation_shares_usd_df_window = donation_shares_usd_df[donation_shares_usd_df['timestamp'] >= min_time_window].copy() if not donation_shares_usd_df.empty else pd.DataFrame()
-    virtual_price_df_window = virtual_price_df[virtual_price_df['timestamp'] >= min_time_window].copy() if not virtual_price_df.empty else pd.DataFrame()
-    total_supply_df_window = total_supply_df[total_supply_df['timestamp'] >= min_time_window].copy() if not total_supply_df.empty else pd.DataFrame()
-    donation_releases_df_window = donation_releases_df[donation_releases_df['timestamp'] >= min_time_window].copy() if not donation_releases_df.empty else pd.DataFrame()
-    
+
     # Filter reset timestamps to time window
     donation_reset_timestamps_window = [ts for ts in donation_reset_timestamps if ts >= min_time_window]
-    
-    # Calculate actual time range in the filtered data
-    all_timestamps_window = []
-    for df in [last_prices_df_window, price_scale_df_window, price_oracle_df_window, donation_shares_df_window, 
-               delta_price_df_window, balance_df_window, donation_shares_usd_df_window, virtual_price_df_window, total_supply_df_window]:
-        if not df.empty and 'timestamp' in df.columns:
-            all_timestamps_window.extend(df['timestamp'].tolist())
-    
-    if all_timestamps_window:
-        min_time_window_actual = min(all_timestamps_window)
-        max_time_window_actual = max(all_timestamps_window)
-        time_range_window = max_time_window_actual - min_time_window_actual
-        time_range_hours_window = time_range_window.total_seconds() / 3600
-        
-        # Calculate width based on actual time range
-        # Scale: 5 min = 1 px, so 1 hour = 12 px, 1 day = 288 px
-        # Convert hours to pixels: hours * 12
-        plot_area_width_pixels_window = time_range_hours_window * 12  # 12 pixels per hour (5 min = 1 px)
-        figure_width_pixels_window = plot_area_width_pixels_window / PLOT_AREA_RATIO
-        # Convert pixels to cm for matplotlib figsize: (pixels / DPI) * 2.54
-        figure_width_cm_window = (figure_width_pixels_window / _INTERNAL_DPI) * 2.54
-        # Ensure minimum width for readability (minimum ~20 cm)
-        figure_width_cm_window = max(figure_width_cm_window, 20.0)
-        
-        print(f"\nCreating {TIME_WINDOW_HOURS}-hour plot: {time_range_hours_window:.2f} hours of data, width: {figure_width_pixels_window:.0f} px ({figure_width_cm_window:.1f} cm)")
-        
-        # Create the time window plot
-        # Order: Chart 0 = Price, Chart 1 = xcp_profit, Chart 2 = Refueling (40px), Chart 3 = donation shares, Chart 4 = delta price
-        fig_window, axes_window = plt.subplots(5, 1, figsize=(figure_width_cm_window/2.54, FIGURE_HEIGHT_CM/2.54), 
-                                               sharex=True, height_ratios=[regular_chart_height_ratio, regular_chart_height_ratio, 
-                                                                           refueling_chart_height_ratio, regular_chart_height_ratio, regular_chart_height_ratio])
-        ax0_window, ax1_window, ax2_window, ax3_window, ax4_window = axes_window
-        
-        # Chart 0: Plot last_prices and price_scale
-        if not last_prices_df_window.empty:
-            ax0_window.plot(last_prices_df_window['timestamp'], last_prices_df_window['last_price'], color=BLUE, label='spot price', linestyle='None', marker=MAKER, markersize=MARKER_SIZE)
-        if not price_scale_df_window.empty:
-            ax0_window.plot(price_scale_df_window['timestamp'], price_scale_df_window['price_scale'], color=GREEN, label='price scale', linestyle='None', marker=MAKER, markersize=MARKER_SIZE)
-        
-        # Calculate max price as baseline (100% at the top) and add Price % of Max to chart 0
-        ax1_twin_window = None
-        if not last_prices_df_window.empty:
-            max_price_window = last_prices_df_window['last_price'].max()
-            # Calculate price as percentage of max price (100% = max price, shows deviation down)
-            last_prices_df_window_copy = last_prices_df_window.copy()
-            last_prices_df_window_copy['price_change_pct'] = (last_prices_df_window_copy['last_price'] / max_price_window) * 100
-            
-            # Create twin axis for price change percentage
-            ax1_twin_window = ax0_window.twinx()
-            
-            # Plot price as percentage of max price on right axis
-            ax1_twin_window.axhline(y=100, color='gray', linestyle='--', linewidth=0.5, alpha=0.5)
-            ax1_twin_window.set_ylabel('Price % of Max', fontsize=12, color='black')
-            ax1_twin_window.tick_params(axis='y', labelcolor='black')
-        
-        ax0_window.set_ylabel('Price (USD)', fontsize=12)
-        ax0_window.set_title(f'{name}: Spot and Scale Prices Over Time', fontsize=14, fontweight='bold')
-        # Collect legend handles and labels from ax0_window and twin axes
-        handles1_window, labels1_window = ax0_window.get_legend_handles_labels()
-        if ax1_twin_window is not None:
-            handles_twin_window, labels_twin_window = ax1_twin_window.get_legend_handles_labels()
-            if handles_twin_window:  # Only extend if there are actually handles from twin
-                handles1_window.extend(handles_twin_window)
-                labels1_window.extend(labels_twin_window)
-        if handles1_window:
-            # Place legend at bottom, all in one line
-            # Use loc='lower center' with bbox_to_anchor to ensure it's visible
-            # markerscale=15 makes legend markers 15x15 pixels while plot markers stay at 1px
-            ax0_window.legend(handles1_window, labels1_window, bbox_to_anchor=(1, -0.02), loc='upper right', 
-                          fontsize=9, ncol=len(handles1_window), frameon=False, columnspacing=1.0, handlelength=2.0, markerscale=15)
-        ax0_window.grid(True, alpha=0.3)
-        
-        # Chart 1: xcp_profit (green) and virtual_price (red) on same scale
-        # Plot xcp_profit in green
-        xcp_profit_df_window = xcp_profit_df[xcp_profit_df['timestamp'] >= min_time_window].copy() if not xcp_profit_df.empty else pd.DataFrame()
-        if not xcp_profit_df_window.empty:
-            ax1_window.plot(xcp_profit_df_window['timestamp'], xcp_profit_df_window['xcp_profit'], 
-                     'green', linestyle='None', marker=MAKER, markersize=MARKER_SIZE, alpha=0.7, label='xcp_profit')
-        
-        # Plot virtual_price in red on same axis
-        if not virtual_price_df_window.empty:
-            # Find where values change (only show markers where value changed)
-            virtual_price_df_window_sorted = virtual_price_df_window.sort_values('timestamp')
-            value_changed_window = virtual_price_df_window_sorted['virtual_price'].diff().abs() > 1e-10
-            value_changed_window.iloc[0] = True
-            
-            # Plot markers only where value changed
-            changed_data_window = virtual_price_df_window_sorted[value_changed_window]
-            if not changed_data_window.empty:
-                ax1_window.plot(changed_data_window['timestamp'], changed_data_window['virtual_price'], 
-                         'red', marker=MAKER, markersize=MARKER_SIZE, linestyle='None', label='virtual_price / 2', alpha=0.7)
-        
-        ax1_window.set_ylabel('Value', fontsize=12)
-        ax1_window.set_title(f'{name}: xcp_profit and virtual_price / 2', fontsize=14, fontweight='bold')
-        # Collect all legend handles and labels from ax1_window
-        handles2_window_new, labels2_window_new = ax1_window.get_legend_handles_labels()
-        if handles2_window_new:
-            # Place legend at bottom, all in one line
-            ax1_window.legend(handles2_window_new, labels2_window_new, bbox_to_anchor=(1, -0.02), loc='upper right', 
-                          fontsize=9, ncol=len(handles2_window_new), frameon=False, columnspacing=1.0, handlelength=2.0, markerscale=15)
-        ax1_window.grid(True, alpha=0.3)
-        
-        # Chart 2: Refueling chart - shows vertical lines for donation share resets
-        ax2_window.set_title('Refueling events (vertical lines)', fontsize=12, fontweight='bold')
-        ax2_window.set_ylim(0, 1)  # Set a simple y-axis range
-        ax2_window.set_yticks([])  # Hide y-axis ticks
 
-        # Show border like the other charts (all spines except right, which is invisible for all)
-        ax2_window.spines['top'].set_visible(True)
-        ax2_window.spines['left'].set_visible(True)
-        ax2_window.spines['bottom'].set_visible(True)
-        ax2_window.spines['right'].set_visible(True)
+    # Calculate figure dimensions for time window data
+    dataframes_window = [
+        last_prices_df_window, price_scale_df_window, xcp_profit_df_window,
+        virtual_price_df_window, donation_shares_df_window, delta_price_df_window
+    ]
+    figure_width_cm_window, figure_width_pixels_window, time_info_window = calculate_figure_dimensions(dataframes_window)
+    print(f"\nCreating {TIME_WINDOW_HOURS}-hour plot: {time_info_window}, width: {figure_width_pixels_window:.0f} px ({figure_width_cm_window:.1f} cm)")
 
-        ax2_window.tick_params(axis='x', which='both', bottom=False, labelbottom=False)  # Hide x-axis
-        
-        # Chart 3: Plot donation shares delta (absolute) - filtered (only negative, zero excluded) - same as plot_supply_shares.py
-        ax3_twin_delta_window = None
-        ax3_twin_normalized_window = None
-        # Filter donation_shares_df to window for delta plot
-        donation_shares_df_window = donation_shares_df[donation_shares_df['timestamp'] >= min_time_window].copy() if not donation_shares_df.empty else pd.DataFrame()
-        # Filter donation_shares_usd_df to window for normalized plot
-        donation_shares_usd_df_window = donation_shares_usd_df[donation_shares_usd_df['timestamp'] >= min_time_window].copy() if not donation_shares_usd_df.empty else pd.DataFrame()
-        
-        if not donation_shares_df_window.empty and 'delta_filtered' in donation_shares_df_window.columns:
-            # Only plot non-zero values (negative deltas) as bars
-            filtered_data_window = donation_shares_df_window[donation_shares_df_window['delta_filtered'] != 0].copy()
-            if not filtered_data_window.empty:
-                # Calculate bar width based on time spacing
-                bar_width_days = 2 / PIXELS_PER_DAY
-                bar_width = timedelta(days=bar_width_days)
-                
-                ax3_window.bar(filtered_data_window['timestamp'], filtered_data_window['delta_filtered'], 
-                        width=bar_width, color='purple', label='refuel in USD', 
-                        align='center', edgecolor='purple', linewidth=0.1)
-                
-                # Add USD value labels for bars with delta < -0.001
-                if 'delta_usd' in filtered_data_window.columns:
-                    for idx, row in filtered_data_window.iterrows():
-                        delta_value = row['delta_filtered']
-                        delta_usd = row.get('delta_usd', 0)
-                        
-                        if delta_value < -0.001 and delta_usd > 0:
-                            usd_label = f"${delta_usd:.4f}"
-                            ax3_window.text(row['timestamp'], delta_value, usd_label, 
-                                    fontsize=6, ha='center', va='top', rotation=0,
-                                    bbox=dict(boxstyle='round,pad=0.2', facecolor='white', alpha=0.7, edgecolor='none'))
-            
-            # Add donation shares (raw values) as black line on separate twin axis
-            if not donation_shares_df_window.empty and 'donation_shares' in donation_shares_df_window.columns:
-                ax3_twin_normalized_window = ax3_window.twinx()
-                # Offset the position of this twin axis to the right
-                ax3_twin_normalized_window.spines['right'].set_position(('outward', 60))
-                # Plot donation shares as black line
-                ax3_twin_normalized_window.plot(donation_shares_df_window['timestamp'], donation_shares_df_window['donation_shares'], 
-                                             'black', label='refuel_shares', linestyle='-', linewidth=1.0, alpha=0.7)
-                # Set y-axis: 0 at bottom, max at top, and hide axis info
-                max_shares_window = donation_shares_df_window['donation_shares'].max()
-                ax3_twin_normalized_window.set_ylim(0, max_shares_window)  # 0 at bottom, max at top
-                ax3_twin_normalized_window.set_yticks([])  # Hide tick labels
-                ax3_twin_normalized_window.spines['right'].set_visible(False)  # Hide the spine
-            
-            # Add moving average of USD spend on right y-axis (if donation shares axis exists, create from it)
-            if 'delta_usd_ma' in donation_shares_df_window.columns:
-                if ax3_twin_normalized_window is not None:
-                    # Create another twin axis from the normalized axis for moving average
-                    ax3_twin_delta_window = ax3_twin_normalized_window.twinx()
-                    ax3_twin_delta_window.spines['right'].set_position(('outward', 0))
-                else:
-                    ax3_twin_delta_window = ax3_window.twinx()
-                ax3_twin_delta_window.plot(donation_shares_df_window['timestamp'], donation_shares_df_window['delta_usd_ma'], 
-                              'orange', label='2h MA USD Spend', linestyle='None', marker=MAKER, markersize=MARKER_SIZE, alpha=0.8)
-                ax3_twin_delta_window.set_ylabel('2h Moving Average USD Spend', fontsize=12, color='orange')
-                ax3_twin_delta_window.tick_params(axis='y', labelcolor='orange')
-            
-            ax3_window.set_ylabel('refuel in shares', fontsize=12)
-            ax3_window.set_title(f'{name}: refuel shares used to rebalance', fontsize=12, fontweight='bold')
-            # Collect all legend handles and labels from ax3_window and twin axes
-            handles3_window, labels3_window = ax3_window.get_legend_handles_labels()
-            if ax3_twin_normalized_window is not None:
-                handles_twin_norm_window, labels_twin_norm_window = ax3_twin_normalized_window.get_legend_handles_labels()
-                handles3_window.extend(handles_twin_norm_window)
-                labels3_window.extend(labels_twin_norm_window)
-            if ax3_twin_delta_window is not None:
-                handles_twin3_window, labels_twin3_window = ax3_twin_delta_window.get_legend_handles_labels()
-                handles3_window.extend(handles_twin3_window)
-                labels3_window.extend(labels_twin3_window)
-            if handles3_window:
-                ax3_window.legend(handles3_window, labels3_window, bbox_to_anchor=(1, -0.02), loc='upper right', 
-                              fontsize=9, ncol=len(handles3_window), frameon=False, columnspacing=1.0, handlelength=2.0, markerscale=15)
-            ax3_window.grid(True, alpha=0.3)
-            ax3_window.axhline(y=0, color='black', linestyle='--', linewidth=0.5, alpha=0.5)
-        else:
-            # Plot donation shares (raw values) as black line even if delta_filtered is not available
-            ax3_twin_normalized_window = None
-            if not donation_shares_df_window.empty and 'donation_shares' in donation_shares_df_window.columns:
-                ax3_twin_normalized_window = ax3_window.twinx()
-                ax3_twin_normalized_window.plot(donation_shares_df_window['timestamp'], donation_shares_df_window['donation_shares'], 
-                                             'black', label='refuel_shares', linestyle='-', linewidth=1.0, alpha=0.7)
-                # Set y-axis: 0 at bottom, max at top, and hide axis info
-                max_shares_window = donation_shares_df_window['donation_shares'].max()
-                ax3_twin_normalized_window.set_ylim(0, max_shares_window)  # 0 at bottom, max at top
-                ax3_twin_normalized_window.set_yticks([])  # Hide tick labels
-                ax3_twin_normalized_window.spines['right'].set_visible(False)  # Hide the spine
-                handles3_window, labels3_window = ax3_window.get_legend_handles_labels()
-                if ax3_twin_normalized_window is not None:
-                    handles_twin_norm_window, labels_twin_norm_window = ax3_twin_normalized_window.get_legend_handles_labels()
-                    handles3_window.extend(handles_twin_norm_window)
-                    labels3_window.extend(labels_twin_norm_window)
-                if handles3_window:
-                    ax3_window.legend(handles3_window, labels3_window, bbox_to_anchor=(1, -0.02), loc='upper right', 
-                                  fontsize=9, ncol=len(handles3_window), frameon=False, columnspacing=1.0, handlelength=2.0, markerscale=15)
-            ax3_window.set_ylabel('refuel in shares', fontsize=12)
-            ax3_window.set_title(f'{name}: refuel shares used to rebalance', fontsize=12, fontweight='bold')
-            ax3_window.grid(True, alpha=0.3)
-        
-        # Chart 4: Plot delta_price_last_to_scale in USD and %
-        ax4_twin_window = None
-        if not delta_price_df_window.empty:
-            delta_usd_data_window = delta_price_df_window[delta_price_df_window['delta_usd'].notna()]
-            if not delta_usd_data_window.empty:
-                ax4_window.plot(delta_usd_data_window['timestamp'], delta_usd_data_window['delta_usd'], 
-                         'c', label='Delta (USD)', linestyle='None', marker=MAKER, markersize=MARKER_SIZE)
-            
-            delta_percent_data_window = delta_price_df_window[delta_price_df_window['delta_percent'].notna()]
-            if not delta_percent_data_window.empty:
-                ax4_twin_window = ax4_window.twinx()
-                # Add blue transparent band from -2% to +2%
-                ax4_twin_window.axhspan(-2, 2, color='blue', alpha=0.2, zorder=0)
-                ax4_twin_window.plot(delta_percent_data_window['timestamp'], delta_percent_data_window['delta_percent'], 
-                             'm', label='Delta (%)', linestyle='None', marker=MAKER, markersize=MARKER_SIZE)
-                ax4_twin_window.set_ylabel('Delta Price Last to Scale (%)', fontsize=10, color='m')
-                ax4_twin_window.tick_params(axis='y', labelcolor='m')
-            
-            ax4_window.set_ylabel('Delta Price Last to Scale (USD)', fontsize=10, color='c')
-            ax4_window.tick_params(axis='y', labelcolor='c')
-            ax4_window.set_title('Price Delta: last_prices() - price_scale()', fontsize=12, fontweight='bold')
-            ax4_window.grid(True, alpha=0.3)
-            # Combine legends from both axes
-            handles4_window, labels4_window = ax4_window.get_legend_handles_labels()
-            if ax4_twin_window is not None:
-                handles_twin4_window, labels_twin4_window = ax4_twin_window.get_legend_handles_labels()
-                handles4_window.extend(handles_twin4_window)
-                labels4_window.extend(labels_twin4_window)
-            if handles4_window:
-                ax4_window.legend(handles4_window, labels4_window, bbox_to_anchor=(0.5, -0.15), loc='upper center', 
-                              fontsize=9, ncol=len(handles4_window), frameon=False, columnspacing=1.0, handlelength=2.0, markerscale=15)
-        else:
-            ax4_window.set_ylabel('Delta Price (USD)', fontsize=12)
-            ax4_window.set_title('Price Delta: last_prices() - price_scale()', fontsize=12, fontweight='bold')
-            ax4_window.grid(True, alpha=0.3)
-        
-        # Add thin black vertical lines for donation share resets (after all twin axes are created)
-        # Note: Chart 3 (ax3_window) does not show these lines
-        if donation_reset_timestamps_window:
-            for reset_time in donation_reset_timestamps_window:
-                ax2_window.axvline(x=reset_time, color='black', linestyle='-', linewidth=1, alpha=0.7)
-        
-        ax4_window.set_xlabel('Time', fontsize=12)
-        
-        # Format x-axis - use 6-hour intervals at fixed times (00:00, 6:00, 12:00, 18:00)
-        # Note: ax2_window (refueling chart) doesn't need x-axis formatting as it's hidden
-        for ax in [ax0_window, ax1_window, ax3_window, ax4_window]:
-            # Use HourLocator with byhour to set fixed hours: 0, 6, 12, 18
-            ax.xaxis.set_major_locator(mdates.HourLocator(byhour=[0, 6, 12, 18]))
-            # Format to show date and time for 6-hour intervals
-            ax.xaxis.set_major_formatter(mdates.DateFormatter('%m/%d %H:%M'))
-            plt.setp(ax.xaxis.get_majorticklabels(), rotation=45, ha='right')
-            # Ensure grid is enabled and follows major ticks (6-hour intervals)
-            ax.grid(True, alpha=0.3, which='major')
-            
-            # Add thicker grid lines at midnight (00:00)
-            ax.xaxis.set_minor_locator(mdates.HourLocator(byhour=[0]))
-            ax.grid(True, alpha=0.6, which='minor', linewidth=1.5, linestyle='-')
-        
-        # Get date range from data
-        if not last_prices_df_window.empty:
-            date_str_window = last_prices_df_window['timestamp'].min().strftime('%Y-%m-%d')
-        else:
-            date_str_window = datetime.now().strftime('%Y-%m-%d')
-        
-        plt.suptitle(f'Data from {date_str_window} (Values from JSON cache)', 
-                     fontsize=10, y=1.02)
-        
-        plt.subplots_adjust(left=0.08, bottom=0.12, right=0.95, top=0.92, hspace=0.3)
-        
-        # Save the time window plot
-        time_window_days = TIME_WINDOW_HOURS // 24
-        output_path_window = plot_dir / f'{name.replace("/", "_").replace(" ", "")}_refuel_analysis_{time_window_days}d.png'
-        plt.savefig(output_path_window, dpi=_INTERNAL_DPI, bbox_inches=None)
-        print(f"Time window chart saved to: {output_path_window} ({figure_width_pixels_window:.0f} x {int((FIGURE_HEIGHT_CM/2.54)*_INTERNAL_DPI)} px)")
-        plt.close(fig_window)
+    # Create and save time window chart
+    time_window_days = TIME_WINDOW_HOURS // 24
+    output_path_window = plot_dir / f'{name.replace("/", "_").replace(" ", "")}_refuel_analysis_{time_window_days}d.png'
+    fig_window, _ = create_refuel_chart(
+        last_prices_df_window, price_scale_df_window, xcp_profit_df_window, virtual_price_df_window,
+        donation_shares_df_window, delta_price_df_window, donation_reset_timestamps_window,
+        figure_width_cm_window, name, output_path_window,
+        plot_description=f"{TIME_WINDOW_HOURS}-hour window chart"
+    )
+    plt.close(fig_window)
 
 # Print summary statistics
 print("\n=== Summary Statistics ===")
