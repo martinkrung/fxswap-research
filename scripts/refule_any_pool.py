@@ -149,6 +149,13 @@ ERC20_ABI = [
         "name": "balanceOf",
         "outputs": [{"name": "balance", "type": "uint256"}],
         "type": "function"
+    },
+    {
+        "constant": True,
+        "inputs": [{"name": "_owner", "type": "address"}, {"name": "_spender", "type": "address"}],
+        "name": "allowance",
+        "outputs": [{"name": "", "type": "uint256"}],
+        "type": "function"
     }
 ]
 
@@ -426,7 +433,24 @@ print(f"  min_mint_amount: {min_mint_amount / 10**18:.8f} LP tokens")
 print(f"  receiver: {receiver}")
 print(f"  donation: True")
 
-# Todo: check if approve for pool exists to get token sent
+# Check if pool has sufficient allowance to spend tokens
+print("\nChecking token approvals...")
+token0_allowance = token0_contract.functions.allowance(signer.address, fxswap_address).call()
+token1_allowance = token1_contract.functions.allowance(signer.address, fxswap_address).call()
+
+print(f"  {token0_name} allowance: {token0_allowance / 10**token0_decimals:.8f} (needed: {token0_amount / 10**token0_decimals:.8f})")
+print(f"  {token1_name} allowance: {token1_allowance / 10**token1_decimals:.8f} (needed: {token1_amount / 10**token1_decimals:.8f})")
+
+if token0_allowance < token0_amount:
+    print(f"  ⚠ WARNING: Insufficient {token0_name} allowance! Transaction will likely fail.")
+    print(f"    Please approve the pool contract to spend your {token0_name}.")
+
+if token1_allowance < token1_amount:
+    print(f"  ⚠ WARNING: Insufficient {token1_name} allowance! Transaction will likely fail.")
+    print(f"    Please approve the pool contract to spend your {token1_name}.")
+
+if token0_allowance >= token0_amount and token1_allowance >= token1_amount:
+    print("  ✓ All token approvals are sufficient")
 
 # Build transaction
 add_liquidity_function = fxswap_contract.functions.add_liquidity(
