@@ -50,11 +50,64 @@ parser.add_argument('--index', type=int, default=0, help='Index of the pool to q
 args = parser.parse_args()
 
 index = args.index
+
+# Security: Validate index exists
+if index not in fxswap_addresses:
+    print(f"Error: Index {index} not found in fxswap_addresses")
+    print(f"Available indices: {list(fxswap_addresses.keys())}")
+    exit(1)
+
+# Security: Validate required keys exist
+required_keys = ["address", "name", "chain_name"]
+for key in required_keys:
+    if key not in fxswap_addresses[index]:
+        print(f"Error: Missing required key '{key}' in fxswap_addresses[{index}]")
+        exit(1)
+
 fxswap_address = fxswap_addresses[index]["address"]
 name = fxswap_addresses[index]["name"]
 chain_name = fxswap_addresses[index]["chain_name"]
 
-json_file_path = f'data/{chain_name}/{fxswap_address}.json'
+# Security: Validate and sanitize path components to prevent path traversal
+# Remove any path separators and dangerous characters
+def sanitize_path_component(component):
+    """Sanitize a path component to prevent path traversal attacks."""
+    if not isinstance(component, str):
+        raise ValueError(f"Path component must be a string, got {type(component)}")
+    # Remove path separators and dangerous characters
+    sanitized = component.replace('/', '_').replace('\\', '_').replace('..', '__').replace('\x00', '')
+    # Replace spaces with underscores (common in filenames)
+    sanitized = sanitized.replace(' ', '_')
+    # Remove any remaining dangerous characters, keep alphanumeric and safe punctuation
+    sanitized = ''.join(c for c in sanitized if c.isalnum() or c in ['-', '_', '.'])
+    if not sanitized:
+        raise ValueError(f"Path component '{component}' became empty after sanitization")
+    return sanitized
+
+try:
+    safe_chain_name = sanitize_path_component(chain_name)
+    safe_address = sanitize_path_component(fxswap_address)
+    safe_name = sanitize_path_component(name)
+except ValueError as e:
+    print(f"Error: Invalid path component: {e}")
+    exit(1)
+
+# Security: Use Path objects and resolve to prevent path traversal
+base_data_dir = Path("data")
+json_file_path = (base_data_dir / safe_chain_name / f"{safe_address}.json").resolve()
+
+# Security: Ensure the resolved path is still within the base_data_dir
+try:
+    json_file_path.relative_to(base_data_dir.resolve())
+except ValueError:
+    print(f"Error: Path traversal detected! Refusing to access: {json_file_path}")
+    exit(1)
+
+# Security: Check file exists before opening
+if not json_file_path.exists():
+    print(f"Error: Data file not found: {json_file_path}")
+    exit(1)
+
 with open(json_file_path, 'r') as f:
     data = json.load(f)
 
@@ -309,8 +362,8 @@ if not merged_df.empty:
 else:
     figure_width_cm = 40.0
 
-# Create output directory
-plot_dir = Path("plots") / chain_name / "volatility"
+# Create output directory (using sanitized chain_name)
+plot_dir = Path("plots") / safe_chain_name / "volatility"
 plot_dir.mkdir(parents=True, exist_ok=True)
 
 # ====================
@@ -466,7 +519,7 @@ for ax in axes1:
     ax.tick_params(axis='x', rotation=45)
 
 plt.tight_layout()
-output_path1 = plot_dir / f'{name.replace("/", "_").replace(" ", "")}_volatility_timeseries.png'
+output_path1 = plot_dir / f'{safe_name}_volatility_timeseries.png'
 plt.savefig(output_path1, dpi=_INTERNAL_DPI, bbox_inches='tight')
 print(f"Chart 1 saved to: {output_path1}")
 plt.close(fig1)
@@ -596,7 +649,7 @@ if corr_matrix is not None and len(correlation_data) > 10:
     plt.setp(ax.yaxis.get_majorticklabels(), rotation=0, fontsize=8)
 
     plt.tight_layout()
-    output_path2 = plot_dir / f'{name.replace("/", "_").replace(" ", "")}_volatility_correlations.png'
+    output_path2 = plot_dir / f'{safe_name}_volatility_correlations.png'
     plt.savefig(output_path2, dpi=_INTERNAL_DPI, bbox_inches='tight')
     print(f"Chart 2 saved to: {output_path2}")
     plt.close(fig2)
@@ -722,7 +775,7 @@ ax.text(0.1, 0.95, summary_text, transform=ax.transAxes,
         bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
 
 plt.tight_layout()
-output_path3 = plot_dir / f'{name.replace("/", "_").replace(" ", "")}_volatility_distributions.png'
+output_path3 = plot_dir / f'{safe_name}_volatility_distributions.png'
 plt.savefig(output_path3, dpi=_INTERNAL_DPI, bbox_inches='tight')
 print(f"Chart 3 saved to: {output_path3}")
 plt.close(fig3)
