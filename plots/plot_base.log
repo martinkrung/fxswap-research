@@ -1,0 +1,1437 @@
+fxswaps_path: /home/m/dev/curve/on-chain-for-mk/config/fxswaps.json
+Loaded 12 pools from fxswaps.json
+token0_decimals: 6
+token1_decimals: 18
+Found 6193 last_prices entries
+Found 6193 price_scale entries
+Found 6193 price_oracle entries
+Found 6193 refuel_shares entries
+Found 6193 delta_price entries
+Found 6193 balance entries
+Found 6006 refuel_release entries
+Found 1174 refuel reset events
+Found 6193 refuel_shares_usd entries
+Found 6193 virtual_price entries
+Found 6193 totalSupply entries
+Found 6193 xcp_profit entries
+Full plot: 14.91 days, width: 4934 px (125.3 cm)
+Full chart saved to: plots/base/USDC_WETHA2-5_refuel_analysis_all.png (4934 x 1377 px)
+
+Creating 168-hour plot: 7.00 days, width: 2317 px (58.9 cm)
+168-hour window chart saved to: plots/base/USDC_WETHA2-5_refuel_analysis_7d.png (2317 x 1377 px)
+
+=== Summary Statistics ===
+
+Last Prices (USD):
+  Min: $3078.19
+  Max: $3912.90
+  Mean: $3528.18
+  Latest: $3114.10
+
+Price Scale (USD):
+  Min: $3145.83
+  Max: $3898.32
+  Mean: $3532.99
+  Latest: $3145.83
+
+Price Oracle (USD):
+  Min: $3130.56
+  Max: $3902.14
+  Mean: $3530.16
+  Latest: $3130.56
+
+Delta Price Last to Scale:
+  USD - Min: $-317.33
+  USD - Max: $114.05
+  USD - Mean: $-4.82
+  USD - Latest: $-31.73
+  % - Min: -9.3455%
+  % - Max: 3.0489%
+  % - Mean: -0.1387%
+  % - Latest: -1.0087%
+
+Refule Shares (USD):
+  Min: $0.00
+  Max: $31.64
+  Mean: $17.17
+  Latest: $9.53
+
+Refule Shares (raw):
+  Total Shares (latest): 0.085179
+  Total Shares Used: 0.216147
+
+Refule Releases:
+  Number of unique releases detected: 1175
+
+=== Refuel Events ===
+Total refuel events: 3
+
+Date                 Token Amount         USD Value      
+-------------------------------------------------------
+2025-10-31 13:22:27  0.063247             $7.87          
+2025-11-03 22:29:07  0.119877             $14.37         
+2025-11-04 11:12:27  0.118202             $13.98         
+-------------------------------------------------------
+Total USD Value                           $36.22
+fxswaps_path: /home/m/dev/curve/on-chain-for-mk/config/fxswaps.json
+Loaded 12 pools from fxswaps.json
+token0_decimals: 6
+token1_decimals: 18
+Found 6188 last_prices entries
+Found 6188 price_scale entries
+Found 6188 price_oracle entries
+Found 6188 refuel_shares entries
+Found 6188 delta_price entries
+Found 6188 balance entries
+Found 5321 refuel_release entries
+Found 1619 refuel reset events
+Found 6188 refuel_shares_usd entries
+Found 6188 virtual_price entries
+Found 6188 totalSupply entries
+Found 6188 xcp_profit entries
+Full plot: 14.90 days, width: 4932 px (125.3 cm)
+Full chart saved to: plots/base/USDC_WETHA5-5_refuel_analysis_all.png (4932 x 1377 px)
+
+Creating 168-hour plot: 7.00 days, width: 2317 px (58.9 cm)
+168-hour window chart saved to: plots/base/USDC_WETHA5-5_refuel_analysis_7d.png (2317 x 1377 px)
+
+=== Summary Statistics ===
+
+Last Prices (USD):
+  Min: $3067.56
+  Max: $3908.38
+  Mean: $3527.86
+  Latest: $3128.63
+
+Price Scale (USD):
+  Min: $3232.98
+  Max: $3897.34
+  Mean: $3558.38
+  Latest: $3469.71
+
+Price Oracle (USD):
+  Min: $3130.10
+  Max: $3899.99
+  Mean: $3529.84
+  Latest: $3130.10
+
+Delta Price Last to Scale:
+  USD - Min: $-444.67
+  USD - Max: $136.54
+  USD - Mean: $-30.51
+  USD - Latest: $-341.08
+  % - Min: -12.6605%
+  % - Max: 4.0989%
+  % - Mean: -0.8657%
+  % - Latest: -9.8302%
+
+Refule Shares (USD):
+  Min: $0.00
+  Max: $31.67
+  Mean: $13.85
+  Latest: $7.65
+
+Refule Shares (raw):
+  Total Shares (latest): 0.068574
+  Total Shares Used: 0.232768
+
+Refule Releases:
+  Number of unique releases detected: 1125
+
+=== Refuel Events ===
+Total refuel events: 3
+
+Date                 Token Amount         USD Value      
+-------------------------------------------------------
+2025-10-31 13:22:27  0.063193             $7.87          
+2025-11-03 22:29:07  0.119883             $14.36         
+2025-11-04 11:09:07  0.118266             $13.98         
+-------------------------------------------------------
+Total USD Value                           $36.21
+fxswaps_path: /home/m/dev/curve/on-chain-for-mk/config/fxswaps.json
+Loaded 12 pools from fxswaps.json
+token0_decimals: 6
+token1_decimals: 18
+Found 6159 last_prices entries
+Found 6159 price_scale entries
+Found 6159 price_oracle entries
+Found 6159 refuel_shares entries
+Found 6159 delta_price entries
+Found 6159 balance entries
+Found 5982 refuel_release entries
+Found 1286 refuel reset events
+Found 6159 refuel_shares_usd entries
+Found 6159 virtual_price entries
+Found 6159 totalSupply entries
+Found 6159 xcp_profit entries
+Full plot: 14.89 days, width: 4930 px (125.2 cm)
+Full chart saved to: plots/base/USDC_WETHA20-5_refuel_analysis_all.png (4930 x 1377 px)
+
+Creating 168-hour plot: 7.00 days, width: 2317 px (58.9 cm)
+168-hour window chart saved to: plots/base/USDC_WETHA20-5_refuel_analysis_7d.png (2317 x 1377 px)
+
+=== Summary Statistics ===
+
+Last Prices (USD):
+  Min: $3114.16
+  Max: $3913.12
+  Mean: $3526.20
+  Latest: $3128.22
+
+Price Scale (USD):
+  Min: $3260.35
+  Max: $3898.12
+  Mean: $3545.93
+  Latest: $3477.80
+
+Price Oracle (USD):
+  Min: $3133.26
+  Max: $3900.30
+  Mean: $3528.19
+  Latest: $3133.26
+
+Delta Price Last to Scale:
+  USD - Min: $-385.59
+  USD - Max: $186.32
+  USD - Mean: $-19.73
+  USD - Latest: $-349.58
+  % - Min: -10.9964%
+  % - Max: 5.3782%
+  % - Mean: -0.5462%
+  % - Latest: -10.0517%
+
+Refule Shares (USD):
+  Min: $0.00
+  Max: $56.60
+  Mean: $25.08
+  Latest: $26.64
+
+Refule Shares (raw):
+  Total Shares (latest): 0.237851
+  Total Shares Used: 0.398234
+
+Refule Releases:
+  Number of unique releases detected: 1287
+
+=== Refuel Events ===
+Total refuel events: 4
+
+Date                 Token Amount         USD Value      
+-------------------------------------------------------
+2025-10-31 12:29:07  0.062215             $7.83          
+2025-11-03 22:25:47  0.118334             $14.38         
+2025-11-04 11:09:07  0.116866             $13.97         
+2025-11-08 21:35:47  0.338670             $40.00         
+-------------------------------------------------------
+Total USD Value                           $76.18
+fxswaps_path: /home/m/dev/curve/on-chain-for-mk/config/fxswaps.json
+Loaded 12 pools from fxswaps.json
+token0_decimals: 6
+token1_decimals: 18
+Found 6009 last_prices entries
+Found 6009 price_scale entries
+Found 6009 price_oracle entries
+Found 6009 refuel_shares entries
+Found 6009 delta_price entries
+Found 6009 balance entries
+Found 5972 refuel_release entries
+Found 1580 refuel reset events
+Found 6009 refuel_shares_usd entries
+Found 6009 virtual_price entries
+Found 6009 totalSupply entries
+Found 6009 xcp_profit entries
+Full plot: 14.21 days, width: 4703 px (119.4 cm)
+Full chart saved to: plots/base/USDC_WETHA40-5_refuel_analysis_all.png (4703 x 1377 px)
+
+Creating 168-hour plot: 7.00 days, width: 2317 px (58.9 cm)
+168-hour window chart saved to: plots/base/USDC_WETHA40-5_refuel_analysis_7d.png (2317 x 1377 px)
+
+=== Summary Statistics ===
+
+Last Prices (USD):
+  Min: $3105.32
+  Max: $3912.21
+  Mean: $3519.49
+  Latest: $3126.72
+
+Price Scale (USD):
+  Min: $3232.15
+  Max: $3898.52
+  Mean: $3535.30
+  Latest: $3474.46
+
+Price Oracle (USD):
+  Min: $3132.85
+  Max: $3900.35
+  Mean: $3521.64
+  Latest: $3132.85
+
+Delta Price Last to Scale:
+  USD - Min: $-393.61
+  USD - Max: $200.42
+  USD - Mean: $-15.81
+  USD - Latest: $-347.73
+  % - Min: -11.2494%
+  % - Max: 5.8119%
+  % - Mean: -0.4358%
+  % - Latest: -10.0083%
+
+Refule Shares (USD):
+  Min: $0.00
+  Max: $57.77
+  Mean: $26.24
+  Latest: $27.11
+
+Refule Shares (raw):
+  Total Shares (latest): 0.239203
+  Total Shares Used: 0.401063
+
+Refule Releases:
+  Number of unique releases detected: 1581
+
+=== Refuel Events ===
+Total refuel events: 5
+
+Date                 Token Amount         USD Value      
+-------------------------------------------------------
+2025-10-31 13:22:27  0.063044             $7.87          
+2025-11-03 22:25:47  0.118671             $14.36         
+2025-11-04 11:09:07  0.117181             $13.98         
+2025-11-08 21:22:27  0.174850             $21.00         
+2025-11-08 21:32:27  0.166520             $20.00         
+-------------------------------------------------------
+Total USD Value                           $77.21
+fxswaps_path: /home/m/dev/curve/on-chain-for-mk/config/fxswaps.json
+Loaded 12 pools from fxswaps.json
+token0_decimals: 6
+token1_decimals: 18
+Found 5951 last_prices entries
+Found 5951 price_scale entries
+Found 5951 price_oracle entries
+Found 5951 refuel_shares entries
+Found 5951 delta_price entries
+Found 5951 balance entries
+Found 5947 refuel_release entries
+Found 1079 refuel reset events
+Found 5951 refuel_shares_usd entries
+Found 5951 virtual_price entries
+Found 5951 totalSupply entries
+Found 5951 xcp_profit entries
+Full plot: 13.94 days, width: 4615 px (117.2 cm)
+Full chart saved to: plots/base/USDC_AEROA20-15_refuel_analysis_all.png (4615 x 1377 px)
+
+Creating 168-hour plot: 7.00 days, width: 2317 px (58.9 cm)
+168-hour window chart saved to: plots/base/USDC_AEROA20-15_refuel_analysis_7d.png (2317 x 1377 px)
+
+=== Summary Statistics ===
+
+Last Prices (USD):
+  Min: $0.75
+  Max: $1.29
+  Mean: $0.99
+  Latest: $0.82
+
+Price Scale (USD):
+  Min: $0.78
+  Max: $1.10
+  Mean: $0.97
+  Latest: $1.05
+
+Price Oracle (USD):
+  Min: $0.78
+  Max: $1.25
+  Mean: $0.99
+  Latest: $0.83
+
+Delta Price Last to Scale:
+  USD - Min: $-0.23
+  USD - Max: $0.28
+  USD - Mean: $0.02
+  USD - Latest: $-0.23
+  % - Min: -21.8833%
+  % - Max: 27.6814%
+  % - Mean: 1.6881%
+  % - Latest: -21.8833%
+
+Refule Shares (USD):
+  Min: $0.00
+  Max: $10.06
+  Mean: $4.38
+  Latest: $4.20
+
+Refule Shares (raw):
+  Total Shares (latest): 2.237441
+  Total Shares Used: 3.589562
+
+Refule Releases:
+  Number of unique releases detected: 1080
+
+=== Refuel Events ===
+Total refuel events: 6
+
+Date                 Token Amount         USD Value      
+-------------------------------------------------------
+2025-10-31 16:02:27  1.788883             $3.75          
+2025-11-08 18:42:27  0.009372             $0.02          
+2025-11-08 18:49:07  0.009647             $0.02          
+2025-11-08 19:32:27  0.019400             $0.04          
+2025-11-08 19:35:47  0.999940             $2.18          
+2025-11-08 19:52:27  2.999762             $6.56          
+-------------------------------------------------------
+Total USD Value                           $12.57
+fxswaps_path: /home/m/dev/curve/on-chain-for-mk/config/fxswaps.json
+Loaded 12 pools from fxswaps.json
+token0_decimals: 6
+token1_decimals: 18
+Found 2975 last_prices entries
+Found 2975 price_scale entries
+Found 2975 price_oracle entries
+Found 2975 refuel_shares entries
+Found 2975 delta_price entries
+Found 2975 balance entries
+Found 2972 refuel_release entries
+Found 76 refuel reset events
+Found 2975 refuel_shares_usd entries
+Found 2975 virtual_price entries
+Found 2975 totalSupply entries
+Found 2975 xcp_profit entries
+Full plot: 6.88 days, width: 2279 px (57.9 cm)
+Full chart saved to: plots/base/USDC_WETHA80-5_refuel_analysis_all.png (2279 x 1377 px)
+
+Creating 168-hour plot: 6.88 days, width: 2279 px (57.9 cm)
+168-hour window chart saved to: plots/base/USDC_WETHA80-5_refuel_analysis_7d.png (2279 x 1377 px)
+
+=== Summary Statistics ===
+
+Last Prices (USD):
+  Min: $3168.80
+  Max: $3635.33
+  Mean: $3456.58
+  Latest: $3251.40
+
+Price Scale (USD):
+  Min: $3284.87
+  Max: $3596.03
+  Mean: $3463.43
+  Latest: $3373.43
+
+Price Oracle (USD):
+  Min: $3180.95
+  Max: $3631.77
+  Mean: $3456.83
+  Latest: $3251.40
+
+Delta Price Last to Scale:
+  USD - Min: $-252.77
+  USD - Max: $141.86
+  USD - Mean: $-6.85
+  USD - Latest: $-122.03
+  % - Min: -7.3876%
+  % - Max: 4.2928%
+  % - Mean: -0.1770%
+  % - Latest: -3.6175%
+
+Refule Shares (USD):
+  Min: $0.00
+  Max: $16.40
+  Mean: $15.99
+  Latest: $15.22
+
+Refule Shares (raw):
+  Total Shares (latest): 0.132683
+  Total Shares Used: 0.006900
+
+Refule Releases:
+  Number of unique releases detected: 77
+
+=== Refuel Events ===
+Total refuel events: 1
+
+Date                 Token Amount         USD Value      
+-------------------------------------------------------
+2025-11-07 17:05:47  0.139583             $16.00         
+-------------------------------------------------------
+Total USD Value                           $16.00
+fxswaps_path: /home/m/dev/curve/on-chain-for-mk/config/fxswaps.json
+Loaded 12 pools from fxswaps.json
+token0_decimals: 6
+token1_decimals: 18
+Found 1244 last_prices entries
+Found 1244 price_scale entries
+Found 1244 price_oracle entries
+Found 1244 refuel_shares entries
+Found 1244 delta_price entries
+Found 1244 balance entries
+Found 1242 refuel_release entries
+Found 73 refuel reset events
+Found 1244 refuel_shares_usd entries
+Found 1244 virtual_price entries
+Found 1244 totalSupply entries
+Found 1244 xcp_profit entries
+Full plot: 2.88 days, width: 952 px (24.2 cm)
+Full chart saved to: plots/base/USDC_WETHA80-52_refuel_analysis_all.png (952 x 1377 px)
+
+Creating 168-hour plot: 2.88 days, width: 952 px (24.2 cm)
+168-hour window chart saved to: plots/base/USDC_WETHA80-52_refuel_analysis_7d.png (952 x 1377 px)
+
+=== Summary Statistics ===
+
+Last Prices (USD):
+  Min: $3363.12
+  Max: $3647.78
+  Mean: $3483.36
+  Latest: $3549.27
+
+Price Scale (USD):
+  Min: $3376.25
+  Max: $3465.00
+  Mean: $3415.73
+  Latest: $3410.13
+
+Price Oracle (USD):
+  Min: $3374.60
+  Max: $3632.94
+  Mean: $3482.27
+  Latest: $3538.94
+
+Delta Price Last to Scale:
+  USD - Min: $-56.21
+  USD - Max: $237.65
+  USD - Mean: $67.62
+  USD - Latest: $139.14
+  % - Min: -1.6439%
+  % - Max: 6.9689%
+  % - Mean: 1.9845%
+  % - Latest: 4.0803%
+
+Refule Shares (USD):
+  Min: $0.00
+  Max: $8.22
+  Mean: $7.03
+  Latest: $6.53
+
+Refule Shares (raw):
+  Total Shares (latest): 0.055060
+  Total Shares Used: 0.014756
+
+Refule Releases:
+  Number of unique releases detected: 74
+
+=== Refuel Events ===
+Total refuel events: 1
+
+Date                 Token Amount         USD Value      
+-------------------------------------------------------
+2025-11-07 22:15:47  0.069816             $8.22          
+-------------------------------------------------------
+Total USD Value                           $8.22
+fxswaps_path: /home/m/dev/curve/on-chain-for-mk/config/fxswaps.json
+Loaded 12 pools from fxswaps.json
+token0_decimals: 6
+token1_decimals: 18
+Found 1632 last_prices entries
+Found 1632 price_scale entries
+Found 1632 price_oracle entries
+Found 1632 refuel_shares entries
+Found 1632 delta_price entries
+Found 1632 balance entries
+Found 1299 refuel_release entries
+Found 69 refuel reset events
+Found 1632 refuel_shares_usd entries
+Found 1632 virtual_price entries
+Found 1632 totalSupply entries
+Found 1632 xcp_profit entries
+Full plot: 3.78 days, width: 1250 px (31.7 cm)
+Full chart saved to: plots/base/USDC_EURCA50-5_refuel_analysis_all.png (1250 x 1377 px)
+
+Creating 168-hour plot: 3.78 days, width: 1250 px (31.7 cm)
+168-hour window chart saved to: plots/base/USDC_EURCA50-5_refuel_analysis_7d.png (1250 x 1377 px)
+
+=== Summary Statistics ===
+
+Last Prices (USD):
+  Min: $1155000000000.00
+  Max: $1164563574084.07
+  Mean: $1159492082119.14
+  Latest: $1164563574084.07
+
+Price Scale (USD):
+  Min: $1155000000000.00
+  Max: $1163958639756.13
+  Mean: $1158819430738.50
+  Latest: $1162602456376.87
+
+Price Oracle (USD):
+  Min: $1155000000000.00
+  Max: $1164360108094.66
+  Mean: $1159405783890.63
+  Latest: $1162854207852.71
+
+Delta Price Last to Scale:
+  USD - Min: $-1169576714.35
+  USD - Max: $3268271251.78
+  USD - Mean: $672651380.64
+  USD - Latest: $1961117707.20
+  % - Min: -0.1006%
+  % - Max: 0.2827%
+  % - Mean: 0.0582%
+  % - Latest: 0.1687%
+
+Refule Shares (USD):
+  Min: $0.00
+  Max: $3872792462158.83
+  Mean: $2822629693356.12
+  Latest: $3100533304292.96
+
+Refule Shares (raw):
+  Total Shares (latest): 2996518914573.191406
+  Total Shares Used: 720070548837.191895
+
+Refule Releases:
+  Number of unique releases detected: 70
+
+=== Refuel Events ===
+Total refuel events: 4
+
+Date                 Token Amount         USD Value      
+-------------------------------------------------------
+2025-11-11 14:02:27  929535253942.067871  $973486468696.34
+2025-11-11 14:29:07  464537685790.102051  $474567970157.44
+2025-11-11 14:32:27  1858151817808.853516 $1898272986035.16
+2025-11-11 16:02:27  464364705869.359863  $465051935358.54
+-------------------------------------------------------
+Total USD Value                           $3811379360247.49
+fxswaps_path: /home/m/dev/curve/on-chain-for-mk/config/fxswaps.json
+Loaded 12 pools from fxswaps.json
+token0_decimals: 6
+token1_decimals: 18
+Found 4238 last_prices entries
+Found 4238 price_scale entries
+Found 4238 price_oracle entries
+Found 4238 refuel_shares entries
+Found 4238 delta_price entries
+Found 4238 balance entries
+Found 4238 refuel_release entries
+Found 16 refuel reset events
+Found 4238 refuel_shares_usd entries
+Found 4238 virtual_price entries
+Found 4238 totalSupply entries
+Found 4238 xcp_profit entries
+Full plot: 9.81 days, width: 3247 px (82.5 cm)
+Full chart saved to: plots/base/USDC_BRZ_refuel_analysis_all.png (3247 x 1377 px)
+
+Creating 168-hour plot: 7.00 days, width: 2317 px (58.9 cm)
+168-hour window chart saved to: plots/base/USDC_BRZ_refuel_analysis_7d.png (2317 x 1377 px)
+
+=== Summary Statistics ===
+
+Last Prices (USD):
+  Min: $0.18
+  Max: $0.19
+  Mean: $0.19
+  Latest: $0.19
+
+Price Scale (USD):
+  Min: $0.19
+  Max: $0.19
+  Mean: $0.19
+  Latest: $0.19
+
+Price Oracle (USD):
+  Min: $0.18
+  Max: $0.19
+  Mean: $0.19
+  Latest: $0.19
+
+Delta Price Last to Scale:
+  USD - Min: $-0.00
+  USD - Max: $0.00
+  USD - Mean: $0.00
+  USD - Latest: $0.00
+  % - Min: -0.8860%
+  % - Max: 0.5842%
+  % - Mean: 0.1212%
+  % - Latest: 0.5842%
+
+Refule Shares (USD):
+  Min: $31.34
+  Max: $39.93
+  Mean: $34.55
+  Latest: $31.34
+
+Refule Shares (raw):
+  Total Shares (latest): 36.189316
+  Total Shares Used: 10.081959
+
+Refule Releases:
+  Number of unique releases detected: 17
+
+=== Refuel Events ===
+No refuel events found.
+fxswaps_path: /home/m/dev/curve/on-chain-for-mk/config/fxswaps.json
+Loaded 12 pools from fxswaps.json
+token0_decimals: 6
+token1_decimals: 18
+Found 3854 last_prices entries
+Found 3854 price_scale entries
+Found 3854 price_oracle entries
+Found 3854 refuel_shares entries
+Found 3854 delta_price entries
+Found 3854 balance entries
+Found 3854 refuel_release entries
+Found 26 refuel reset events
+Found 3854 refuel_shares_usd entries
+Found 3854 virtual_price entries
+Found 3854 totalSupply entries
+Found 3854 xcp_profit entries
+Full plot: 8.92 days, width: 2952 px (75.0 cm)
+Full chart saved to: plots/base/USDC_IDRX_refuel_analysis_all.png (2952 x 1377 px)
+
+Creating 168-hour plot: 7.00 days, width: 2317 px (58.9 cm)
+168-hour window chart saved to: plots/base/USDC_IDRX_refuel_analysis_7d.png (2317 x 1377 px)
+
+=== Summary Statistics ===
+
+Last Prices (USD):
+  Min: $0.00
+  Max: $0.00
+  Mean: $0.00
+  Latest: $0.00
+
+Price Scale (USD):
+  Min: $0.00
+  Max: $0.00
+  Mean: $0.00
+  Latest: $0.00
+
+Price Oracle (USD):
+  Min: $0.00
+  Max: $0.00
+  Mean: $0.00
+  Latest: $0.00
+
+Delta Price Last to Scale:
+  USD - Min: $-0.00
+  USD - Max: $0.00
+  USD - Mean: $-0.00
+  USD - Latest: $0.00
+  % - Min: -1.6126%
+  % - Max: 0.0714%
+  % - Mean: -0.0793%
+  % - Latest: 0.0294%
+
+Refule Shares (USD):
+  Min: $1.49
+  Max: $5.09
+  Mean: $2.06
+  Latest: $1.80
+
+Refule Shares (raw):
+  Total Shares (latest): 232.605839
+  Total Shares Used: 570.579480
+
+Refule Releases:
+  Number of unique releases detected: 27
+
+=== Refuel Events ===
+No refuel events found.
+fxswaps_path: /home/m/dev/curve/on-chain-for-mk/config/fxswaps.json
+Loaded 12 pools from fxswaps.json
+Found 6193 donation_shares entries
+Found 6193 user_supply entries
+Found 6193 totalSupply entries
+Found 6193 balance_0 entries
+Found 6193 balance_1 entries
+Found 6193 last_prices entries
+Found 5636 fee entries
+Full plot: 14.91 days, width: 4934 px (125.3 cm)
+Time range: 2025-10-30 16:35:47 to 2025-11-14 14:19:07
+Chart saved to: plots/base/USDC_WETHA2-5_secondary_refuel_analysis.png (4934 x 2362 px)
+
+=== Summary Statistics ===
+
+donation_shares (absolute):
+  Min: 0.000000
+  Max: 0.265486
+  Mean: 0.145793
+  Latest: 0.085179
+
+user_supply (absolute):
+  Min: 32.508509
+  Max: 32.508509
+  Mean: 32.508509
+  Latest: 32.508509
+
+totalSupply (absolute):
+  Min: 32.508509
+  Max: 32.773995
+  Mean: 32.654302
+  Latest: 32.593688
+
+balance_0 (USDC) - absolute:
+  Min: 1640.26
+  Max: 2078.48
+  Mean: 1937.45
+  Latest: 1802.07
+
+balance_1 (WETH) - absolute:
+  Min: 0.507836
+  Max: 0.645626
+  Mean: 0.551793
+  Latest: 0.591803
+
+USD Values:
+  balance_0 (USDC) USD - Min: $1640.26
+  balance_0 (USDC) USD - Max: $2078.48
+  balance_0 (USDC) USD - Mean: $1937.45
+  balance_0 (USDC) USD - Latest: $1802.07
+  balance_1 (WETH) USD - Min: $1829.98
+  balance_1 (WETH) USD - Max: $2046.41
+  balance_1 (WETH) USD - Mean: $1943.09
+  balance_1 (WETH) USD - Latest: $1842.93
+  Total USD - Min: $3627.62
+  Total USD - Max: $4075.32
+  Total USD - Mean: $3880.54
+  Total USD - Latest: $3645.01
+
+USD Ratio (USDC/WETH):
+  Min: 0.8253
+  Max: 1.0619
+  Mean: 0.9972
+  Latest: 0.9778
+
+fee (absolute):
+  Min: 0.00000000
+  Max: 0.00000000
+  Mean: 0.00000000
+  Latest: 0.00000000
+fxswaps_path: /home/m/dev/curve/on-chain-for-mk/config/fxswaps.json
+Loaded 12 pools from fxswaps.json
+Found 6188 donation_shares entries
+Found 6188 user_supply entries
+Found 6189 totalSupply entries
+Found 6188 balance_0 entries
+Found 6188 balance_1 entries
+Found 6188 last_prices entries
+Found 5566 fee entries
+Full plot: 14.90 days, width: 4933 px (125.3 cm)
+Time range: 2025-10-30 16:35:47 to 2025-11-14 14:15:47
+Chart saved to: plots/base/USDC_WETHA5-5_secondary_refuel_analysis.png (4933 x 2362 px)
+
+=== Summary Statistics ===
+
+donation_shares (absolute):
+  Min: 0.000000
+  Max: 0.266879
+  Mean: 0.117553
+  Latest: 0.068574
+
+user_supply (absolute):
+  Min: 32.538612
+  Max: 32.538612
+  Mean: 32.538612
+  Latest: 32.538612
+
+totalSupply (absolute):
+  Min: 0.000000
+  Max: 32.805491
+  Mean: 32.650888
+  Latest: 32.607185
+
+balance_0 (USDC) - absolute:
+  Min: 1297.66
+  Max: 2117.18
+  Mean: 1902.66
+  Latest: 1404.15
+
+balance_1 (WETH) - absolute:
+  Min: 0.501341
+  Max: 0.750688
+  Mean: 0.563510
+  Latest: 0.714231
+
+USD Values:
+  balance_0 (USDC) USD - Min: $1297.66
+  balance_0 (USDC) USD - Max: $2117.18
+  balance_0 (USDC) USD - Mean: $1902.66
+  balance_0 (USDC) USD - Latest: $1404.15
+  balance_1 (WETH) USD - Min: $1738.50
+  balance_1 (WETH) USD - Max: $2302.78
+  balance_1 (WETH) USD - Mean: $1981.09
+  balance_1 (WETH) USD - Latest: $2234.57
+  Total USD - Min: $3600.44
+  Total USD - Max: $4080.47
+  Total USD - Mean: $3883.75
+  Total USD - Latest: $3638.72
+
+USD Ratio (USDC/WETH):
+  Min: 0.5635
+  Max: 1.2178
+  Mean: 0.9652
+  Latest: 0.6284
+
+fee (absolute):
+  Min: 0.00000000
+  Max: 0.00000000
+  Mean: 0.00000000
+  Latest: 0.00000000
+fxswaps_path: /home/m/dev/curve/on-chain-for-mk/config/fxswaps.json
+Loaded 12 pools from fxswaps.json
+Found 6159 donation_shares entries
+Found 6159 user_supply entries
+Found 6160 totalSupply entries
+Found 6159 balance_0 entries
+Found 6159 balance_1 entries
+Found 6159 last_prices entries
+Found 5564 fee entries
+Full plot: 14.90 days, width: 4932 px (125.3 cm)
+Time range: 2025-10-30 16:42:27 to 2025-11-14 14:15:47
+Chart saved to: plots/base/USDC_WETHA20-5_secondary_refuel_analysis.png (4932 x 2362 px)
+
+=== Summary Statistics ===
+
+donation_shares (absolute):
+  Min: 0.000000
+  Max: 0.478256
+  Mean: 0.210324
+  Latest: 0.237851
+
+user_supply (absolute):
+  Min: 32.243091
+  Max: 32.581761
+  Mean: 32.446436
+  Latest: 32.243091
+
+totalSupply (absolute):
+  Min: 0.000000
+  Max: 32.844130
+  Mean: 32.651459
+  Latest: 32.480942
+
+balance_0 (USDC) - absolute:
+  Min: 829.92
+  Max: 2747.03
+  Mean: 1910.08
+  Latest: 862.83
+
+balance_1 (WETH) - absolute:
+  Min: 0.339477
+  Max: 0.899124
+  Mean: 0.576591
+  Latest: 0.887235
+
+USD Values:
+  balance_0 (USDC) USD - Min: $829.92
+  balance_0 (USDC) USD - Max: $2747.03
+  balance_0 (USDC) USD - Mean: $1910.08
+  balance_0 (USDC) USD - Latest: $862.83
+  balance_1 (WETH) USD - Min: $1231.41
+  balance_1 (WETH) USD - Max: $2806.11
+  balance_1 (WETH) USD - Mean: $2020.09
+  balance_1 (WETH) USD - Latest: $2775.47
+  Total USD - Min: $3625.73
+  Total USD - Max: $4152.51
+  Total USD - Mean: $3930.17
+  Total USD - Latest: $3638.30
+
+USD Ratio (USDC/WETH):
+  Min: 0.2958
+  Max: 2.2166
+  Mean: 1.0204
+  Latest: 0.3109
+
+fee (absolute):
+  Min: 0.00000000
+  Max: 0.00000000
+  Mean: 0.00000000
+  Latest: 0.00000000
+fxswaps_path: /home/m/dev/curve/on-chain-for-mk/config/fxswaps.json
+Loaded 12 pools from fxswaps.json
+Found 6009 donation_shares entries
+Found 6009 user_supply entries
+Found 6010 totalSupply entries
+Found 6009 balance_0 entries
+Found 6009 balance_1 entries
+Found 6009 last_prices entries
+Found 5626 fee entries
+Full plot: 14.21 days, width: 4704 px (119.5 cm)
+Time range: 2025-10-31 09:09:07 to 2025-11-14 14:12:27
+Chart saved to: plots/base/USDC_WETHA40-5_secondary_refuel_analysis.png (4704 x 2362 px)
+
+=== Summary Statistics ===
+
+donation_shares (absolute):
+  Min: 0.000000
+  Max: 0.480514
+  Mean: 0.217155
+  Latest: 0.239203
+
+user_supply (absolute):
+  Min: 31.971376
+  Max: 32.312750
+  Mean: 32.172852
+  Latest: 31.971376
+
+totalSupply (absolute):
+  Min: 0.000000
+  Max: 32.579585
+  Mean: 32.384617
+  Latest: 32.210578
+
+balance_0 (USDC) - absolute:
+  Min: 593.50
+  Max: 3090.05
+  Mean: 1907.27
+  Latest: 637.39
+
+balance_1 (WETH) - absolute:
+  Min: 0.250236
+  Max: 0.968234
+  Mean: 0.579980
+  Latest: 0.963680
+
+USD Values:
+  balance_0 (USDC) USD - Min: $593.50
+  balance_0 (USDC) USD - Max: $3090.05
+  balance_0 (USDC) USD - Mean: $1907.27
+  balance_0 (USDC) USD - Latest: $637.39
+  balance_1 (WETH) USD - Min: $913.07
+  balance_1 (WETH) USD - Max: $3013.16
+  balance_1 (WETH) USD - Mean: $2025.74
+  balance_1 (WETH) USD - Latest: $3013.16
+  Total USD - Min: $3581.61
+  Total USD - Max: $4111.52
+  Total USD - Mean: $3933.01
+  Total USD - Latest: $3650.55
+
+USD Ratio (USDC/WETH):
+  Min: 0.1986
+  Max: 3.3843
+  Mean: 1.1231
+  Latest: 0.2115
+
+fee (absolute):
+  Min: 0.00000000
+  Max: 0.00000000
+  Mean: 0.00000000
+  Latest: 0.00000000
+fxswaps_path: /home/m/dev/curve/on-chain-for-mk/config/fxswaps.json
+Loaded 12 pools from fxswaps.json
+Found 5951 donation_shares entries
+Found 5951 user_supply entries
+Found 5952 totalSupply entries
+Found 5951 balance_0 entries
+Found 5951 balance_1 entries
+Found 5951 last_prices entries
+Found 5625 fee entries
+Full plot: 13.95 days, width: 4617 px (117.3 cm)
+Time range: 2025-10-31 15:29:07 to 2025-11-14 14:12:27
+Chart saved to: plots/base/USDC_AEROA20-15_secondary_refuel_analysis.png (4617 x 2362 px)
+
+=== Summary Statistics ===
+
+donation_shares (absolute):
+  Min: 0.000000
+  Max: 4.592319
+  Mean: 2.012698
+  Latest: 2.237441
+
+user_supply (absolute):
+  Min: 465.114307
+  Max: 1936.222103
+  Mean: 1189.694190
+  Latest: 1932.182146
+
+totalSupply (absolute):
+  Min: 0.000000
+  Max: 1936.864353
+  Mean: 1191.506669
+  Latest: 1934.419587
+
+balance_0 (USDC) - absolute:
+  Min: 227.83
+  Max: 3766.14
+  Mean: 1456.72
+  Latest: 619.06
+
+balance_1 (WETH) - absolute:
+  Min: 342.968916
+  Max: 3682.950975
+  Mean: 1159.772296
+  Latest: 3682.950975
+
+USD Values:
+  balance_0 (USDC) USD - Min: $227.83
+  balance_0 (USDC) USD - Max: $3766.14
+  balance_0 (USDC) USD - Mean: $1456.72
+  balance_0 (USDC) USD - Latest: $619.06
+  balance_1 (WETH) USD - Min: $297.05
+  balance_1 (WETH) USD - Max: $3122.35
+  balance_1 (WETH) USD - Mean: $1133.44
+  balance_1 (WETH) USD - Latest: $3014.85
+  Total USD - Min: $838.71
+  Total USD - Max: $4543.04
+  Total USD - Mean: $2590.16
+  Total USD - Latest: $3633.90
+
+USD Ratio (USDC/WETH):
+  Min: 0.2053
+  Max: 4.8476
+  Mean: 1.4884
+  Latest: 0.2053
+
+fee (absolute):
+  Min: 0.00000000
+  Max: 0.00000000
+  Mean: 0.00000000
+  Latest: 0.00000000
+fxswaps_path: /home/m/dev/curve/on-chain-for-mk/config/fxswaps.json
+Loaded 12 pools from fxswaps.json
+Found 2975 donation_shares entries
+Found 2975 user_supply entries
+Found 2977 totalSupply entries
+Found 2975 balance_0 entries
+Found 2975 balance_1 entries
+Found 2975 last_prices entries
+Found 2975 fee entries
+Full plot: 6.89 days, width: 2280 px (57.9 cm)
+Time range: 2025-11-07 16:49:07 to 2025-11-14 14:09:07
+Chart saved to: plots/base/USDC_WETHA80-5_secondary_refuel_analysis.png (2280 x 2362 px)
+
+=== Summary Statistics ===
+
+donation_shares (absolute):
+  Min: 0.000000
+  Max: 0.139583
+  Mean: 0.135566
+  Latest: 0.132683
+
+user_supply (absolute):
+  Min: 0.010000
+  Max: 69.789856
+  Mean: 2.027166
+  Latest: 0.010000
+
+totalSupply (absolute):
+  Min: 0.000000
+  Max: 69.929439
+  Mean: 2.161279
+  Latest: 0.142683
+
+balance_0 (USDC) - absolute:
+  Min: 2.19
+  Max: 6597.01
+  Mean: 176.34
+  Latest: 2.85
+
+balance_1 (WETH) - absolute:
+  Min: 0.000953
+  Max: 1.281610
+  Mean: 0.022118
+  Latest: 0.004158
+
+USD Values:
+  balance_0 (USDC) USD - Min: $2.19
+  balance_0 (USDC) USD - Max: $6597.01
+  balance_0 (USDC) USD - Mean: $176.34
+  balance_0 (USDC) USD - Latest: $2.85
+  balance_1 (WETH) USD - Min: $3.28
+  balance_1 (WETH) USD - Max: $4204.92
+  balance_1 (WETH) USD - Mean: $74.50
+  balance_1 (WETH) USD - Latest: $13.52
+  Total USD - Min: $16.02
+  Total USD - Max: $8144.37
+  Total USD - Mean: $250.84
+  Total USD - Latest: $16.37
+
+USD Ratio (USDC/WETH):
+  Min: 0.1581
+  Max: 4.2634
+  Mean: 1.4656
+  Latest: 0.2109
+
+fee (absolute):
+  Min: 0.00000000
+  Max: 0.00000000
+  Mean: 0.00000000
+  Latest: 0.00000000
+fxswaps_path: /home/m/dev/curve/on-chain-for-mk/config/fxswaps.json
+Loaded 12 pools from fxswaps.json
+Found 1244 donation_shares entries
+Found 1244 user_supply entries
+Found 1246 totalSupply entries
+Found 1244 balance_0 entries
+Found 1244 balance_1 entries
+Found 1244 last_prices entries
+Found 1244 fee entries
+Full plot: 2.88 days, width: 954 px (24.2 cm)
+Time range: 2025-11-07 22:02:27 to 2025-11-10 19:12:27
+Chart saved to: plots/base/USDC_WETHA80-52_secondary_refuel_analysis.png (954 x 2362 px)
+
+=== Summary Statistics ===
+
+donation_shares (absolute):
+  Min: 0.000000
+  Max: 0.069816
+  Mean: 0.059707
+  Latest: 0.055060
+
+user_supply (absolute):
+  Min: 0.010000
+  Max: 27.698786
+  Mean: 22.173426
+  Latest: 27.698786
+
+totalSupply (absolute):
+  Min: 0.000000
+  Max: 27.768562
+  Mean: 22.197445
+  Latest: 27.753846
+
+balance_0 (USDC) - absolute:
+  Min: 2.91
+  Max: 2798.39
+  Mean: 1732.31
+  Latest: 2652.90
+
+balance_1 (WETH) - absolute:
+  Min: 0.001060
+  Max: 0.685960
+  Mean: 0.257416
+  Latest: 0.180219
+
+USD Values:
+  balance_0 (USDC) USD - Min: $2.91
+  balance_0 (USDC) USD - Max: $2798.39
+  balance_0 (USDC) USD - Mean: $1732.31
+  balance_0 (USDC) USD - Latest: $2652.90
+  balance_1 (WETH) USD - Min: $3.68
+  balance_1 (WETH) USD - Max: $2306.97
+  balance_1 (WETH) USD - Mean: $886.82
+  balance_1 (WETH) USD - Latest: $639.65
+  Total USD - Min: $9.32
+  Total USD - Max: $3306.69
+  Total USD - Mean: $2619.14
+  Total USD - Latest: $3292.55
+
+USD Ratio (USDC/WETH):
+  Min: 0.3947
+  Max: 5.5054
+  Mean: 2.4770
+  Latest: 4.1474
+
+fee (absolute):
+  Min: 0.00000000
+  Max: 0.00000000
+  Mean: 0.00000000
+  Latest: 0.00000000
+fxswaps_path: /home/m/dev/curve/on-chain-for-mk/config/fxswaps.json
+Loaded 12 pools from fxswaps.json
+Found 1632 donation_shares entries
+Found 1632 user_supply entries
+Found 1633 totalSupply entries
+Found 1632 balance_0 entries
+Found 1632 balance_1 entries
+Found 1632 last_prices entries
+Found 1632 fee entries
+Full plot: 3.78 days, width: 1251 px (31.8 cm)
+Time range: 2025-11-10 19:29:07 to 2025-11-14 14:09:07
+Chart saved to: plots/base/USDC_EURCA50-5_secondary_refuel_analysis.png (1251 x 2362 px)
+
+=== Summary Statistics ===
+
+donation_shares (absolute):
+  Min: 0.000000
+  Max: 3716589463410.383301
+  Mean: 2658726349827.381348
+  Latest: 2996518914573.191406
+
+user_supply (absolute):
+  Min: 1860968421010953.000000
+  Max: 4670269079488912.000000
+  Mean: 4658401678271730.000000
+  Latest: 4666264811330816.000000
+
+totalSupply (absolute):
+  Min: 0.000000
+  Max: 4670269079488912.000000
+  Mean: 4658206111660981.000000
+  Latest: 4669261330245389.000000
+
+balance_0 (USDC) - absolute:
+  Min: 2000.00
+  Max: 5379.60
+  Mean: 5096.13
+  Latest: 5248.29
+
+balance_1 (WETH) - absolute:
+  Min: 1731.601732
+  Max: 4449.379071
+  Mean: 4262.710885
+  Latest: 4148.626687
+
+USD Values:
+  balance_0 (USDC) USD - Min: $2000.00
+  balance_0 (USDC) USD - Max: $5379.60
+  balance_0 (USDC) USD - Mean: $5096.13
+  balance_0 (USDC) USD - Latest: $5248.29
+  balance_1 (WETH) USD - Min: $2000000000460000.00
+  balance_1 (WETH) USD - Max: $5169390826233943.00
+  balance_1 (WETH) USD - Mean: $4942599148579127.00
+  balance_1 (WETH) USD - Latest: $4831339522153294.00
+  Total USD - Min: $2000000000462000.00
+  Total USD - Max: $5169390826238841.00
+  Total USD - Mean: $4942599148584223.00
+  Total USD - Latest: $4831339522158542.00
+
+USD Ratio (USDC/WETH):
+  Min: 0.0000
+  Max: 0.0000
+  Mean: 0.0000
+  Latest: 0.0000
+
+fee (absolute):
+  Min: 5.00000000
+  Max: 6.69025500
+  Mean: 5.37109708
+  Latest: 5.75718800
+fxswaps_path: /home/m/dev/curve/on-chain-for-mk/config/fxswaps.json
+Loaded 12 pools from fxswaps.json
+Found 4238 donation_shares entries
+Found 4238 user_supply entries
+Found 4238 totalSupply entries
+Found 4238 balance_0 entries
+Found 4238 balance_1 entries
+Found 4238 last_prices entries
+Found 4238 fee entries
+Full plot: 9.81 days, width: 3247 px (82.5 cm)
+Time range: 2025-11-04 18:42:27 to 2025-11-14 14:05:47
+Chart saved to: plots/base/USDC_BRZ_secondary_refuel_analysis.png (3247 x 2362 px)
+
+=== Summary Statistics ===
+
+donation_shares (absolute):
+  Min: 36.189316
+  Max: 46.271275
+  Mean: 40.043849
+  Latest: 36.189316
+
+user_supply (absolute):
+  Min: 23147.570067
+  Max: 23147.570067
+  Mean: 23147.570067
+  Latest: 23147.570067
+
+totalSupply (absolute):
+  Min: 23183.759383
+  Max: 23193.841342
+  Mean: 23187.613916
+  Latest: 23183.759383
+
+balance_0 (USDC) - absolute:
+  Min: 8765.47
+  Max: 10849.42
+  Mean: 10161.72
+  Latest: 10849.42
+
+balance_1 (WETH) - absolute:
+  Min: 49261.028301
+  Max: 60474.668619
+  Mean: 52946.764688
+  Latest: 49261.028301
+
+USD Values:
+  balance_0 (USDC) USD - Min: $8765.47
+  balance_0 (USDC) USD - Max: $10849.42
+  balance_0 (USDC) USD - Mean: $10161.72
+  balance_0 (USDC) USD - Latest: $10849.42
+  balance_1 (WETH) USD - Min: $9229.84
+  balance_1 (WETH) USD - Max: $11148.94
+  balance_1 (WETH) USD - Mean: $9849.64
+  balance_1 (WETH) USD - Latest: $9229.84
+  Total USD - Min: $19914.41
+  Total USD - Max: $20079.26
+  Total USD - Mean: $20011.36
+  Total USD - Latest: $20079.26
+
+USD Ratio (USDC/WETH):
+  Min: 0.7862
+  Max: 1.1755
+  Mean: 1.0395
+  Latest: 1.1755
+
+fee (absolute):
+  Min: 0.00000000
+  Max: 0.00000000
+  Mean: 0.00000000
+  Latest: 0.00000000
+fxswaps_path: /home/m/dev/curve/on-chain-for-mk/config/fxswaps.json
+Loaded 12 pools from fxswaps.json
+Found 3854 donation_shares entries
+Found 3854 user_supply entries
+Found 3854 totalSupply entries
+Found 3854 balance_0 entries
+Found 3854 balance_1 entries
+Found 3854 last_prices entries
+Found 3854 fee entries
+Full plot: 8.92 days, width: 2952 px (75.0 cm)
+Time range: 2025-11-05 16:02:27 to 2025-11-14 14:05:47
+Chart saved to: plots/base/USDC_IDRX_secondary_refuel_analysis.png (2952 x 2362 px)
+
+=== Summary Statistics ===
+
+donation_shares (absolute):
+  Min: 232.605839
+  Max: 803.185319
+  Mean: 277.292516
+  Latest: 232.605839
+
+user_supply (absolute):
+  Min: 966545.167937
+  Max: 966545.167937
+  Mean: 966545.167937
+  Latest: 966545.167937
+
+totalSupply (absolute):
+  Min: 966777.773776
+  Max: 967348.353256
+  Mean: 966822.460453
+  Latest: 966777.773776
+
+balance_0 (USDC) - absolute:
+  Min: 4887.33
+  Max: 7627.66
+  Mean: 7318.00
+  Latest: 7477.57
+
+balance_1 (WETH) - absolute:
+  Min: 0.000000
+  Max: 0.000000
+  Mean: 0.000000
+  Latest: 0.000000
+
+USD Values:
+  balance_0 (USDC) USD - Min: $4887.33
+  balance_0 (USDC) USD - Max: $7627.66
+  balance_0 (USDC) USD - Mean: $7318.00
+  balance_0 (USDC) USD - Latest: $7477.57
+  balance_1 (WETH) USD - Min: $0.00
+  balance_1 (WETH) USD - Max: $0.00
+  balance_1 (WETH) USD - Mean: $0.00
+  balance_1 (WETH) USD - Latest: $0.00
+  Total USD - Min: $4887.33
+  Total USD - Max: $7627.66
+  Total USD - Mean: $7318.00
+  Total USD - Latest: $7477.57
+
+USD Ratio (USDC/WETH):
+  Min: 4907412515675893.0000
+  Max: 10397133630887890.0000
+  Mean: 9634044907101676.0000
+  Latest: 9995157949557452.0000
+
+fee (absolute):
+  Min: 0.00000000
+  Max: 0.00000000
+  Mean: 0.00000000
+  Latest: 0.00000000
