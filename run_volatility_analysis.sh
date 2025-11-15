@@ -23,9 +23,11 @@ TOTAL_POOLS=$(python3 -c "import json; f=open('config/fxswaps.json'); d=json.loa
 echo "Found $TOTAL_POOLS pools to analyze"
 echo ""
 
-# Create plots directory if it doesn't exist
+# Create plots and financial_statements directories if they don't exist
 mkdir -p plots/base/volatility
 mkdir -p plots/ethereum/volatility
+mkdir -p financial_statements/base
+mkdir -p financial_statements/ethereum
 
 # Run analysis for each pool
 SUCCESSFUL=0
@@ -40,8 +42,16 @@ for i in $(seq 0 $((TOTAL_POOLS - 1))); do
 
     # Run the volatility analysis
     if python3 scripts/plot_volatility.py --index $i; then
-        echo "  ✓ Success"
-        SUCCESSFUL=$((SUCCESSFUL + 1))
+        echo "  ✓ Volatility analysis success"
+
+        # Generate financial statements
+        if python3 scripts/generate_financial_statements.py --index $i; then
+            echo "  ✓ Financial statements generated"
+            SUCCESSFUL=$((SUCCESSFUL + 1))
+        else
+            echo "  ✗ Financial statements failed"
+            FAILED=$((FAILED + 1))
+        fi
     else
         echo "  ✗ Failed"
         FAILED=$((FAILED + 1))
@@ -59,4 +69,8 @@ echo ""
 echo "Charts saved to:"
 echo "  - plots/base/volatility/"
 echo "  - plots/ethereum/volatility/"
+echo ""
+echo "Financial statements saved to:"
+echo "  - financial_statements/base/"
+echo "  - financial_statements/ethereum/"
 echo "=========================================="

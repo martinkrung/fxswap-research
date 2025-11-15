@@ -1,0 +1,41 @@
+USDC/WETH A2-5
+
+On Start,Amount,Price,USD
+USDC,1854.432,1.000,$1854.43
+WETH,0.578,3233.141,$1868.65
+,,,$3723.08
+
+Hodl,,,
+USDC,1854.432,1.000,$1854.43
+WETH,0.578,3114.101,$1799.85
+,,,$3654.28
+
+Impermanent Loss,,,
+Initial Price Ratio,0.00031,,
+Future Price Ratio,0.00032,,
+Price Change Ratio,1.03823,,
+
+New USDC,1826.9375,1.0000,$1826.94
+New WETH,0.5867,3114.1005,$1826.94
+Value in ($),3653.8749,,$3653.87
+IL ($),-0.408,,
+IL (%),-0.01%,,
+
+Real Pool,,,
+USDC,1802.07,1,$1802.07
+WETH,0.59,3114.10,$1842.93
+Value,,,$3645.01
+Fee,,,$-8.87
+Refuel used to date,,,-$0.00
+Earned,,,$-8.87
+APR timespan,7.00,,-12.42%
+APR year,,,-12.42%
+Fee per year,,,$-462.43
+Balance in one year,,,$3260.65
+
+Price Token 0,USDC,1.00,
+Price Token 1,WETH,3114.10,
+
+Refuel,,,
+
+Total,,,$0.00
