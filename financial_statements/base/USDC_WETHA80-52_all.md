@@ -1,24 +1,24 @@
 # USDC/WETH A80-5 2
 
-Period: 2025-11-07 21:09:07 to 2025-11-10 18:12:27
+Period: 2025-11-08 21:09:07 to 2025-11-10 18:12:27
 
-Duration: 2.88 days
+Duration: 1.88 days
 
 ## On Start
 
 | Asset | Amount | Price | USD |
 |-------|--------|-------|-----|
-| USDC | 1600.000 | 1.000 | $1,600.00 |
-| WETH | 0.462 | 3465.000 | $1,600.00 |
-| **Total** | | | **$3,200.00** |
+| USDC | 1774.733 | 1.000 | $1,774.73 |
+| WETH | 0.432 | 3395.585 | $1,465.78 |
+| **Total** | | | **$3,240.52** |
 
 ## Hodl
 
 | Asset | Amount | Price | USD |
 |-------|--------|-------|-----|
-| USDC | 1600.000 | 1.000 | $1,600.00 |
-| WETH | 0.462 | 3549.275 | $1,638.91 |
-| **Total** | | | **$3,238.91** |
+| USDC | 1774.733 | 1.000 | $1,774.73 |
+| WETH | 0.432 | 3549.275 | $1,532.13 |
+| **Total** | | | **$3,306.86** |
 
 ## Impermanent Loss
 
@@ -26,15 +26,15 @@ Duration: 2.88 days
 |--------|-------|
 | Initial Price Ratio | 0.00029 |
 | Future Price Ratio | 0.00028 |
-| Price Change Ratio | 0.97626 |
+| Price Change Ratio | 0.95670 |
 
 | Asset | Amount | Price | USD |
 |-------|--------|-------|-----|
-| New USDC | 1619.3405 | 1.0000 | $1,619.34 |
-| New WETH | 0.4562 | 3549.2747 | $1,619.34 |
-| **Value** | | | **$3,238.68** |
-| IL ($) | -0.234 | | |
-| IL (%) | -0.01% | | |
+| New USDC | 1648.9739 | 1.0000 | $1,648.97 |
+| New WETH | 0.4646 | 3549.2747 | $1,648.97 |
+| **Value** | | | **$3,297.95** |
+| IL ($) | -8.911 | | |
+| IL (%) | -0.27% | | |
 
 ## Real Pool
 
@@ -43,26 +43,19 @@ Duration: 2.88 days
 | USDC | 2652.90 | 1 | $2,652.90 |
 | WETH | 0.18 | 3549.27 | $639.65 |
 | **Value** | | | **$3,292.55** |
-| Fee | | | $53.87 |
-| Refuel used to date | | | -$8.22 |
-| **Earned** | | | **$45.65** |
+| Fee | | | $-5.40 |
+| Refuel used to date | | | -$0.00 |
+| **Earned** | | | **$-5.40** |
 
 | Metric | Value |
 |--------|-------|
-| APR timespan | 2.88 days - 180.96% |
-| APR year | 180.96% |
-| Fee per year | $5,790.60 |
-| Balance in one year | $8,990.60 |
+| APR timespan | 1.88 days - -32.40% |
+| APR year | -32.40% |
+| Fee per year | $-1,049.86 |
+| Balance in one year | $2,190.66 |
 
 ## Current Prices
 
 - USDC: $1.00
 - WETH: $3549.27
-
-## Refuel
-
-| Date | Token Amount | USD Value |
-|------|--------------|----------|
-| 2025-11-07 21:15:47 | 0.069816 | $8.22 |
-| **Total** | | **$8.22** |
 

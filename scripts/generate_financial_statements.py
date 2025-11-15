@@ -29,7 +29,7 @@ def calculate_impermanent_loss(initial_price_ratio, future_price_ratio):
 
 
 def generate_financial_statement(pool_data, name, chain_name, start_time=None, end_time=None,
-                                 token0_decimals=6, token1_decimals=18):
+                                 token0_decimals=6, token1_decimals=18, skip_first_day=True):
     """
     Generate a financial statement for a pool.
 
@@ -41,10 +41,28 @@ def generate_financial_statement(pool_data, name, chain_name, start_time=None, e
         end_time: Optional end datetime for filtering
         token0_decimals: Decimals for token 0
         token1_decimals: Decimals for token 1
+        skip_first_day: If True and start_time is None, skip the first day of data (default: True)
 
     Returns:
         dict: Financial statement data
     """
+    # If start_time not provided and skip_first_day=True, find earliest timestamp and add 1 day
+    if start_time is None and skip_first_day:
+        earliest_timestamp = None
+        for block_number, block_data in pool_data.items():
+            if 'last_prices' in block_data:
+                ts = datetime.fromtimestamp(block_data['last_prices']['epoch'])
+            elif 'price_scale' in block_data:
+                ts = datetime.fromtimestamp(block_data['price_scale']['epoch'])
+            else:
+                continue
+
+            if earliest_timestamp is None or ts < earliest_timestamp:
+                earliest_timestamp = ts
+
+        if earliest_timestamp:
+            start_time = earliest_timestamp + timedelta(days=1)
+
     # Parse pool data into lists
     timestamps = []
     balances_0 = []

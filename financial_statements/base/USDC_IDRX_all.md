@@ -1,39 +1,39 @@
 # USDC/IDRX
 
-Period: 2025-11-05 15:02:27 to 2025-11-14 13:05:47
+Period: 2025-11-06 15:02:27 to 2025-11-14 13:05:47
 
-Duration: 8.92 days
+Duration: 7.92 days
 
 ## On Start
 
 | Asset | Amount | Price | USD |
 |-------|--------|-------|-----|
-| USDC | 6129.188 | 1.000 | $6,129.19 |
+| USDC | 7465.412 | 1.000 | $7,465.41 |
 | IDRX | 0.000 | 0.000 | $0.00 |
-| **Total** | | | **$6,129.19** |
+| **Total** | | | **$7,465.41** |
 
 ## Hodl
 
 | Asset | Amount | Price | USD |
 |-------|--------|-------|-----|
-| USDC | 6129.188 | 1.000 | $6,129.19 |
+| USDC | 7465.412 | 1.000 | $7,465.41 |
 | IDRX | 0.000 | 0.000 | $0.00 |
-| **Total** | | | **$6,129.19** |
+| **Total** | | | **$7,465.41** |
 
 ## Impermanent Loss
 
 | Metric | Value |
 |--------|-------|
-| Initial Price Ratio | 16778.89893 |
+| Initial Price Ratio | 16734.93281 |
 | Future Price Ratio | 16750.49466 |
-| Price Change Ratio | 0.99831 |
+| Price Change Ratio | 1.00093 |
 
 | Asset | Amount | Price | USD |
 |-------|--------|-------|-----|
 | New USDC | 0.0001 | 1.0000 | $0.00 |
-| New IDRX | 1.2318 | 0.0001 | $0.00 |
+| New IDRX | 1.2527 | 0.0001 | $0.00 |
 | **Value** | | | **$0.00** |
-| IL ($) | -6129.187 | | |
+| IL ($) | -7465.412 | | |
 | IL (%) | -100.00% | | |
 
 ## Real Pool
@@ -49,10 +49,10 @@ Duration: 8.92 days
 
 | Metric | Value |
 |--------|-------|
-| APR timespan | 8.92 days - 4992.69% |
-| APR year | 4992.69% |
-| Fee per year | $306,011.63 |
-| Balance in one year | $312,140.82 |
+| APR timespan | 7.92 days - 4616.68% |
+| APR year | 4616.68% |
+| Fee per year | $344,654.43 |
+| Balance in one year | $352,119.84 |
 
 ## Current Prices
 
