@@ -8,6 +8,7 @@ import argparse
 from pathlib import Path
 import seaborn as sns
 from scipy import stats
+from data_loader import load_fxswap_data
 
 # Plotting constants (reused from plot_refule.py)
 PIXELS_PER_DAY = 288
@@ -94,22 +95,21 @@ except ValueError as e:
 
 # Security: Use Path objects and resolve to prevent path traversal
 base_data_dir = Path("data")
-json_file_path = (base_data_dir / safe_chain_name / f"{safe_address}.json").resolve()
+data_file_path = (base_data_dir / safe_chain_name / safe_address).resolve()
 
 # Security: Ensure the resolved path is still within the base_data_dir
 try:
-    json_file_path.relative_to(base_data_dir.resolve())
+    data_file_path.relative_to(base_data_dir.resolve())
 except ValueError:
-    print(f"Error: Path traversal detected! Refusing to access: {json_file_path}")
+    print(f"Error: Path traversal detected! Refusing to access: {data_file_path}")
     exit(1)
 
-# Security: Check file exists before opening
-if not json_file_path.exists():
-    print(f"Error: Data file not found: {json_file_path}")
+# Load data (supports both Parquet and JSON for backward compatibility)
+try:
+    data = load_fxswap_data(data_file_path)
+except FileNotFoundError as e:
+    print(f"Error: {e}")
     exit(1)
-
-with open(json_file_path, 'r') as f:
-    data = json.load(f)
 
 def has_USDC(name):
     """Returns True if 'USDC' appears anywhere in the input pool name."""

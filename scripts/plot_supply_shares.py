@@ -16,6 +16,7 @@ import json
 import argparse
 from pathlib import Path
 import os
+from data_loader import load_fxswap_data
 
 DATA_DIR = Path(os.getenv('DATA_DIR', 'data'))
 
@@ -55,9 +56,12 @@ index = args.index
 fxswap_address = fxswap_addresses[index]["address"]
 name = fxswap_addresses[index]["name"]
 chain_name = fxswap_addresses[index]["chain_name"]
-json_file_path = f'data/{chain_name}/{fxswap_address}.json'
-with open(json_file_path, 'r') as f:
-    data = json.load(f)
+data_file_path = Path(f'data/{chain_name}/{fxswap_address}')
+try:
+    data = load_fxswap_data(data_file_path)
+except FileNotFoundError as e:
+    print(f"Error: {e}")
+    exit(1)
 
 # Token decimals (USDC=6, WETH=18)
 token0_decimals = 18

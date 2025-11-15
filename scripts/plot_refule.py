@@ -6,6 +6,7 @@ import numpy as np
 import json
 import argparse
 from pathlib import Path
+from data_loader import load_fxswap_data
 
 # Plotting constants
 PIXELS_PER_DAY = 288  # 1 day = 288 pixels width in the actual plot area
@@ -50,9 +51,12 @@ fxswap_address = fxswap_addresses[index]["address"]
 name = fxswap_addresses[index]["name"]
 chain_name = fxswap_addresses[index]["chain_name"]
 
-json_file_path = f'data/{chain_name}/{fxswap_address}.json'
-with open(json_file_path, 'r') as f:
-    data = json.load(f)
+data_file_path = Path(f'data/{chain_name}/{fxswap_address}')
+try:
+    data = load_fxswap_data(data_file_path)
+except FileNotFoundError as e:
+    print(f"Error: {e}")
+    exit(1)
 
 def has_USDC(name):
     """

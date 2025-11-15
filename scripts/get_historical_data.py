@@ -7,6 +7,8 @@ from pathlib import Path
 from datetime import datetime, timezone
 import re
 import argparse
+import pandas as pd
+import pyarrow.parquet as pq
 
 # Setup
 RPC = os.getenv('RPC')
@@ -90,7 +92,7 @@ DATA_DIR.mkdir(exist_ok=True)
 fxswap_data_dir = Path("data") / chain_name
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 
-data_file = fxswap_data_dir / f"{fxswap_address}.json"
+data_file = fxswap_data_dir / f"{fxswap_address}.parquet"
 
 # Global in-memory cache (loaded once at startup)
 _in_memory_cache = None
@@ -128,12 +130,35 @@ def load_cache():
     if _in_memory_cache is None:
         if data_file.exists():
             try:
-                with open(data_file, 'r') as f:
-                    _in_memory_cache = json.load(f)
-            except (json.JSONDecodeError, IOError):
+                # Read from Parquet file
+                df = pd.read_parquet(data_file)
+                # Convert DataFrame to nested dict structure
+                _in_memory_cache = {}
+                for _, row in df.iterrows():
+                    block_str = str(row['block_number'])
+                    if block_str not in _in_memory_cache:
+                        _in_memory_cache[block_str] = {}
+                    _in_memory_cache[block_str][row['function_name']] = {
+                        'value': row['value'],
+                        'epoch': int(row['epoch']),
+                        'human_readable': row['human_readable']
+                    }
+            except Exception as e:
+                print(f"Error loading cache from {data_file}: {e}")
                 _in_memory_cache = {}
         else:
-            _in_memory_cache = {}
+            # Try to load from legacy JSON file for backward compatibility
+            json_file = data_file.with_suffix('.json')
+            if json_file.exists():
+                try:
+                    print(f"Found legacy JSON file, loading from {json_file}")
+                    with open(json_file, 'r') as f:
+                        _in_memory_cache = json.load(f)
+                except (json.JSONDecodeError, IOError) as e:
+                    print(f"Error loading legacy JSON: {e}")
+                    _in_memory_cache = {}
+            else:
+                _in_memory_cache = {}
     return _in_memory_cache
 
 def save_cache(cache=None, force=False):
@@ -143,11 +168,34 @@ def save_cache(cache=None, force=False):
         cache = _in_memory_cache
     if cache is None:
         return False  # Nothing to save
-    
+
     # Only save if dirty or forced - this prevents saving when nothing changed
     if force or _cache_dirty:
-        with open(data_file, 'w') as f:
-            json.dump(cache, f, indent=2)
+        # Convert nested dict to DataFrame
+        records = []
+        for block_number, block_data in cache.items():
+            for function_name, function_data in block_data.items():
+                if isinstance(function_data, dict):
+                    records.append({
+                        'block_number': int(block_number),
+                        'function_name': function_name,
+                        'value': function_data.get('value'),
+                        'epoch': function_data.get('epoch'),
+                        'human_readable': function_data.get('human_readable')
+                    })
+
+        df = pd.DataFrame(records)
+
+        # Ensure proper data types
+        if not df.empty:
+            df['block_number'] = df['block_number'].astype('int64')
+            df['function_name'] = df['function_name'].astype('string')
+            df['value'] = df['value'].astype('float64')
+            df['epoch'] = df['epoch'].astype('int64')
+            df['human_readable'] = df['human_readable'].astype('string')
+
+        # Save to Parquet
+        df.to_parquet(data_file, engine='pyarrow', compression='snappy', index=False)
         _cache_dirty = False
         return True  # Return True if we actually saved
     return False  # Return False if nothing changed, so we didn't save
