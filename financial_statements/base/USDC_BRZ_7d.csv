@@ -1,0 +1,41 @@
+USDC/BRZ
+
+On Start,Amount,Price,USD
+USDC,9802.655,1.000,$9802.65
+BRZ,54872.880,0.185,$10167.71
+,,,$19970.37
+
+Hodl,,,
+USDC,9802.655,1.000,$9802.65
+BRZ,54872.880,0.187,$10281.31
+,,,$20083.97
+
+Impermanent Loss,,,
+Initial Price Ratio,5.39678,,
+Future Price Ratio,5.33715,,
+Price Change Ratio,0.98895,,
+
+New USDC,10039.1317,1.0000,$10039.13
+New BRZ,53580.3223,0.1874,$10039.13
+Value in ($),20078.2634,,$20078.26
+IL ($),-5.705,,
+IL (%),-0.03%,,
+
+Real Pool,,,
+USDC,10849.42,1,$10849.42
+BRZ,49261.03,0.19,$9229.84
+Value,,,$20079.26
+Fee,,,$1.00
+Refuel used to date,,,-$0.00
+Earned,,,$1.00
+APR timespan,7.00,,0.26%
+APR year,,,0.26%
+Fee per year,,,$51.88
+Balance in one year,,,$20022.25
+
+Price Token 0,USDC,1.00,
+Price Token 1,BRZ,0.19,
+
+Refuel,,,
+
+Total,,,$0.00

@@ -1,0 +1,41 @@
+crvUSD/ZCHF
+
+On Start,Amount,Price,USD
+crvUSD,10221.937,1.000,$10221.94
+ZCHF,7882.922,1.241,$9782.19
+,,,$20004.12
+
+Hodl,,,
+crvUSD,10221.937,1.000,$10221.94
+ZCHF,7882.922,1.260,$9933.62
+,,,$20155.55
+
+Impermanent Loss,,,
+Initial Price Ratio,0.80584,,
+Future Price Ratio,0.79356,,
+Price Change Ratio,0.98476,,
+
+New crvUSD,10076.7453,1.0000,$10076.75
+New ZCHF,7996.5038,1.2601,$10076.75
+Value in ($),20153.4906,,$20153.49
+IL ($),-2.062,,
+IL (%),-0.01%,,
+
+Real Pool,,,
+crvUSD,11899.61,1,$11899.61
+ZCHF,6546.96,1.26,$8250.12
+Value,,,$20149.72
+Fee,,,$-3.77
+Refuel used to date,,,-$0.00
+Earned,,,$-3.77
+APR timespan,7.00,,-0.98%
+APR year,,,-0.98%
+Fee per year,,,$-196.51
+Balance in one year,,,$19807.61
+
+Price Token 0,crvUSD,1.00,
+Price Token 1,ZCHF,1.26,
+
+Refuel,,,
+
+Total,,,$0.00
