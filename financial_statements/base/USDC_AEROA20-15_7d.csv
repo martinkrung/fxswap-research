@@ -1,37 +1,37 @@
 USDC/AERO A20-15
 
 On Start,Amount,Price,USD
-USDC,414.005,1.000,$414.00
-AERO,632.226,0.873,$552.24
-,,,$966.25
+USDC,413.417,1.000,$413.42
+AERO,631.328,0.873,$551.46
+,,,$964.88
 
 Hodl,,,
-USDC,414.005,1.000,$414.00
-AERO,632.226,0.819,$517.54
-,,,$931.54
+USDC,413.417,1.000,$413.42
+AERO,631.328,0.819,$516.80
+,,,$930.22
 
 Impermanent Loss,,,
 Initial Price Ratio,1.14483,,
 Future Price Ratio,1.22160,,
 Price Change Ratio,1.06706,,
 
-New USDC,462.8852,1.0000,$462.89
-New AERO,565.4628,0.8186,$462.89
-Value in ($),925.7705,,$925.77
-IL ($),-5.771,,
+New USDC,462.2284,1.0000,$462.23
+New AERO,564.6605,0.8186,$462.23
+Value in ($),924.4569,,$924.46
+IL ($),-5.763,,
 IL (%),-0.62%,,
 
 Real Pool,,,
-USDC,619.06,1,$619.06
-AERO,3682.95,0.82,$3014.85
-Value,,,$3633.90
-Fee,,,$2708.13
+USDC,618.34,1,$618.34
+AERO,3678.69,0.82,$3011.36
+Value,,,$3629.70
+Fee,,,$2705.24
 Refuel used to date,,,-$4.63
-Earned,,,$2703.51
-APR timespan,7.00,,14589.29%
-APR year,,,14589.29%
-Fee per year,,,$140968.66
-Balance in one year,,,$141934.91
+Earned,,,$2700.62
+APR timespan,7.00,,14594.40%
+APR year,,,14594.40%
+Fee per year,,,$140817.99
+Balance in one year,,,$141782.87
 
 Price Token 0,USDC,1.00,
 Price Token 1,AERO,0.82,

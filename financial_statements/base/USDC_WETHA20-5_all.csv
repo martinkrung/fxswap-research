@@ -1,37 +1,37 @@
 USDC/WETH A20-5
 
 On Start,Amount,Price,USD
-USDC,2148.804,1.000,$2148.80
-WETH,0.512,3870.755,$1982.15
-,,,$4130.95
+USDC,2144.791,1.000,$2144.79
+WETH,0.511,3870.755,$1978.45
+,,,$4123.24
 
 Hodl,,,
-USDC,2148.804,1.000,$2148.80
-WETH,0.512,3128.224,$1601.91
-,,,$3750.71
+USDC,2144.791,1.000,$2144.79
+WETH,0.511,3128.224,$1598.92
+,,,$3743.71
 
 Impermanent Loss,,,
 Initial Price Ratio,0.00026,,
 Future Price Ratio,0.00032,,
 Price Change Ratio,1.23737,,
 
-New USDC,1855.3137,1.0000,$1855.31
-New WETH,0.5931,3128.2235,$1855.31
-Value in ($),3710.6275,,$3710.63
-IL ($),-40.086,,
+New USDC,1851.8494,1.0000,$1851.85
+New WETH,0.5920,3128.2235,$1851.85
+Value in ($),3703.6988,,$3703.70
+IL ($),-40.011,,
 IL (%),-1.07%,,
 
 Real Pool,,,
-USDC,862.83,1,$862.83
-WETH,0.89,3128.22,$2775.47
-Value,,,$3638.30
-Fee,,,$-72.33
+USDC,856.51,1,$856.51
+WETH,0.88,3128.22,$2755.14
+Value,,,$3611.65
+Fee,,,$-92.04
 Refuel used to date,,,-$41.70
-Earned,,,$-114.03
-APR timespan,13.89,,-72.52%
-APR year,,,-72.52%
-Fee per year,,,$-2995.71
-Balance in one year,,,$1135.24
+Earned,,,$-133.74
+APR timespan,13.89,,-85.22%
+APR year,,,-85.22%
+Fee per year,,,$-3513.62
+Balance in one year,,,$609.62
 
 Price Token 0,USDC,1.00,
 Price Token 1,WETH,3128.22,

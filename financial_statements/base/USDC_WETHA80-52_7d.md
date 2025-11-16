@@ -40,19 +40,19 @@ Duration: 2.88 days
 
 | Asset | Amount | Price | USD |
 |-------|--------|-------|-----|
-| USDC | 2652.90 | 1 | $2,652.90 |
-| WETH | 0.18 | 3549.27 | $639.65 |
-| **Value** | | | **$3,292.55** |
-| Fee | | | $53.87 |
+| USDC | 2647.64 | 1 | $2,647.64 |
+| WETH | 0.18 | 3549.27 | $638.38 |
+| **Value** | | | **$3,286.02** |
+| Fee | | | $47.33 |
 | Refuel used to date | | | -$1.69 |
-| **Earned** | | | **$52.18** |
+| **Earned** | | | **$45.65** |
 
 | Metric | Value |
 |--------|-------|
-| APR timespan | 2.88 days - 206.85% |
-| APR year | 206.85% |
-| Fee per year | $6,619.22 |
-| Balance in one year | $9,819.22 |
+| APR timespan | 2.88 days - 180.96% |
+| APR year | 180.96% |
+| Fee per year | $5,790.60 |
+| Balance in one year | $8,990.60 |
 
 ## Current Prices
 

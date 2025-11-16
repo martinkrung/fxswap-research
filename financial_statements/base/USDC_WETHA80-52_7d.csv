@@ -22,16 +22,16 @@ IL ($),-0.234,,
 IL (%),-0.01%,,
 
 Real Pool,,,
-USDC,2652.90,1,$2652.90
-WETH,0.18,3549.27,$639.65
-Value,,,$3292.55
-Fee,,,$53.87
+USDC,2647.64,1,$2647.64
+WETH,0.18,3549.27,$638.38
+Value,,,$3286.02
+Fee,,,$47.33
 Refuel used to date,,,-$1.69
-Earned,,,$52.18
-APR timespan,2.88,,206.85%
-APR year,,,206.85%
-Fee per year,,,$6619.22
-Balance in one year,,,$9819.22
+Earned,,,$45.65
+APR timespan,2.88,,180.96%
+APR year,,,180.96%
+Fee per year,,,$5790.60
+Balance in one year,,,$8990.60
 
 Price Token 0,USDC,1.00,
 Price Token 1,WETH,3549.27,

@@ -1,37 +1,37 @@
 USDC/BRZ
 
 On Start,Amount,Price,USD
-USDC,9802.655,1.000,$9802.65
-BRZ,54872.880,0.185,$10167.71
-,,,$19970.37
+USDC,9785.707,1.000,$9785.71
+BRZ,54778.012,0.185,$10150.13
+,,,$19935.84
 
 Hodl,,,
-USDC,9802.655,1.000,$9802.65
-BRZ,54872.880,0.187,$10281.31
-,,,$20083.97
+USDC,9785.707,1.000,$9785.71
+BRZ,54778.012,0.187,$10263.54
+,,,$20049.25
 
 Impermanent Loss,,,
 Initial Price Ratio,5.39678,,
 Future Price Ratio,5.33715,,
 Price Change Ratio,0.98895,,
 
-New USDC,10039.1317,1.0000,$10039.13
-New BRZ,53580.3223,0.1874,$10039.13
-Value in ($),20078.2634,,$20078.26
-IL ($),-5.705,,
+New USDC,10021.7754,1.0000,$10021.78
+New BRZ,53487.6892,0.1874,$10021.78
+Value in ($),20043.5508,,$20043.55
+IL ($),-5.695,,
 IL (%),-0.03%,,
 
 Real Pool,,,
-USDC,10849.42,1,$10849.42
-BRZ,49261.03,0.19,$9229.84
-Value,,,$20079.26
-Fee,,,$1.00
+USDC,10832.48,1,$10832.48
+BRZ,49184.13,0.19,$9215.44
+Value,,,$20047.92
+Fee,,,$4.36
 Refuel used to date,,,-$-31.34
-Earned,,,$32.34
-APR timespan,7.00,,8.44%
-APR year,,,8.44%
-Fee per year,,,$1686.21
-Balance in one year,,,$21656.58
+Earned,,,$35.71
+APR timespan,7.00,,9.34%
+APR year,,,9.34%
+Fee per year,,,$1861.90
+Balance in one year,,,$21797.74
 
 Price Token 0,USDC,1.00,
 Price Token 1,BRZ,0.19,

@@ -120,17 +120,33 @@ def generate_financial_statement(pool_data, name, chain_name, start_time=None, e
     start_idx = 0
     end_idx = -1
 
-    start_balance_0 = balances_0[start_idx]
-    start_balance_1 = balances_1[start_idx]
+    start_balance_0_total = balances_0[start_idx]
+    start_balance_1_total = balances_1[start_idx]
     start_price = last_prices[start_idx]
 
-    end_balance_0 = balances_0[end_idx]
-    end_balance_1 = balances_1[end_idx]
+    end_balance_0_total = balances_0[end_idx]
+    end_balance_1_total = balances_1[end_idx]
     end_price = last_prices[end_idx]
 
     # Skip if essential data is missing
-    if None in [start_balance_0, start_balance_1, start_price, end_balance_0, end_balance_1, end_price]:
+    if None in [start_balance_0_total, start_balance_1_total, start_price, end_balance_0_total, end_balance_1_total, end_price]:
         return None
+
+    # Exclude donation_shares from balances to get user's portion only
+    # Start balances
+    start_donation_shares = donation_shares[start_idx]
+    start_total_supply = total_supplies[start_idx]
+    start_donation_token0 = 0
+    start_donation_token1 = 0
+
+    if start_donation_shares is not None and start_total_supply is not None and start_total_supply > 0:
+        start_donation_ratio = start_donation_shares / start_total_supply
+        start_donation_token0 = start_donation_ratio * start_balance_0_total
+        start_donation_token1 = start_donation_ratio * start_balance_1_total
+
+    # User's balances at start (excluding donation_shares)
+    start_balance_0 = start_balance_0_total - start_donation_token0
+    start_balance_1 = start_balance_1_total - start_donation_token1
 
     # Calculate refuel events (increases in donation_shares)
     refuel_events = []
@@ -202,12 +218,26 @@ def generate_financial_statement(pool_data, name, chain_name, start_time=None, e
     il_pct = (il_usd / hodl_total_usd * 100) if hodl_total_usd > 0 else 0
 
     # === REAL POOL ===
-    real_token0_amount = end_balance_0
+    # Real Pool should exclude donation_shares (refuel reserves)
+    # Calculate donation shares portion at end
+    end_donation_shares = donation_shares[end_idx]
+    end_total_supply = total_supplies[end_idx]
+    end_donation_token0 = 0
+    end_donation_token1 = 0
+    refuel_remaining_usd = 0
+
+    if end_donation_shares is not None and end_total_supply is not None and end_total_supply > 0:
+        end_donation_ratio = end_donation_shares / end_total_supply
+        end_donation_token0 = end_donation_ratio * end_balance_0_total
+        end_donation_token1 = end_donation_ratio * end_balance_1_total
+        refuel_remaining_usd = end_donation_token0 + end_donation_token1 * end_price
+
+    # Real pool balances = Total balances - Donation shares
+    real_token0_amount = end_balance_0_total - end_donation_token0
+    real_token1_amount = end_balance_1_total - end_donation_token1
+
     real_token0_usd = real_token0_amount * 1.0
-
-    real_token1_amount = end_balance_1
     real_token1_usd = real_token1_amount * end_price
-
     real_total_usd = real_token0_usd + real_token1_usd
 
     # Calculate fees earned
@@ -216,16 +246,6 @@ def generate_financial_statement(pool_data, name, chain_name, start_time=None, e
     # Calculate refuel metrics
     # Total refuel added = sum of all refuel events
     total_refuel_added_usd = sum(event['usd_value'] for event in refuel_events)
-
-    # Refuel remaining = current donation_shares value in USD
-    refuel_remaining_usd = 0
-    end_donation_shares = donation_shares[end_idx]
-    end_total_supply = total_supplies[end_idx]
-    if end_donation_shares is not None and end_total_supply is not None and end_total_supply > 0:
-        remaining_ratio = end_donation_shares / end_total_supply
-        remaining_token0_usd = remaining_ratio * end_balance_0
-        remaining_token1_usd = remaining_ratio * end_balance_1 * end_price
-        refuel_remaining_usd = remaining_token0_usd + remaining_token1_usd
 
     # Refuel used to date = total added - remaining
     refuel_used_usd = total_refuel_added_usd - refuel_remaining_usd
