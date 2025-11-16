@@ -26,16 +26,18 @@ crvUSD,11899.61,1,$11899.61
 ZCHF,6546.96,1.26,$8250.12
 Value,,,$20149.72
 Fee,,,$-3.77
-Refuel used to date,,,-$0.00
-Earned,,,$-3.77
-APR timespan,7.00,,-0.98%
-APR year,,,-0.98%
-Fee per year,,,$-196.51
-Balance in one year,,,$19807.61
+Refuel used to date,,,-$-8.25
+Earned,,,$4.48
+APR timespan,7.00,,1.17%
+APR year,,,1.17%
+Fee per year,,,$233.62
+Balance in one year,,,$20237.74
 
 Price Token 0,crvUSD,1.00,
 Price Token 1,ZCHF,1.26,
 
 Refuel,,,
 
-Total,,,$0.00
+Total added,,,$0.00
+Remaining unused,,,$8.25
+Used to date,,,$-8.25

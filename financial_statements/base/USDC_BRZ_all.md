@@ -44,15 +44,15 @@ Duration: 8.81 days
 | BRZ | 49261.03 | 0.19 | $9,229.84 |
 | **Value** | | | **$20,079.26** |
 | Fee | | | $48.14 |
-| Refuel used to date | | | -$0.00 |
-| **Earned** | | | **$48.14** |
+| Refuel used to date | | | -$-31.34 |
+| **Earned** | | | **$79.49** |
 
 | Metric | Value |
 |--------|-------|
-| APR timespan | 8.81 days - 9.99% |
-| APR year | 9.99% |
-| Fee per year | $1,995.01 |
-| Balance in one year | $21,974.70 |
+| APR timespan | 8.81 days - 16.49% |
+| APR year | 16.49% |
+| Fee per year | $3,293.88 |
+| Balance in one year | $23,273.57 |
 
 ## Current Prices
 

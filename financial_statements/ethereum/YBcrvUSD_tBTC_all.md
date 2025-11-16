@@ -44,15 +44,15 @@ Duration: 15.93 days
 | tBTC | 626.74 | 95955.59 | $60,139,024.14 |
 | **Value** | | | **$98,303,543.76** |
 | Fee | | | $5404271.35 |
-| Refuel used to date | | | -$128820.46 |
-| **Earned** | | | **$5275450.89** |
+| Refuel used to date | | | -$59805.75 |
+| **Earned** | | | **$5344465.60** |
 
 | Metric | Value |
 |--------|-------|
-| APR timespan | 15.93 days - 120.36% |
-| APR year | 120.36% |
-| Fee per year | $120,895,078.74 |
-| Balance in one year | $221,335,772.54 |
+| APR timespan | 15.93 days - 121.94% |
+| APR year | 121.94% |
+| Fee per year | $122,476,657.07 |
+| Balance in one year | $222,917,350.87 |
 
 ## Current Prices
 
@@ -655,5 +655,7 @@ Duration: 15.93 days
 | 2025-11-14 12:38:59 | 0.029041 | $18.42 |
 | 2025-11-14 12:42:59 | 0.053573 | $33.92 |
 | 2025-11-14 13:10:59 | 0.028302 | $17.91 |
-| **Total** | | **$128820.46** |
+| **Total added** | | **$128820.46** |
+| **Remaining unused** | | **$69014.71** |
+| **Used to date** | | **$59805.75** |
 

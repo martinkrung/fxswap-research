@@ -44,15 +44,15 @@ Duration: 15.93 days
 | ZCHF | 6546.96 | 1.26 | $8,250.12 |
 | **Value** | | | **$20,149.72** |
 | Fee | | | $30.73 |
-| Refuel used to date | | | -$18.98 |
-| **Earned** | | | **$11.75** |
+| Refuel used to date | | | -$10.73 |
+| **Earned** | | | **$19.99** |
 
 | Metric | Value |
 |--------|-------|
-| APR timespan | 15.93 days - 1.34% |
-| APR year | 1.34% |
-| Fee per year | $269.20 |
-| Balance in one year | $20,397.53 |
+| APR timespan | 15.93 days - 2.28% |
+| APR year | 2.28% |
+| Fee per year | $458.17 |
+| Balance in one year | $20,586.50 |
 
 ## Current Prices
 
@@ -65,5 +65,7 @@ Duration: 15.93 days
 |------|--------------|----------|
 | 2025-11-03 11:43:59 | 8.390048 | $18.78 |
 | 2025-11-03 20:55:47 | 0.089776 | $0.20 |
-| **Total** | | **$18.98** |
+| **Total added** | | **$18.98** |
+| **Remaining unused** | | **$8.25** |
+| **Used to date** | | **$10.73** |
 

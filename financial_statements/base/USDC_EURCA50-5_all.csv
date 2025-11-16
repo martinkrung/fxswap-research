@@ -26,16 +26,18 @@ USDC,5248.29,1,$5248.29
 EURC,4148.63,1164563574084.07,$4831339522153294.00
 Value,,,$4831339522158542.00
 Fee,,,$4831329467827455.00
-Refuel used to date,,,-$0.00
-Earned,,,$4831329467827455.00
-APR timespan,2.78,,13585.22%
-APR year,,,13585.22%
-Fee per year,,,$635366163875757440.00
-Balance in one year,,,$640043056544552832.00
+Refuel used to date,,,-$-3100533304292.96
+Earned,,,$4834430001131748.00
+APR timespan,2.78,,13593.94%
+APR year,,,13593.94%
+Fee per year,,,$635773913743497984.00
+Balance in one year,,,$640450806412293376.00
 
 Price Token 0,USDC,1.00,
 Price Token 1,EURC,1164563574084.07,
 
 Refuel,,,
 
-Total,,,$0.00
+Total added,,,$0.00
+Remaining unused,,,$3100533304292.96
+Used to date,,,$-3100533304292.96

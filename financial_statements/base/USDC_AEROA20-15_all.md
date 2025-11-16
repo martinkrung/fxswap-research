@@ -44,15 +44,15 @@ Duration: 12.94 days
 | AERO | 3682.95 | 0.82 | $3,014.85 |
 | **Value** | | | **$3,633.90** |
 | Fee | | | $2758.96 |
-| Refuel used to date | | | -$8.83 |
-| **Earned** | | | **$2750.13** |
+| Refuel used to date | | | -$4.63 |
+| **Earned** | | | **$2754.33** |
 
 | Metric | Value |
 |--------|-------|
-| APR timespan | 12.94 days - 7763.79% |
-| APR year | 7763.79% |
-| Fee per year | $77,560.50 |
-| Balance in one year | $78,559.51 |
+| APR timespan | 12.94 days - 7775.65% |
+| APR year | 7775.65% |
+| Fee per year | $77,679.04 |
+| Balance in one year | $78,678.05 |
 
 ## Current Prices
 
@@ -68,5 +68,7 @@ Duration: 12.94 days
 | 2025-11-08 18:32:27 | 0.019400 | $0.04 |
 | 2025-11-08 18:35:47 | 0.999940 | $2.18 |
 | 2025-11-08 18:52:27 | 2.999762 | $6.56 |
-| **Total** | | **$8.83** |
+| **Total added** | | **$8.83** |
+| **Remaining unused** | | **$4.20** |
+| **Used to date** | | **$4.63** |
 

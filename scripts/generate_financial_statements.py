@@ -213,11 +213,25 @@ def generate_financial_statement(pool_data, name, chain_name, start_time=None, e
     # Calculate fees earned
     fee_usd = real_total_usd - new_total_usd
 
-    # Calculate total refuel cost
-    total_refuel_usd = sum(event['usd_value'] for event in refuel_events)
+    # Calculate refuel metrics
+    # Total refuel added = sum of all refuel events
+    total_refuel_added_usd = sum(event['usd_value'] for event in refuel_events)
 
-    # Calculate net earned (fees - refuel costs)
-    earned_usd = fee_usd - total_refuel_usd
+    # Refuel remaining = current donation_shares value in USD
+    refuel_remaining_usd = 0
+    end_donation_shares = donation_shares[end_idx]
+    end_total_supply = total_supplies[end_idx]
+    if end_donation_shares is not None and end_total_supply is not None and end_total_supply > 0:
+        remaining_ratio = end_donation_shares / end_total_supply
+        remaining_token0_usd = remaining_ratio * end_balance_0
+        remaining_token1_usd = remaining_ratio * end_balance_1 * end_price
+        refuel_remaining_usd = remaining_token0_usd + remaining_token1_usd
+
+    # Refuel used to date = total added - remaining
+    refuel_used_usd = total_refuel_added_usd - refuel_remaining_usd
+
+    # Calculate net earned (fees - refuel used)
+    earned_usd = fee_usd - refuel_used_usd
 
     # Calculate APR if we have enough time data
     time_span_days = (timestamps[end_idx] - timestamps[start_idx]).total_seconds() / (24 * 3600)
@@ -296,7 +310,9 @@ def generate_financial_statement(pool_data, name, chain_name, start_time=None, e
 
         # Refuel events
         'refuel_events': refuel_events,
-        'total_refuel_usd': total_refuel_usd,
+        'total_refuel_added_usd': total_refuel_added_usd,
+        'refuel_remaining_usd': refuel_remaining_usd,
+        'refuel_used_usd': refuel_used_usd,
     }
 
 
@@ -382,7 +398,7 @@ def save_as_csv(statement, output_path):
         ])
         writer.writerow(['Value', '', '', f"${statement['real']['total_usd']:.2f}"])
         writer.writerow(['Fee', '', '', f"${statement['real']['fee_usd']:.2f}"])
-        writer.writerow(['Refuel used to date', '', '', f"-${statement['total_refuel_usd']:.2f}"])
+        writer.writerow(['Refuel used to date', '', '', f"-${statement['refuel_used_usd']:.2f}"])
         writer.writerow(['Earned', '', '', f"${statement['real']['earned_usd']:.2f}"])
         writer.writerow(['APR timespan', f"{statement['time_span_days']:.2f}", '', f"{statement['real']['apr_pct']:.2f}%"])
         writer.writerow(['APR year', '', '', f"{statement['real']['apr_pct']:.2f}%"])
@@ -405,7 +421,9 @@ def save_as_csv(statement, output_path):
                 f"${event['usd_value']:.2f}"
             ])
         writer.writerow([])
-        writer.writerow(['Total', '', '', f"${statement['total_refuel_usd']:.2f}"])
+        writer.writerow(['Total added', '', '', f"${statement['total_refuel_added_usd']:.2f}"])
+        writer.writerow(['Remaining unused', '', '', f"${statement['refuel_remaining_usd']:.2f}"])
+        writer.writerow(['Used to date', '', '', f"${statement['refuel_used_usd']:.2f}"])
 
 
 def save_as_markdown(statement, output_path):
@@ -456,7 +474,7 @@ def save_as_markdown(statement, output_path):
         f.write(f"| {statement['on_start']['token1_name']} | {statement['real']['token1_amount']:.2f} | {statement['current_prices']['token1_price']:.2f} | ${statement['real']['token1_usd']:,.2f} |\n")
         f.write(f"| **Value** | | | **${statement['real']['total_usd']:,.2f}** |\n")
         f.write(f"| Fee | | | ${statement['real']['fee_usd']:.2f} |\n")
-        f.write(f"| Refuel used to date | | | -${statement['total_refuel_usd']:.2f} |\n")
+        f.write(f"| Refuel used to date | | | -${statement['refuel_used_usd']:.2f} |\n")
         f.write(f"| **Earned** | | | **${statement['real']['earned_usd']:.2f}** |\n\n")
 
         f.write("| Metric | Value |\n")
@@ -478,7 +496,9 @@ def save_as_markdown(statement, output_path):
             f.write("|------|--------------|----------|\n")
             for event in statement['refuel_events']:
                 f.write(f"| {event['date'].strftime('%Y-%m-%d %H:%M:%S')} | {event['token_amount']:.6f} | ${event['usd_value']:.2f} |\n")
-            f.write(f"| **Total** | | **${statement['total_refuel_usd']:.2f}** |\n\n")
+            f.write(f"| **Total added** | | **${statement['total_refuel_added_usd']:.2f}** |\n")
+            f.write(f"| **Remaining unused** | | **${statement['refuel_remaining_usd']:.2f}** |\n")
+            f.write(f"| **Used to date** | | **${statement['refuel_used_usd']:.2f}** |\n\n")
 
 
 def main():

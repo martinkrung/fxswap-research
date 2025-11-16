@@ -44,15 +44,15 @@ Duration: 7.00 days
 | WETH | 0.89 | 3128.22 | $2,775.47 |
 | **Value** | | | **$3,638.30** |
 | Fee | | | $32.22 |
-| Refuel used to date | | | -$40.00 |
-| **Earned** | | | **$-7.78** |
+| Refuel used to date | | | -$13.36 |
+| **Earned** | | | **$18.86** |
 
 | Metric | Value |
 |--------|-------|
-| APR timespan | 7.00 days - -10.76% |
-| APR year | -10.76% |
-| Fee per year | $-405.81 |
-| Balance in one year | $3,365.67 |
+| APR timespan | 7.00 days - 26.07% |
+| APR year | 26.07% |
+| Fee per year | $983.41 |
+| Balance in one year | $4,754.89 |
 
 ## Current Prices
 
@@ -64,5 +64,7 @@ Duration: 7.00 days
 | Date | Token Amount | USD Value |
 |------|--------------|----------|
 | 2025-11-08 20:35:47 | 0.338670 | $40.00 |
-| **Total** | | **$40.00** |
+| **Total added** | | **$40.00** |
+| **Remaining unused** | | **$26.64** |
+| **Used to date** | | **$13.36** |
 

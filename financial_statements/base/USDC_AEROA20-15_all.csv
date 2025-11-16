@@ -26,12 +26,12 @@ USDC,619.06,1,$619.06
 AERO,3682.95,0.82,$3014.85
 Value,,,$3633.90
 Fee,,,$2758.96
-Refuel used to date,,,-$8.83
-Earned,,,$2750.13
-APR timespan,12.94,,7763.79%
-APR year,,,7763.79%
-Fee per year,,,$77560.50
-Balance in one year,,,$78559.51
+Refuel used to date,,,-$4.63
+Earned,,,$2754.33
+APR timespan,12.94,,7775.65%
+APR year,,,7775.65%
+Fee per year,,,$77679.04
+Balance in one year,,,$78678.05
 
 Price Token 0,USDC,1.00,
 Price Token 1,AERO,0.82,
@@ -43,4 +43,6 @@ Refuel,,,
 2025-11-08 18:35:47,0.999940,,$2.18
 2025-11-08 18:52:27,2.999762,,$6.56
 
-Total,,,$8.83
+Total added,,,$8.83
+Remaining unused,,,$4.20
+Used to date,,,$4.63

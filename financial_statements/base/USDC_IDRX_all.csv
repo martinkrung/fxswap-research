@@ -26,16 +26,18 @@ USDC,7477.57,1,$7477.57
 IDRX,0.00,0.00,$0.00
 Value,,,$7477.57
 Fee,,,$7477.57
-Refuel used to date,,,-$0.00
-Earned,,,$7477.57
-APR timespan,7.92,,4616.68%
-APR year,,,4616.68%
-Fee per year,,,$344654.43
-Balance in one year,,,$352119.84
+Refuel used to date,,,-$-1.80
+Earned,,,$7479.37
+APR timespan,7.92,,4617.79%
+APR year,,,4617.79%
+Fee per year,,,$344737.35
+Balance in one year,,,$352202.77
 
 Price Token 0,USDC,1.00,
 Price Token 1,IDRX,0.00,
 
 Refuel,,,
 
-Total,,,$0.00
+Total added,,,$0.00
+Remaining unused,,,$1.80
+Used to date,,,$-1.80

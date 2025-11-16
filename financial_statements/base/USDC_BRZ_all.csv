@@ -26,16 +26,18 @@ USDC,10849.42,1,$10849.42
 BRZ,49261.03,0.19,$9229.84
 Value,,,$20079.26
 Fee,,,$48.14
-Refuel used to date,,,-$0.00
-Earned,,,$48.14
-APR timespan,8.81,,9.99%
-APR year,,,9.99%
-Fee per year,,,$1995.01
-Balance in one year,,,$21974.70
+Refuel used to date,,,-$-31.34
+Earned,,,$79.49
+APR timespan,8.81,,16.49%
+APR year,,,16.49%
+Fee per year,,,$3293.88
+Balance in one year,,,$23273.57
 
 Price Token 0,USDC,1.00,
 Price Token 1,BRZ,0.19,
 
 Refuel,,,
 
-Total,,,$0.00
+Total added,,,$0.00
+Remaining unused,,,$31.34
+Used to date,,,$-31.34

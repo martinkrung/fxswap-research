@@ -44,15 +44,15 @@ Duration: 7.00 days
 | IDRX | 0.00 | 0.00 | $0.00 |
 | **Value** | | | **$7,477.57** |
 | Fee | | | $7477.57 |
-| Refuel used to date | | | -$0.00 |
-| **Earned** | | | **$7477.57** |
+| Refuel used to date | | | -$-1.80 |
+| **Earned** | | | **$7479.37** |
 
 | Metric | Value |
 |--------|-------|
-| APR timespan | 7.00 days - 5276.47% |
-| APR year | 5276.47% |
-| Fee per year | $389,901.72 |
-| Balance in one year | $397,291.16 |
+| APR timespan | 7.00 days - 5277.74% |
+| APR year | 5277.74% |
+| Fee per year | $389,995.53 |
+| Balance in one year | $397,384.97 |
 
 ## Current Prices
 

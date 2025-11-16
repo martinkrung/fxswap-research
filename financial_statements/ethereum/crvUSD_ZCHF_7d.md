@@ -44,15 +44,15 @@ Duration: 7.00 days
 | ZCHF | 6546.96 | 1.26 | $8,250.12 |
 | **Value** | | | **$20,149.72** |
 | Fee | | | $-3.77 |
-| Refuel used to date | | | -$0.00 |
-| **Earned** | | | **$-3.77** |
+| Refuel used to date | | | -$-8.25 |
+| **Earned** | | | **$4.48** |
 
 | Metric | Value |
 |--------|-------|
-| APR timespan | 7.00 days - -0.98% |
-| APR year | -0.98% |
-| Fee per year | $-196.51 |
-| Balance in one year | $19,807.61 |
+| APR timespan | 7.00 days - 1.17% |
+| APR year | 1.17% |
+| Fee per year | $233.62 |
+| Balance in one year | $20,237.74 |
 
 ## Current Prices
 

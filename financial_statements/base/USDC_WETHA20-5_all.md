@@ -44,15 +44,15 @@ Duration: 13.89 days
 | WETH | 0.89 | 3128.22 | $2,775.47 |
 | **Value** | | | **$3,638.30** |
 | Fee | | | $-72.33 |
-| Refuel used to date | | | -$68.34 |
-| **Earned** | | | **$-140.67** |
+| Refuel used to date | | | -$41.70 |
+| **Earned** | | | **$-114.03** |
 
 | Metric | Value |
 |--------|-------|
-| APR timespan | 13.89 days - -89.46% |
-| APR year | -89.46% |
-| Fee per year | $-3,695.64 |
-| Balance in one year | $435.31 |
+| APR timespan | 13.89 days - -72.52% |
+| APR year | -72.52% |
+| Fee per year | $-2,995.71 |
+| Balance in one year | $1,135.24 |
 
 ## Current Prices
 
@@ -66,5 +66,7 @@ Duration: 13.89 days
 | 2025-11-03 21:25:47 | 0.118334 | $14.38 |
 | 2025-11-04 10:09:07 | 0.116866 | $13.97 |
 | 2025-11-08 20:35:47 | 0.338670 | $40.00 |
-| **Total** | | **$68.34** |
+| **Total added** | | **$68.34** |
+| **Remaining unused** | | **$26.64** |
+| **Used to date** | | **$41.70** |
 

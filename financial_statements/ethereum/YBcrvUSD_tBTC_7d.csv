@@ -26,12 +26,12 @@ YB crvUSD,38164519.63,1,$38164519.63
 tBTC,626.74,95955.59,$60139024.14
 Value,,,$98303543.76
 Fee,,,$4971966.93
-Refuel used to date,,,-$53982.33
-Earned,,,$4917984.60
-APR timespan,7.00,,260.84%
-APR year,,,260.84%
-Fee per year,,,$256529386.03
-Balance in one year,,,$354877635.43
+Refuel used to date,,,-$-15032.38
+Earned,,,$4986999.31
+APR timespan,7.00,,264.50%
+APR year,,,264.50%
+Fee per year,,,$260129295.87
+Balance in one year,,,$358477545.27
 
 Price Token 0,YB crvUSD,1.00,
 Price Token 1,tBTC,95955.59,
@@ -441,4 +441,6 @@ Refuel,,,
 2025-11-14 12:42:59,0.053573,,$33.92
 2025-11-14 13:10:59,0.028302,,$17.91
 
-Total,,,$53982.33
+Total added,,,$53982.33
+Remaining unused,,,$69014.71
+Used to date,,,$-15032.38

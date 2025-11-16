@@ -26,12 +26,12 @@ USDC,2.85,1,$2.85
 WETH,0.00,3251.40,$13.52
 Value,,,$16.37
 Fee,,,$-7942.61
-Refuel used to date,,,-$16.00
-Earned,,,$-7958.61
-APR timespan,6.88,,-5274.52%
-APR year,,,-5274.52%
-Fee per year,,,$-421961.41
-Balance in one year,,,$-413961.41
+Refuel used to date,,,-$0.78
+Earned,,,$-7943.38
+APR timespan,6.88,,-5264.43%
+APR year,,,-5264.43%
+Fee per year,,,$-421154.21
+Balance in one year,,,$-413154.21
 
 Price Token 0,USDC,1.00,
 Price Token 1,WETH,3251.40,
@@ -39,4 +39,6 @@ Price Token 1,WETH,3251.40,
 Refuel,,,
 2025-11-07 16:05:47,0.139583,,$16.00
 
-Total,,,$16.00
+Total added,,,$16.00
+Remaining unused,,,$15.22
+Used to date,,,$0.78
