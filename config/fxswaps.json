@@ -94,5 +94,13 @@
         "address": "0xc4a556892887C8684ad46700C6ae2F7Dcb57BAF4",
         "explorer": "https://basescan.org/address/0xc4a556892887C8684ad46700C6ae2F7Dcb57BAF4",
         "curve": ""
-    }   
+    },
+    "12": {
+        "chain_name": "ethereum",
+        "name": "YB crvUSD/tBTC new",
+        "chain_id": 1,
+        "address": "0x18084fbA666a33d37592fA2633fD49a74DD93a88",
+        "explorer": "",
+        "curve": "t"
+    }
 }

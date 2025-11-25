@@ -11,6 +11,7 @@ from pathlib import Path
 def load_fxswap_data(file_path):
     """
     Load fxswap data from Parquet or JSON file.
+    Creates empty files if they don't exist.
 
     Args:
         file_path: Path to the data file (can be .parquet or .json)
@@ -32,8 +33,24 @@ def load_fxswap_data(file_path):
         with open(json_path, 'r') as f:
             return json.load(f)
 
-    # If neither exists, raise error
-    raise FileNotFoundError(f"Data file not found: tried {parquet_path} and {json_path}")
+    # If neither exists, create an empty parquet file with the correct schema
+    # Ensure the directory exists
+    parquet_path.parent.mkdir(parents=True, exist_ok=True)
+    
+    # Create an empty DataFrame with the correct schema and dtypes
+    empty_df = pd.DataFrame({
+        'block_number': pd.Series(dtype='int64'),
+        'function_name': pd.Series(dtype='string'),
+        'value': pd.Series(dtype='float64'),
+        'epoch': pd.Series(dtype='int64'),
+        'human_readable': pd.Series(dtype='string')
+    })
+    
+    # Save the empty parquet file
+    empty_df.to_parquet(parquet_path, engine='pyarrow', compression='snappy', index=False)
+    
+    # Return empty dict (no data yet)
+    return {}
 
 
 def dataframe_to_nested_dict(df):
