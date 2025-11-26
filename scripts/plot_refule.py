@@ -20,7 +20,7 @@ MAKER = "."  # Use this constant instead of the literal maker string
 BLUE = '#3465A4'
 GREEN = '#4E9A06'
 ORANGE = '#F57900'
-TIME_WINDOW_HOURS = 2*24  # Time window for the time_window plot (in hours)
+TIME_WINDOW_HOURS = 7*24  # Time window for the time_window plot (in hours)
 
 # Load fxswap_addresses from fxswaps.json if file exists, else use default.
 fxswaps_path = Path(__file__).parent.parent / "config" / "fxswaps.json"
