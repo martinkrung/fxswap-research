@@ -7,34 +7,34 @@ AERO,502.798,1.062,$533.77
 
 Hodl,,,
 USDC,461.711,1.000,$461.71
-AERO,502.798,0.819,$411.59
-,,,$873.30
+AERO,502.798,0.698,$351.12
+,,,$812.83
 
 Impermanent Loss,,,
 Initial Price Ratio,0.94197,,
-Future Price Ratio,1.22160,,
-Price Change Ratio,1.29686,,
+Future Price Ratio,1.43199,,
+Price Change Ratio,1.52020,,
 
-New USDC,435.9298,1.0000,$435.93
-New AERO,532.5339,0.8186,$435.93
-Value in ($),871.8595,,$871.86
-IL ($),-1.440,,
-IL (%),-0.16%,,
+New USDC,402.6357,1.0000,$402.64
+New AERO,576.5692,0.6983,$402.64
+Value in ($),805.2715,,$805.27
+IL ($),-7.559,,
+IL (%),-0.93%,,
 
 Real Pool,,,
-USDC,618.34,1,$618.34
-AERO,3678.69,0.82,$3011.36
-Value,,,$3629.70
-Fee,,,$2757.84
-Refuel used to date,,,-$4.63
-Earned,,,$2753.22
-APR timespan,12.94,,7799.99%
-APR year,,,7799.99%
-Fee per year,,,$77647.50
-Balance in one year,,,$78642.98
+USDC,462.16,1,$462.16
+AERO,3904.03,0.70,$2726.31
+Value,,,$3188.46
+Fee,,,$2383.19
+Refuel used to date,,,-$5.14
+Earned,,,$2378.05
+APR timespan,25.14,,3468.45%
+APR year,,,3468.45%
+Fee per year,,,$34527.74
+Balance in one year,,,$35523.23
 
 Price Token 0,USDC,1.00,
-Price Token 1,AERO,0.82,
+Price Token 1,AERO,0.70,
 
 Refuel,,,
 2025-11-08 17:42:27,0.009372,,$0.02
@@ -44,5 +44,5 @@ Refuel,,,
 2025-11-08 18:52:27,2.999762,,$6.56
 
 Total added,,,$8.83
-Remaining unused,,,$4.20
-Used to date,,,$4.63
+Remaining unused,,,$3.69
+Used to date,,,$5.14

@@ -5,6 +5,7 @@ import json
 import argparse
 from pathlib import Path
 import csv
+from data_loader import load_fxswap_data
 
 def calculate_impermanent_loss(initial_price_ratio, future_price_ratio):
     """
@@ -546,10 +547,13 @@ def main():
         token0_decimals = 18
         token1_decimals = 18
 
-    # Load pool data
-    json_file_path = Path(__file__).parent.parent / f'data/{chain_name}/{fxswap_address}.json'
-    with open(json_file_path, 'r') as f:
-        pool_data = json.load(f)
+    # Load pool data (supports both Parquet and JSON)
+    data_file_path = Path(f'data/{chain_name}/{fxswap_address}')
+    try:
+        pool_data = load_fxswap_data(data_file_path)
+    except FileNotFoundError as e:
+        print(f"Error: {e}")
+        exit(1)
 
     print(f"\nGenerating financial statements for: {name}")
     print(f"Chain: {chain_name}")

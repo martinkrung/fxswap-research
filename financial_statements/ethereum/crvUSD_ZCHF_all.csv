@@ -7,39 +7,39 @@ ZCHF,7682.671,1.259,$9675.83
 
 Hodl,,,
 crvUSD,10452.502,1.000,$10452.50
-ZCHF,7682.671,1.260,$9681.27
-,,,$20133.77
+ZCHF,7682.671,1.240,$9530.17
+,,,$19982.67
 
 Impermanent Loss,,,
 Initial Price Ratio,0.79401,,
-Future Price Ratio,0.79356,,
-Price Change Ratio,0.99944,,
+Future Price Ratio,0.80614,,
+Price Change Ratio,1.01528,,
 
-New crvUSD,10059.4982,1.0000,$10059.50
-New ZCHF,7982.8172,1.2601,$10059.50
-Value in ($),20118.9964,,$20119.00
-IL ($),-14.777,,
-IL (%),-0.07%,,
+New crvUSD,9980.6878,1.0000,$9980.69
+New ZCHF,8045.8518,1.2405,$9980.69
+Value in ($),19961.3755,,$19961.38
+IL ($),-21.297,,
+IL (%),-0.11%,,
 
 Real Pool,,,
-crvUSD,11894.74,1,$11894.74
-ZCHF,6544.28,1.26,$8246.74
-Value,,,$20141.48
-Fee,,,$22.48
-Refuel used to date,,,-$10.73
-Earned,,,$11.75
-APR timespan,15.93,,1.34%
-APR year,,,1.34%
-Fee per year,,,$269.20
-Balance in one year,,,$20397.53
+crvUSD,8857.85,1,$8857.85
+ZCHF,8974.97,1.24,$11133.23
+Value,,,$19991.08
+Fee,,,$29.71
+Refuel used to date,,,-$18.98
+Earned,,,$10.73
+APR timespan,28.13,,0.69%
+APR year,,,0.69%
+Fee per year,,,$139.19
+Balance in one year,,,$20267.51
 
 Price Token 0,crvUSD,1.00,
-Price Token 1,ZCHF,1.26,
+Price Token 1,ZCHF,1.24,
 
 Refuel,,,
 2025-11-03 11:43:59,8.390048,,$18.78
 2025-11-03 20:55:47,0.089776,,$0.20
 
 Total added,,,$18.98
-Remaining unused,,,$8.25
-Used to date,,,$10.73
+Remaining unused,,,$0.00
+Used to date,,,$18.98

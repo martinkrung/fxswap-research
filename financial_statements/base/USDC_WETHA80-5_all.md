@@ -1,8 +1,8 @@
 # USDC/WETH A80-5
 
-Period: 2025-11-08 15:55:47 to 2025-11-14 13:09:07
+Period: 2025-11-08 15:55:47 to 2025-11-26 17:52:27
 
-Duration: 5.88 days
+Duration: 18.08 days
 
 ## On Start
 
@@ -17,45 +17,45 @@ Duration: 5.88 days
 | Asset | Amount | Price | USD |
 |-------|--------|-------|-----|
 | USDC | 0.582 | 1.000 | $0.58 |
-| WETH | 0.000 | 3251.398 | $0.56 |
-| **Total** | | | **$1.14** |
+| WETH | 0.000 | 3013.828 | $0.52 |
+| **Total** | | | **$1.10** |
 
 ## Impermanent Loss
 
 | Metric | Value |
 |--------|-------|
 | Initial Price Ratio | 0.00030 |
-| Future Price Ratio | 0.00031 |
-| Price Change Ratio | 1.04150 |
+| Future Price Ratio | 0.00033 |
+| Price Change Ratio | 1.12360 |
 
 | Asset | Amount | Price | USD |
 |-------|--------|-------|-----|
-| New USDC | 0.5711 | 1.0000 | $0.57 |
-| New WETH | 0.0002 | 3251.3979 | $0.57 |
-| **Value** | | | **$1.14** |
-| IL ($) | -0.000 | | |
-| IL (%) | -0.02% | | |
+| New USDC | 0.5498 | 1.0000 | $0.55 |
+| New WETH | 0.0002 | 3013.8281 | $0.55 |
+| **Value** | | | **$1.10** |
+| IL ($) | -0.002 | | |
+| IL (%) | -0.16% | | |
 
 ## Real Pool
 
 | Asset | Amount | Price | USD |
 |-------|--------|-------|-----|
-| USDC | 0.20 | 1 | $0.20 |
-| WETH | 0.00 | 3251.40 | $0.95 |
-| **Value** | | | **$1.15** |
-| Fee | | | $0.01 |
-| Refuel used to date | | | -$-15.22 |
-| **Earned** | | | **$15.23** |
+| USDC | 0.89 | 1 | $0.89 |
+| WETH | 0.00 | 3013.83 | $0.25 |
+| **Value** | | | **$1.14** |
+| Fee | | | $0.05 |
+| Refuel used to date | | | -$-13.91 |
+| **Earned** | | | **$13.95** |
 
 | Metric | Value |
 |--------|-------|
-| APR timespan | 5.88 days - 81050.30% |
-| APR year | 81050.30% |
-| Fee per year | $944.71 |
-| Balance in one year | $945.87 |
+| APR timespan | 18.08 days - 24167.82% |
+| APR year | 24167.82% |
+| Fee per year | $281.70 |
+| Balance in one year | $282.86 |
 
 ## Current Prices
 
 - USDC: $1.00
-- WETH: $3251.40
+- WETH: $3013.83
 

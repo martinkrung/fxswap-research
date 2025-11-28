@@ -1,8 +1,8 @@
 # USDC/WETH A20-5
 
-Period: 2025-10-31 15:49:07 to 2025-11-14 13:15:47
+Period: 2025-10-31 15:49:07 to 2025-11-26 17:59:07
 
-Duration: 13.89 days
+Duration: 26.09 days
 
 ## On Start
 
@@ -17,47 +17,47 @@ Duration: 13.89 days
 | Asset | Amount | Price | USD |
 |-------|--------|-------|-----|
 | USDC | 2144.791 | 1.000 | $2,144.79 |
-| WETH | 0.511 | 3128.224 | $1,598.92 |
-| **Total** | | | **$3,743.71** |
+| WETH | 0.511 | 3022.987 | $1,545.13 |
+| **Total** | | | **$3,689.92** |
 
 ## Impermanent Loss
 
 | Metric | Value |
 |--------|-------|
 | Initial Price Ratio | 0.00026 |
-| Future Price Ratio | 0.00032 |
-| Price Change Ratio | 1.23737 |
+| Future Price Ratio | 0.00033 |
+| Price Change Ratio | 1.28044 |
 
 | Asset | Amount | Price | USD |
 |-------|--------|-------|-----|
-| New USDC | 1851.8494 | 1.0000 | $1,851.85 |
-| New WETH | 0.5920 | 3128.2235 | $1,851.85 |
-| **Value** | | | **$3,703.70** |
-| IL ($) | -40.011 | | |
-| IL (%) | -1.07% | | |
+| New USDC | 1820.4338 | 1.0000 | $1,820.43 |
+| New WETH | 0.6022 | 3022.9866 | $1,820.43 |
+| **Value** | | | **$3,640.87** |
+| IL ($) | -49.053 | | |
+| IL (%) | -1.33% | | |
 
 ## Real Pool
 
 | Asset | Amount | Price | USD |
 |-------|--------|-------|-----|
-| USDC | 856.51 | 1 | $856.51 |
-| WETH | 0.88 | 3128.22 | $2,755.14 |
-| **Value** | | | **$3,611.65** |
-| Fee | | | $-92.04 |
-| Refuel used to date | | | -$41.70 |
-| **Earned** | | | **$-133.74** |
+| USDC | 788.38 | 1 | $788.38 |
+| WETH | 0.91 | 3022.99 | $2,755.53 |
+| **Value** | | | **$3,543.91** |
+| Fee | | | $-96.96 |
+| Refuel used to date | | | -$52.05 |
+| **Earned** | | | **$-149.01** |
 
 | Metric | Value |
 |--------|-------|
-| APR timespan | 13.89 days - -85.22% |
-| APR year | -85.22% |
-| Fee per year | $-3,513.62 |
-| Balance in one year | $609.62 |
+| APR timespan | 26.09 days - -50.56% |
+| APR year | -50.56% |
+| Fee per year | $-2,084.64 |
+| Balance in one year | $2,038.60 |
 
 ## Current Prices
 
 - USDC: $1.00
-- WETH: $3128.22
+- WETH: $3022.99
 
 ## Refuel
 
@@ -67,6 +67,6 @@ Duration: 13.89 days
 | 2025-11-04 10:09:07 | 0.116866 | $13.97 |
 | 2025-11-08 20:35:47 | 0.338670 | $40.00 |
 | **Total added** | | **$68.34** |
-| **Remaining unused** | | **$26.64** |
-| **Used to date** | | **$41.70** |
+| **Remaining unused** | | **$16.29** |
+| **Used to date** | | **$52.05** |
 

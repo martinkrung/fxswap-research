@@ -7,39 +7,39 @@ WETH,0.521,3858.972,$2011.74
 
 Hodl,,,
 USDC,2027.691,1.000,$2027.69
-WETH,0.521,3114.101,$1623.43
-,,,$3651.12
+WETH,0.521,3027.324,$1578.19
+,,,$3605.88
 
 Impermanent Loss,,,
 Initial Price Ratio,0.00026,,
-Future Price Ratio,0.00032,,
-Price Change Ratio,1.23919,,
+Future Price Ratio,0.00033,,
+Price Change Ratio,1.27471,,
 
-New USDC,1814.3346,1.0000,$1814.33
-New WETH,0.5826,3114.1005,$1814.33
-Value in ($),3628.6691,,$3628.67
-IL ($),-22.450,,
-IL (%),-0.61%,,
+New USDC,1788.8772,1.0000,$1788.88
+New WETH,0.5909,3027.3243,$1788.88
+Value in ($),3577.7545,,$3577.75
+IL ($),-28.126,,
+IL (%),-0.78%,,
 
 Real Pool,,,
-USDC,1797.36,1,$1797.36
-WETH,0.59,3114.10,$1838.12
-Value,,,$3635.48
-Fee,,,$6.81
-Refuel used to date,,,-$18.83
-Earned,,,$-12.02
-APR timespan,13.91,,-7.81%
-APR year,,,-7.81%
-Fee per year,,,$-315.49
-Balance in one year,,,$3723.94
+USDC,1844.56,1,$1844.56
+WETH,0.58,3027.32,$1741.08
+Value,,,$3585.64
+Fee,,,$7.89
+Refuel used to date,,,-$28.36
+Earned,,,$-20.47
+APR timespan,26.10,,-7.09%
+APR year,,,-7.09%
+Fee per year,,,$-286.22
+Balance in one year,,,$3753.21
 
 Price Token 0,USDC,1.00,
-Price Token 1,WETH,3114.10,
+Price Token 1,WETH,3027.32,
 
 Refuel,,,
 2025-11-03 21:29:07,0.119877,,$14.37
 2025-11-04 10:12:27,0.118202,,$13.98
 
 Total added,,,$28.36
-Remaining unused,,,$9.53
-Used to date,,,$18.83
+Remaining unused,,,$0.00
+Used to date,,,$28.36

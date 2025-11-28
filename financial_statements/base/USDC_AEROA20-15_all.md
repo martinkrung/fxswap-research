@@ -1,8 +1,8 @@
 # USDC/AERO A20-15
 
-Period: 2025-11-01 14:35:47 to 2025-11-14 13:12:27
+Period: 2025-11-01 14:35:47 to 2025-11-26 17:55:47
 
-Duration: 12.94 days
+Duration: 25.14 days
 
 ## On Start
 
@@ -17,47 +17,47 @@ Duration: 12.94 days
 | Asset | Amount | Price | USD |
 |-------|--------|-------|-----|
 | USDC | 461.711 | 1.000 | $461.71 |
-| AERO | 502.798 | 0.819 | $411.59 |
-| **Total** | | | **$873.30** |
+| AERO | 502.798 | 0.698 | $351.12 |
+| **Total** | | | **$812.83** |
 
 ## Impermanent Loss
 
 | Metric | Value |
 |--------|-------|
 | Initial Price Ratio | 0.94197 |
-| Future Price Ratio | 1.22160 |
-| Price Change Ratio | 1.29686 |
+| Future Price Ratio | 1.43199 |
+| Price Change Ratio | 1.52020 |
 
 | Asset | Amount | Price | USD |
 |-------|--------|-------|-----|
-| New USDC | 435.9298 | 1.0000 | $435.93 |
-| New AERO | 532.5339 | 0.8186 | $435.93 |
-| **Value** | | | **$871.86** |
-| IL ($) | -1.440 | | |
-| IL (%) | -0.16% | | |
+| New USDC | 402.6357 | 1.0000 | $402.64 |
+| New AERO | 576.5692 | 0.6983 | $402.64 |
+| **Value** | | | **$805.27** |
+| IL ($) | -7.559 | | |
+| IL (%) | -0.93% | | |
 
 ## Real Pool
 
 | Asset | Amount | Price | USD |
 |-------|--------|-------|-----|
-| USDC | 618.34 | 1 | $618.34 |
-| AERO | 3678.69 | 0.82 | $3,011.36 |
-| **Value** | | | **$3,629.70** |
-| Fee | | | $2757.84 |
-| Refuel used to date | | | -$4.63 |
-| **Earned** | | | **$2753.22** |
+| USDC | 462.16 | 1 | $462.16 |
+| AERO | 3904.03 | 0.70 | $2,726.31 |
+| **Value** | | | **$3,188.46** |
+| Fee | | | $2383.19 |
+| Refuel used to date | | | -$5.14 |
+| **Earned** | | | **$2378.05** |
 
 | Metric | Value |
 |--------|-------|
-| APR timespan | 12.94 days - 7799.99% |
-| APR year | 7799.99% |
-| Fee per year | $77,647.50 |
-| Balance in one year | $78,642.98 |
+| APR timespan | 25.14 days - 3468.45% |
+| APR year | 3468.45% |
+| Fee per year | $34,527.74 |
+| Balance in one year | $35,523.23 |
 
 ## Current Prices
 
 - USDC: $1.00
-- AERO: $0.82
+- AERO: $0.70
 
 ## Refuel
 
@@ -69,6 +69,6 @@ Duration: 12.94 days
 | 2025-11-08 18:35:47 | 0.999940 | $2.18 |
 | 2025-11-08 18:52:27 | 2.999762 | $6.56 |
 | **Total added** | | **$8.83** |
-| **Remaining unused** | | **$4.20** |
-| **Used to date** | | **$4.63** |
+| **Remaining unused** | | **$3.69** |
+| **Used to date** | | **$5.14** |
 

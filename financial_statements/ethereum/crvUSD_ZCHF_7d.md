@@ -1,6 +1,6 @@
 # crvUSD/ZCHF
 
-Period: 2025-11-07 13:22:47 to 2025-11-14 13:19:11
+Period: 2025-11-19 18:11:35 to 2025-11-26 18:08:23
 
 Duration: 7.00 days
 
@@ -8,54 +8,54 @@ Duration: 7.00 days
 
 | Asset | Amount | Price | USD |
 |-------|--------|-------|-----|
-| crvUSD | 10215.626 | 1.000 | $10,215.63 |
-| ZCHF | 7878.055 | 1.241 | $9,776.15 |
-| **Total** | | | **$19,991.77** |
+| crvUSD | 8974.122 | 1.000 | $8,974.12 |
+| ZCHF | 8876.103 | 1.248 | $11,073.70 |
+| **Total** | | | **$20,047.82** |
 
 ## Hodl
 
 | Asset | Amount | Price | USD |
 |-------|--------|-------|-----|
-| crvUSD | 10215.626 | 1.000 | $10,215.63 |
-| ZCHF | 7878.055 | 1.260 | $9,927.48 |
-| **Total** | | | **$20,143.11** |
+| crvUSD | 8974.122 | 1.000 | $8,974.12 |
+| ZCHF | 8876.103 | 1.240 | $11,010.59 |
+| **Total** | | | **$19,984.72** |
 
 ## Impermanent Loss
 
 | Metric | Value |
 |--------|-------|
-| Initial Price Ratio | 0.80584 |
-| Future Price Ratio | 0.79356 |
-| Price Change Ratio | 0.98476 |
+| Initial Price Ratio | 0.80155 |
+| Future Price Ratio | 0.80614 |
+| Price Change Ratio | 1.00573 |
 
 | Asset | Amount | Price | USD |
 |-------|--------|-------|-----|
-| New crvUSD | 10070.5241 | 1.0000 | $10,070.52 |
-| New ZCHF | 7991.5669 | 1.2601 | $10,070.52 |
-| **Value** | | | **$20,141.05** |
-| IL ($) | -2.061 | | |
-| IL (%) | -0.01% | | |
+| New crvUSD | 9940.3431 | 1.0000 | $9,940.34 |
+| New ZCHF | 8013.3283 | 1.2405 | $9,940.34 |
+| **Value** | | | **$19,880.69** |
+| IL ($) | -104.031 | | |
+| IL (%) | -0.52% | | |
 
 ## Real Pool
 
 | Asset | Amount | Price | USD |
 |-------|--------|-------|-----|
-| crvUSD | 11894.74 | 1 | $11,894.74 |
-| ZCHF | 6544.28 | 1.26 | $8,246.74 |
-| **Value** | | | **$20,141.48** |
-| Fee | | | $0.43 |
-| Refuel used to date | | | -$-8.25 |
-| **Earned** | | | **$8.68** |
+| crvUSD | 8857.85 | 1 | $8,857.85 |
+| ZCHF | 8974.97 | 1.24 | $11,133.23 |
+| **Value** | | | **$19,991.08** |
+| Fee | | | $110.40 |
+| Refuel used to date | | | -$0.00 |
+| **Earned** | | | **$110.40** |
 
 | Metric | Value |
 |--------|-------|
-| APR timespan | 7.00 days - 2.26% |
-| APR year | 2.26% |
-| Fee per year | $452.50 |
-| Balance in one year | $20,444.28 |
+| APR timespan | 7.00 days - 28.72% |
+| APR year | 28.72% |
+| Fee per year | $5,758.16 |
+| Balance in one year | $25,805.98 |
 
 ## Current Prices
 
 - crvUSD: $1.00
-- ZCHF: $1.26
+- ZCHF: $1.24
 

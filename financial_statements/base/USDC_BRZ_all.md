@@ -1,8 +1,8 @@
 # USDC/BRZ
 
-Period: 2025-11-05 17:42:27 to 2025-11-14 13:05:47
+Period: 2025-11-05 17:42:27 to 2025-11-26 17:45:47
 
-Duration: 8.81 days
+Duration: 21.00 days
 
 ## On Start
 
@@ -17,42 +17,42 @@ Duration: 8.81 days
 | Asset | Amount | Price | USD |
 |-------|--------|-------|-----|
 | USDC | 9279.058 | 1.000 | $9,279.06 |
-| BRZ | 57470.167 | 0.187 | $10,767.96 |
-| **Total** | | | **$20,047.01** |
+| BRZ | 57470.167 | 0.186 | $10,669.79 |
+| **Total** | | | **$19,948.85** |
 
 ## Impermanent Loss
 
 | Metric | Value |
 |--------|-------|
 | Initial Price Ratio | 5.39056 |
-| Future Price Ratio | 5.33715 |
-| Price Change Ratio | 0.99009 |
+| Future Price Ratio | 5.38625 |
+| Price Change Ratio | 0.99920 |
 
 | Asset | Amount | Price | USD |
 |-------|--------|-------|-----|
-| New USDC | 9995.8237 | 1.0000 | $9,995.82 |
-| New BRZ | 53349.1813 | 0.1874 | $9,995.82 |
-| **Value** | | | **$19,991.65** |
-| IL ($) | -55.367 | | |
-| IL (%) | -0.28% | | |
+| New USDC | 9950.1565 | 1.0000 | $9,950.16 |
+| New BRZ | 53594.0329 | 0.1857 | $9,950.16 |
+| **Value** | | | **$19,900.31** |
+| IL ($) | -48.537 | | |
+| IL (%) | -0.24% | | |
 
 ## Real Pool
 
 | Asset | Amount | Price | USD |
 |-------|--------|-------|-----|
-| USDC | 10832.48 | 1 | $10,832.48 |
-| BRZ | 49184.13 | 0.19 | $9,215.44 |
-| **Value** | | | **$20,047.92** |
-| Fee | | | $56.27 |
-| Refuel used to date | | | -$-31.34 |
-| **Earned** | | | **$87.61** |
+| USDC | 10527.46 | 1 | $10,527.46 |
+| BRZ | 50811.26 | 0.19 | $9,433.51 |
+| **Value** | | | **$19,960.97** |
+| Fee | | | $60.66 |
+| Refuel used to date | | | -$-12.16 |
+| **Earned** | | | **$72.82** |
 
 | Metric | Value |
 |--------|-------|
-| APR timespan | 8.81 days - 18.21% |
-| APR year | 18.21% |
-| Fee per year | $3,630.62 |
-| Balance in one year | $23,570.94 |
+| APR timespan | 21.00 days - 6.35% |
+| APR year | 6.35% |
+| Fee per year | $1,265.59 |
+| Balance in one year | $21,205.91 |
 
 ## Current Prices
 

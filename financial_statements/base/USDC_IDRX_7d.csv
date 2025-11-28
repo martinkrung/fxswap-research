@@ -1,37 +1,37 @@
 USDC/IDRX
 
 On Start,Amount,Price,USD
-USDC,7387.546,1.000,$7387.55
+USDC,7431.915,1.000,$7431.92
 IDRX,0.000,0.000,$0.00
-,,,$7387.55
+,,,$7431.92
 
 Hodl,,,
-USDC,7387.546,1.000,$7387.55
+USDC,7431.915,1.000,$7431.92
 IDRX,0.000,0.000,$0.00
-,,,$7387.55
+,,,$7431.92
 
 Impermanent Loss,,,
-Initial Price Ratio,16754.14337,,
-Future Price Ratio,16750.49466,,
-Price Change Ratio,0.99978,,
+Initial Price Ratio,16723.60604,,
+Future Price Ratio,16673.61761,,
+Price Change Ratio,0.99701,,
 
 New USDC,0.0001,1.0000,$0.00
-New IDRX,1.2523,0.0001,$0.00
+New IDRX,1.2498,0.0001,$0.00
 Value in ($),0.0001,,$0.00
-IL ($),-7387.546,,
+IL ($),-7431.915,,
 IL (%),-100.00%,,
 
 Real Pool,,,
-USDC,7475.77,1,$7475.77
+USDC,7896.89,1,$7896.89
 IDRX,0.00,0.00,$0.00
-Value,,,$7475.77
-Fee,,,$7475.77
-Refuel used to date,,,-$-1.80
-Earned,,,$7477.57
-APR timespan,7.00,,5277.82%
-APR year,,,5277.82%
-Fee per year,,,$389901.72
-Balance in one year,,,$397289.27
+Value,,,$7896.89
+Fee,,,$7896.89
+Refuel used to date,,,-$0.00
+Earned,,,$7896.89
+APR timespan,7.00,,5540.51%
+APR year,,,5540.51%
+Fee per year,,,$411766.34
+Balance in one year,,,$419198.25
 
 Price Token 0,USDC,1.00,
 Price Token 1,IDRX,0.00,
@@ -39,5 +39,5 @@ Price Token 1,IDRX,0.00,
 Refuel,,,
 
 Total added,,,$0.00
-Remaining unused,,,$1.80
-Used to date,,,$-1.80
+Remaining unused,,,$0.00
+Used to date,,,$0.00
