@@ -8,3 +8,6 @@ python scripts/plot_supply_shares.py --index=8
 python scripts/plot_refule.py --index=7
 python scripts/generate_financial_statements.py --index=7
 python scripts/plot_supply_shares.py --index=7
+python scripts/plot_refule.py --index=12
+python scripts/generate_financial_statements.py --index=12
+python scripts/plot_supply_shares.py --index=12
