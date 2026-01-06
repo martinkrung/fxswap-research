@@ -2,6 +2,7 @@ from web3 import Web3
 import os
 import json
 import time
+import sys
 from eth_utils import keccak
 from pathlib import Path
 from datetime import datetime, timezone
@@ -39,6 +40,7 @@ else:
 # Parse command line arguments
 parser = argparse.ArgumentParser(description='Collect historical data for fxswap pools')
 parser.add_argument('--index', type=int, default=0, help='Index of the pool to query (default: 0)')
+parser.add_argument('--skip-blocks', type=int, default=0, help='Number of blocks to skip from latest before starting (default: 0)')
 args = parser.parse_args()
 
 index = args.index
@@ -70,7 +72,9 @@ match chain_id:
         block_number = latest_block - (latest_block % 100)
         min_block_threshold = 37524600  # Base chain minimum block
     case 1:
-        block_number = latest_block - (latest_block % 20)
+        # Start from latest block minus skip_blocks, rounded down to the nearest multiple of 20
+        start_block = latest_block - args.skip_blocks
+        block_number = start_block - (start_block % 20)
         # force to pull data at a specific block
         # block_number = 23736660
         # Ethereum: set to 0 or a reasonable minimum (e.g., deployment block)
@@ -321,7 +325,7 @@ SAVE_INTERVAL = 100  # Save every 20 blocks processed
 consecutive_cached_blocks = 0
 # Increase threshold to allow more blocks to be processed
 # For Ethereum: 400 iterations * 20 blocks = 8000 blocks ≈ 3 days at 14s block time
-MAX_CONSECUTIVE_CACHED = 50  # Increased from 10 to allow more cached blocks before stopping
+MAX_CONSECUTIVE_CACHED = 5000  # Increased from 10 to allow more cached blocks before stopping
 
 # override decimals if USDC is in the name
 if has_USDC(name):
@@ -524,7 +528,7 @@ for i in range(3000):
                     save_cache(cache, force=True)
                     should_stop = True
                     break
-                time.sleep(0.01)
+                time.sleep(0.001)
             if should_stop:
                 break
             # Save after processing uncached functions if it's time for interval save
@@ -576,7 +580,7 @@ for i in range(3000):
                 should_stop = True
                 break
             
-            time.sleep(0.01)
+            time.sleep(0.001)
         
         # Save after processing uncached functions if it's time for interval save
         # Only save if something actually changed (_cache_dirty will be True if new data was written)
