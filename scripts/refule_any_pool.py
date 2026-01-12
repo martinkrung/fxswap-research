@@ -11,6 +11,7 @@ from eth_utils import keccak
 import requests
 from pathlib import Path
 import time
+import argparse
 """
 This script is used to refuel a Curve FXSwap pool by adding liquidity.
 """
@@ -29,6 +30,11 @@ print(f"XSCAN_API_URI_ONLY: {XSCAN_API_URI_ONLY}")
 print(f"XSCAN_CHAIN_ID: {XSCAN_CHAIN_ID}")
 print(f"RPC: {RPC}")
 print(f"SINGER: {SINGER}")
+
+# Parse command line arguments
+parser = argparse.ArgumentParser(description='Refuel a Curve FXSwap pool by adding liquidity')
+parser.add_argument('--index', '-i', type=int, required=True, help='Pool index from fxswaps.json config (e.g., 8 for crvUSD/ZCHF)')
+args = parser.parse_args()
 
 def account_load(fname):
     path = os.path.expanduser(os.path.join('~', '.ape', 'accounts', fname + '.json'))
@@ -105,9 +111,21 @@ else:
     print(f"fxswaps.json not found at {fxswaps_path}, using empty dictionary")
     fxswap_addresses = {}
 
+# Validate the provided index
+if args.index not in fxswap_addresses:
+    print(f"Error: Pool index {args.index} not found in fxswaps.json")
+    available = sorted(fxswap_addresses.keys())
+    print(f"Available indices: {available}")
+    sys.exit(1)
 
-index = 8
+# Check chain ID match
+if fxswap_addresses[args.index]['chain_id'] != chain_id:
+    print(f"Warning: Pool is on chain_id {fxswap_addresses[args.index]['chain_id']}, but RPC is configured for chain_id {chain_id}. Proceeding anyway.")
+
+index = args.index
 fxswap_address = fxswap_addresses[index]["address"]
+
+print(f"Selected pool: {fxswap_addresses[index]['name']} at {fxswap_address}")
 
 # Get fxswap contract ABI and create contract instance
 fxswap_abi = get_abi_from_etherscan(fxswap_address)
