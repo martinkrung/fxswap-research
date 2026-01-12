@@ -1,0 +1,11 @@
+vyper
+titanoboa
+pandas
+matplotlib
+numpy
+web3
+eth-utils
+pyarrow
+parquet-tools
+seaborn
+scipy
