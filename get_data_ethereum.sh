@@ -2,5 +2,9 @@
 source .env_ethereum
 
 # then get data
-python scripts/get_historical_data.py --index 8
+
+python scripts/fill_missing_fxswap_data.py --index 8
+python scripts/fill_missing_fxswap_data.py --index 13
+python scripts/fill_missing_fxswap_data.py --index 7
+python scripts/fill_missing_fxswap_data.py --index 12
 #python scripts/get_historical_data.py --index 7
