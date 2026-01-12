@@ -12,8 +12,9 @@ Key workflow:
     4. Persist updates back to the Parquet dataset (unless ``--dry-run``).
 
 By default the backfill begins at the pool's ``first_block`` from
-``config/fxswaps.json`` (rounded down to the stride). Use ``--min-block`` to
+``config/fxswaps.json`` (rounded up to the stride). Use ``--min-block`` to
 override this floor or ``--max-blocks`` to cap the number of iterations.
+Requires ``first_block`` in config; pools without it are skipped.
 
 Examples
 --------
@@ -368,29 +369,36 @@ def process_pool(
     existing_blocks = load_existing_blocks(parquet_path)
 
     config_first_block = pool.get("first_block")
+    if config_first_block is None:
+        logging.warning(
+            "Pool #%s %s (%s) missing first_block in config; skipping",
+            pool_index,
+            name,
+            chain_name,
+        )
+        return {"fetched": 0, "missing": 0}
+
     effective_min_block: Optional[int]
     if args.min_block is not None:
         effective_min_block = int(args.min_block)
-    elif config_first_block is not None:
+    else:
         try:
             effective_min_block = int(config_first_block)
         except (TypeError, ValueError):
-            logging.warning(
-                "Pool #%s %s (%s) has non-integer first_block=%s in config; falling back to cached data",
+            logging.error(
+                "Pool #%s %s (%s) has invalid first_block=%s in config; skipping",
                 pool_index,
                 name,
                 chain_name,
                 config_first_block,
             )
-            effective_min_block = None
-    else:
-        effective_min_block = None
+            return {"fetched": 0, "missing": 0}
 
     if effective_min_block is not None:
         effective_min_block = max(0, effective_min_block)
         remainder = effective_min_block % stride
         if remainder != 0:
-            effective_min_block -= remainder
+            effective_min_block += (stride - remainder)  # round up to next stride
 
     missing_blocks = determine_target_blocks(
         latest_aligned=latest_aligned,
