@@ -1,0 +1,121 @@
+name: Collect FXSwap Data Hourly
+
+on:
+  schedule:
+    # Run every hour at minute 0
+    - cron: '0 * * * *'
+  workflow_dispatch:  # Allow manual triggering
+
+jobs:
+  collect-data:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write  # Required to push changes
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for proper git operations
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Configure git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Collect data for all pools
+        env:
+          RPC: ${{ secrets.ALCHEMY_RPC_URL }}
+        run: |
+          # Create a log file with timestamp
+          LOG_FILE="logs/data_collection_$(date +%Y%m%d_%H%M%S).log"
+          mkdir -p logs
+
+          echo "Starting data collection at $(date)" | tee -a "$LOG_FILE"
+          echo "========================================" | tee -a "$LOG_FILE"
+
+          # Array of pool indices to collect data for
+          # Based on config/fxswaps.json: pools 0-12
+          POOL_INDICES=(0 1 2 3 4 5 6 9 10 11 12)
+
+          # Track success/failure
+          SUCCESS_COUNT=0
+          FAILED_POOLS=()
+
+          for index in "${POOL_INDICES[@]}"; do
+            echo "" | tee -a "$LOG_FILE"
+            echo "Collecting data for pool index $index..." | tee -a "$LOG_FILE"
+            echo "----------------------------------------" | tee -a "$LOG_FILE"
+
+            if python scripts/get_historical_data.py --index=$index 2>&1 | tee -a "$LOG_FILE"; then
+              echo "✓ Successfully collected data for pool index $index" | tee -a "$LOG_FILE"
+              SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
+            else
+              echo "✗ Failed to collect data for pool index $index" | tee -a "$LOG_FILE"
+              FAILED_POOLS+=($index)
+            fi
+
+            # Small delay between collections to avoid rate limiting
+            sleep 2
+          done
+
+          echo "" | tee -a "$LOG_FILE"
+          echo "========================================" | tee -a "$LOG_FILE"
+          echo "Data collection completed at $(date)" | tee -a "$LOG_FILE"
+          echo "Successful collections: $SUCCESS_COUNT/${#POOL_INDICES[@]}" | tee -a "$LOG_FILE"
+
+          if [ ${#FAILED_POOLS[@]} -gt 0 ]; then
+            echo "Failed pools: ${FAILED_POOLS[*]}" | tee -a "$LOG_FILE"
+            # Don't fail the workflow, just report failures
+          fi
+
+          # Save log file path for later use
+          echo "LOG_FILE=$LOG_FILE" >> $GITHUB_ENV
+
+      - name: Check for changes
+        id: check_changes
+        run: |
+          # Check if there are any changes to commit
+          if git diff --quiet && git diff --cached --quiet; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "No changes to commit"
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "Changes detected"
+            git status
+          fi
+
+      - name: Commit and push changes
+        if: steps.check_changes.outputs.has_changes == 'true'
+        run: |
+          # Add all parquet files (logs are kept as artifacts only)
+          git add data/**/*.parquet
+
+          # Create commit with timestamp
+          TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          git commit -m "chore: automated data collection - $TIMESTAMP" \
+                     -m "Collected data for all configured FXSwap pools" \
+                     -m "Workflow run: ${{ github.run_number }}"
+
+          # Push changes
+          git push
+
+      - name: Upload log as artifact
+        if: always()  # Upload logs even if the workflow fails
+        uses: actions/upload-artifact@v4
+        with:
+          name: data-collection-log-${{ github.run_number }}
+          path: logs/*.log
+          retention-days: 30
