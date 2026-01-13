@@ -107,7 +107,7 @@
         "first_block": 23433543
     },
     "13": {
-        "name": "USDC/WETH A3-5 ng",
+        "name": "USDC/WETH A03-5 ng",
         "chain_name": "base",
         "chain_id": 8453,
         "address": "0xF2EcC3A2dEFB4ECC1Ac510CBbc405a539A990BE4",
@@ -116,7 +116,7 @@
         "first_block": 40596396
     },
     "14": {
-        "name": "USDC/WETH A5-5 ng",
+        "name": "USDC/WETH A05-5 ng",
         "chain_name": "base",
         "chain_id": 8453,
         "address": "0x1090a57182746d1b4Dad650459d474fe8a023cec",
