@@ -1,24 +1,25 @@
 #!/usr/bin/env python3
 
-import boa
 import json
 import os
 from getpass import getpass
+
+import boa
 from eth_account import account
-import sys
-import math
 from eth_utils import keccak
+
+
 """
 This script is used to deploy a Curve pool using the stablepool factory contract.
 It unpacks the packed parameters from deployment data and calls the deploy_pool function.
 """
 
 # Load environment variables with `source .env_optimism`
-XSCAN_API_URI = os.getenv('XSCAN_API_URI')
-XSCAN_API_KEY = os.getenv('XSCAN_API_KEY')
-RPC = os.getenv('RPC')
-SINGER = os.getenv('SINGER')
-TWOCRYPTO_FACTORY = os.getenv('TWOCRYPTO_FACTORY')
+XSCAN_API_URI = os.getenv("XSCAN_API_URI")
+XSCAN_API_KEY = os.getenv("XSCAN_API_KEY")
+RPC = os.getenv("RPC")
+SINGER = os.getenv("SINGER")
+TWOCRYPTO_FACTORY = os.getenv("TWOCRYPTO_FACTORY")
 
 print(f"XSCAN_API_KEY: {XSCAN_API_KEY}")
 print(f"XSCAN_API_URI: {XSCAN_API_URI}")
@@ -26,10 +27,11 @@ print(f"RPC: {RPC}")
 print(f"SINGER: {SINGER}")
 print(f"STABLEPOOL_FACTORY: {TWOCRYPTO_FACTORY}")
 
+
 def account_load(fname):
-    path = os.path.expanduser(os.path.join('~', '.ape', 'accounts', fname + '.json'))
+    path = os.path.expanduser(os.path.join("~", ".ape", "accounts", fname + ".json"))
     print(f"Loading account from: {path}")
-    with open(path, 'r') as f:
+    with open(path) as f:
         pkey = account.decode_keyfile_json(json.load(f), getpass())
         acc = account.Account.from_key(pkey)
         print(f"Account loaded: {acc.address}")
@@ -40,7 +42,7 @@ signer = account_load(SINGER)
 
 
 SIM = False
-'''
+"""
 if not SIM:
     private_key = decrypt_private_key(os.environ.get("ENCRYPTED_PK"), getpass())
     if not private_key:
@@ -48,26 +50,23 @@ if not SIM:
 else:
     private_key = os.environ.get("WEB3_TESTNET_PK")
 deployer = Account.from_key(private_key)
-'''
+"""
 
 # Setup boa environment
 if SIM:
     boa.fork(RPC)
 else:
-#    boa.fork(RPC)
+    #    boa.fork(RPC)
     boa.set_network_env(RPC)
     boa.env.add_account(signer)
 boa.env.eoa = signer.address
 
 print(
-    f"Chain: {boa.env.evm.patch.chain_id}, Deployer: {signer.address}, Balance: {boa.env.get_balance(signer.address)/1e18}"
+    f"Chain: {boa.env.evm.patch.chain_id}, Deployer: {signer.address}, Balance: {boa.env.get_balance(signer.address) / 1e18}"
 )
 
 factory_contract = boa.from_etherscan(
-    TWOCRYPTO_FACTORY,
-    name="stablepool_factory",
-    chain_id=8453,
-    api_key=XSCAN_API_KEY
+    TWOCRYPTO_FACTORY, name="stablepool_factory", chain_id=8453, api_key=XSCAN_API_KEY
 )
 
 
@@ -81,7 +80,7 @@ params = {
     "_symbol": "USDC/EURC A50-5",
     "_coins": [coin0_address, coin1_address],
     "implementation_id": int(keccak(text="fx50").hex(), 16),
-    "A": 50*10000,
+    "A": 50 * 10000,
     "gamma": int(10**18 * 0.001),  # irrelevant for fx pools
     "mid_fee": int(10**10 * 5 / 10_000),  # in bps
     "out_fee": int(10**10 * 10 / 10_000),  # in bps
@@ -89,7 +88,7 @@ params = {
     "allowed_extra_profit": int(10**18 * 1e-12),  # 1e-12
     "adjustment_step": int(10**18 * 1e-5),  # 1e-7
     "ma_exp_time": int(86400 / 24),  # 1h
-    "initial_price": int(1.155 * 10**18), # 1.155 EURC per USDC
+    "initial_price": int(1.155 * 10**18),  # 1.155 EURC per USDC
 }
 
 
@@ -101,7 +100,7 @@ params = {
 # USDC/WETH A80-5 A=800000, mid_fee=5, out_fee=20, fee in bps, adjustment_step 1e-4, allowed_extra_profit 1e-15
 
 
-print(f"Deploying pool with parameters:")
+print("Deploying pool with parameters:")
 print(f"name: {params['_name']}")
 print(f"symbol: {params['_symbol']}")
 print(f"coins: {params['_coins']}")
@@ -122,7 +121,6 @@ if SIM:
         print(f"Pool deployed to: {pool_address}")
 else:
     pool_address = factory_contract.deploy_pool(
-        **params, 
-        sender=signer.address, 
-        gas=5_500_000)
+        **params, sender=signer.address, gas=5_500_000
+    )
     print(f"Pool deployed to: {pool_address}")

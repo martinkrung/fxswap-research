@@ -1,0 +1,23 @@
+[tool.ruff]
+# Target Python version
+target-version = "py312"
+
+# Same as Black.
+line-length = 88
+
+[tool.ruff.lint]
+# Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`)  codes by default.
+# Unlike Flake8, Ruff doesn't enable all `E` codes by default.
+# (I) isort, (B) bugbear, (C4) comprehensions, (UP) upgrade
+select = ["E", "F", "I", "B", "C4", "UP"]
+ignore = ["E501"] # Line length (handled by formatter)
+
+[tool.ruff.lint.isort]
+combine-as-imports = true
+lines-after-imports = 2
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "lf"

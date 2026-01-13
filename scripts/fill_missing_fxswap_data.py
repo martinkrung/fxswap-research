@@ -40,15 +40,16 @@ import os
 import re
 import tempfile
 from collections import defaultdict
-from datetime import datetime, timezone
+from collections.abc import Iterable, Sequence
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Dict, Iterable, Iterator, List, Optional, Sequence, Tuple
 
 import pandas as pd
 import pyarrow.parquet as pq
 from eth_utils.crypto import keccak
 from web3 import Web3
 from web3.exceptions import BlockNotFound
+
 
 try:  # Optional progress bar support
     from tqdm import tqdm
@@ -63,6 +64,7 @@ except ImportError:  # pragma: no cover - tqdm not installed
 
 from update_fxswap_blocks import RpcRegistry, build_parquet_index, load_config
 
+
 ROOT_DIR = Path(__file__).resolve().parent.parent
 DEFAULT_CONFIG_PATH = ROOT_DIR / "config" / "fxswaps.json"
 DATA_ROOT = ROOT_DIR / "data"
@@ -73,7 +75,7 @@ CHAIN_STRIDE = {
     BASE_CHAIN_ID: 100,
     ETHEREUM_CHAIN_ID: 20,
 }
-DEFAULT_MAX_BLOCKS: Optional[int] = None
+DEFAULT_MAX_BLOCKS: int | None = None
 DEFAULT_CHUNK_SIZE = 50
 
 FUNCTION_NAMES = [
@@ -93,7 +95,7 @@ FUNCTION_NAMES = [
 ]
 
 
-def get_function_selector_any(func: str) -> Tuple[str, Optional[str]]:
+def get_function_selector_any(func: str) -> tuple[str, str | None]:
     matcher = re.match(r"(\w+)\((.*?)\)$", func)
     if matcher:
         fn_name, params = matcher.group(1), matcher.group(2)
@@ -107,7 +109,9 @@ def get_function_selector_any(func: str) -> Tuple[str, Optional[str]]:
         try:
             param_value = int(params)
         except ValueError:
-            raise ValueError(f"Unsupported parameter format in function '{func}'") from None
+            raise ValueError(
+                f"Unsupported parameter format in function '{func}'"
+            ) from None
         encoded_param = param_value.to_bytes(32, "big").hex()
         return selector, encoded_param
     # fallback assume no params
@@ -122,7 +126,9 @@ def get_call_data(function_name: str) -> str:
 
 
 FUNCTION_CALL_DATA = {name: get_call_data(name) for name in FUNCTION_NAMES}
-MULTICALL3_ADDRESS = Web3.to_checksum_address("0xcA11bde05977b3631167028862bE2a173976CA11")
+MULTICALL3_ADDRESS = Web3.to_checksum_address(
+    "0xcA11bde05977b3631167028862bE2a173976CA11"
+)
 MULTICALL3_ABI = [
     {
         "inputs": [
@@ -155,8 +161,7 @@ MULTICALL3_ABI = [
 ]
 
 
-
-def load_existing_blocks(parquet_path: Path) -> List[int]:
+def load_existing_blocks(parquet_path: Path) -> list[int]:
     if not parquet_path.exists():
         return []
     try:
@@ -167,9 +172,13 @@ def load_existing_blocks(parquet_path: Path) -> List[int]:
 
     blocks: set[int] = set()
     try:
-        for batch in parquet_file.iter_batches(columns=["block_number"], batch_size=100_000):
+        for batch in parquet_file.iter_batches(
+            columns=["block_number"], batch_size=100_000
+        ):
             column = batch.column(0)
-            blocks.update(int(value) for value in column.to_pylist() if value is not None)
+            blocks.update(
+                int(value) for value in column.to_pylist() if value is not None
+            )
     except KeyError:
         logging.warning("Column 'block_number' missing in %s", parquet_path)
     return sorted(blocks)
@@ -180,9 +189,9 @@ def determine_target_blocks(
     latest_aligned: int,
     stride: int,
     existing_blocks: Sequence[int],
-    min_block: Optional[int],
-    max_blocks: Optional[int],
-) -> List[int]:
+    min_block: int | None,
+    max_blocks: int | None,
+) -> list[int]:
     if latest_aligned < 0:
         return []
 
@@ -193,7 +202,7 @@ def determine_target_blocks(
     step_limit = max_blocks
 
     existing_set = set(existing_blocks)
-    missing: List[int] = []
+    missing: list[int] = []
 
     block = latest_aligned
     steps = 0
@@ -208,7 +217,7 @@ def determine_target_blocks(
     return missing
 
 
-def resolve_decimals(pool_name: str) -> Tuple[int, int]:
+def resolve_decimals(pool_name: str) -> tuple[int, int]:
     token0_decimals = 18
     token1_decimals = 18
     if "USDC" in pool_name.upper():
@@ -219,7 +228,9 @@ def resolve_decimals(pool_name: str) -> Tuple[int, int]:
     return token0_decimals, token1_decimals
 
 
-def convert_result(function_name: str, raw: bytes, token_decimals: Tuple[int, int]) -> float:
+def convert_result(
+    function_name: str, raw: bytes, token_decimals: tuple[int, int]
+) -> float:
     if not raw:
         return 0.0
     result_int = int.from_bytes(raw, "big")
@@ -236,9 +247,9 @@ def fetch_block_snapshot(
     multicall_contract,
     address: str,
     block_number: int,
-    token_decimals: Tuple[int, int],
+    token_decimals: tuple[int, int],
     silent: bool,
-) -> Optional[List[Dict[str, object]]]:
+) -> list[dict[str, object]] | None:
     try:
         block_data = w3.eth.get_block(block_number)
     except BlockNotFound:
@@ -246,7 +257,9 @@ def fetch_block_snapshot(
         return None
 
     timestamp = int(block_data["timestamp"])
-    human_readable = datetime.fromtimestamp(timestamp, timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
+    human_readable = datetime.fromtimestamp(timestamp, UTC).strftime(
+        "%Y-%m-%d %H:%M:%S UTC"
+    )
 
     calls = [
         {
@@ -258,20 +271,31 @@ def fetch_block_snapshot(
     ]
 
     try:
-        results = multicall_contract.functions.aggregate3(calls).call(block_identifier=block_number)
+        results = multicall_contract.functions.aggregate3(calls).call(
+            block_identifier=block_number
+        )
     except Exception as exc:
-        logging.warning("aggregate3 failed for block %s: %s -- retrying with single calls", block_number, exc)
+        logging.warning(
+            "aggregate3 failed for block %s: %s -- retrying with single calls",
+            block_number,
+            exc,
+        )
         results = []
         for fn in FUNCTION_NAMES:
             try:
-                raw = w3.eth.call({"to": address, "data": FUNCTION_CALL_DATA[fn]}, block_identifier=block_number)
+                raw = w3.eth.call(
+                    {"to": address, "data": FUNCTION_CALL_DATA[fn]},
+                    block_identifier=block_number,
+                )
                 results.append((True, raw))
             except Exception as call_exc:
-                logging.error("call() failed for %s at block %s: %s", fn, block_number, call_exc)
+                logging.error(
+                    "call() failed for %s at block %s: %s", fn, block_number, call_exc
+                )
                 results.append((False, b""))
 
-    records: List[Dict[str, object]] = []
-    for fn_name, (success, raw_bytes) in zip(FUNCTION_NAMES, results):
+    records: list[dict[str, object]] = []
+    for fn_name, (success, raw_bytes) in zip(FUNCTION_NAMES, results, strict=False):
         if not success:
             logging.debug("Call %s failed at block %s", fn_name, block_number)
             continue
@@ -293,17 +317,19 @@ def fetch_block_snapshot(
 def write_updates(
     *,
     parquet_path: Path,
-    new_records: List[Dict[str, object]],
+    new_records: list[dict[str, object]],
     dry_run: bool,
-    existing_df: Optional[pd.DataFrame],
-) -> Optional[pd.DataFrame]:
+    existing_df: pd.DataFrame | None,
+) -> pd.DataFrame | None:
     if not new_records:
         logging.info("No data collected; skipping write to %s", parquet_path)
         return existing_df
 
     df_new = pd.DataFrame(new_records)
     if df_new.empty:
-        logging.info("New record set empty after DataFrame conversion for %s", parquet_path)
+        logging.info(
+            "New record set empty after DataFrame conversion for %s", parquet_path
+        )
         return existing_df
 
     if dry_run:
@@ -320,7 +346,9 @@ def write_updates(
     else:
         combined = df_new
 
-    combined.drop_duplicates(subset=["block_number", "function_name"], keep="last", inplace=True)
+    combined.drop_duplicates(
+        subset=["block_number", "function_name"], keep="last", inplace=True
+    )
     combined.sort_values(by=["block_number", "function_name"], inplace=True)
 
     temp_fd, temp_path = tempfile.mkstemp(suffix=".parquet", dir=parquet_path.parent)
@@ -340,11 +368,11 @@ def write_updates(
 def process_pool(
     *,
     pool_index: int,
-    pool: Dict[str, object],
+    pool: dict[str, object],
     rpc_registry: RpcRegistry,
-    parquet_index: Dict[str, Path],
+    parquet_index: dict[str, Path],
     args: argparse.Namespace,
-) -> Dict[str, int]:
+) -> dict[str, int]:
     address = str(pool["address"])
     chain_name = str(pool["chain_name"])
     chain_id = int(pool["chain_id"])
@@ -378,7 +406,7 @@ def process_pool(
         )
         return {"fetched": 0, "missing": 0}
 
-    effective_min_block: Optional[int]
+    effective_min_block: int | None
     if args.min_block is not None:
         effective_min_block = int(args.min_block)
     else:
@@ -398,7 +426,7 @@ def process_pool(
         effective_min_block = max(0, effective_min_block)
         remainder = effective_min_block % stride
         if remainder != 0:
-            effective_min_block += (stride - remainder)  # round up to next stride
+            effective_min_block += stride - remainder  # round up to next stride
 
     missing_blocks = determine_target_blocks(
         latest_aligned=latest_aligned,
@@ -431,17 +459,17 @@ def process_pool(
         return {"fetched": 0, "missing": 0}
 
     token_decimals = resolve_decimals(name)
-    failures: Dict[int, int] = defaultdict(int)
+    failures: dict[int, int] = defaultdict(int)
     fetched_blocks: set[int] = set()
-    existing_df: Optional[pd.DataFrame] = None
+    existing_df: pd.DataFrame | None = None
     if not args.dry_run and parquet_path.exists():
         existing_df = pd.read_parquet(parquet_path)
 
-    def process_batch(batch_blocks: List[int]) -> None:
+    def process_batch(batch_blocks: list[int]) -> None:
         nonlocal existing_df
         if not batch_blocks:
             return
-        chunk_records: List[Dict[str, object]] = []
+        chunk_records: list[dict[str, object]] = []
         for block in batch_blocks:
             snapshot = fetch_block_snapshot(
                 w3=w3,
@@ -467,12 +495,14 @@ def process_pool(
     iterator: Iterable[int]
     progress_bar = None
     if tqdm is not None and not args.no_progress:
-        progress_bar = tqdm(missing_blocks, desc=f"Pool #{pool_index} {name}", unit="block", leave=False)
+        progress_bar = tqdm(
+            missing_blocks, desc=f"Pool #{pool_index} {name}", unit="block", leave=False
+        )
         iterator = progress_bar
     else:
         iterator = missing_blocks
 
-    batch: List[int] = []
+    batch: list[int] = []
     try:
         for block in iterator:
             batch.append(block)
@@ -487,32 +517,60 @@ def process_pool(
         process_batch(batch)
 
     if failures:
-        logging.warning("Encountered %s failed blocks for pool #%s", len(failures), pool_index)
+        logging.warning(
+            "Encountered %s failed blocks for pool #%s", len(failures), pool_index
+        )
 
     return {"fetched": len(fetched_blocks), "missing": len(missing_blocks)}
 
 
-def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
+def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--config", default=str(DEFAULT_CONFIG_PATH), help="Path to fxswap config JSON")
-    parser.add_argument("--index", action="append", type=int, dest="indexes", help="Pool index to process (repeatable)")
-    parser.add_argument("--all", action="store_true", help="Process every pool in the config")
-    parser.add_argument("--min-block", type=int, help="Lower block bound to backfill (inclusive)")
+    parser.add_argument(
+        "--config", default=str(DEFAULT_CONFIG_PATH), help="Path to fxswap config JSON"
+    )
+    parser.add_argument(
+        "--index",
+        action="append",
+        type=int,
+        dest="indexes",
+        help="Pool index to process (repeatable)",
+    )
+    parser.add_argument(
+        "--all", action="store_true", help="Process every pool in the config"
+    )
+    parser.add_argument(
+        "--min-block", type=int, help="Lower block bound to backfill (inclusive)"
+    )
     parser.add_argument(
         "--max-blocks",
         type=int,
         help="Maximum number of blocks to examine per pool (default: unlimited)",
         default=DEFAULT_MAX_BLOCKS,
     )
-    parser.add_argument("--chunk-size", type=int, default=DEFAULT_CHUNK_SIZE, help="Number of blocks to fetch per batch")
-    parser.add_argument("--dry-run", action="store_true", help="Do not write any changes to Parquet files")
-    parser.add_argument("--verbose", action="store_true", help="Print per-block fetch logs")
-    parser.add_argument("--no-progress", action="store_true", help="Disable progress bars even if tqdm is available")
+    parser.add_argument(
+        "--chunk-size",
+        type=int,
+        default=DEFAULT_CHUNK_SIZE,
+        help="Number of blocks to fetch per batch",
+    )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Do not write any changes to Parquet files",
+    )
+    parser.add_argument(
+        "--verbose", action="store_true", help="Print per-block fetch logs"
+    )
+    parser.add_argument(
+        "--no-progress",
+        action="store_true",
+        help="Disable progress bars even if tqdm is available",
+    )
     return parser.parse_args(list(argv) if argv is not None else None)
 
 
-
-def main(argv: Optional[Sequence[str]] = None) -> None:
+def main(argv: Sequence[str] | None = None) -> None:
     args = parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 
@@ -525,7 +583,9 @@ def main(argv: Optional[Sequence[str]] = None) -> None:
     if not args.indexes and not args.all:
         raise SystemExit("Specify --index at least once or pass --all")
 
-    targets = sorted(config.keys()) if args.all else sorted(set(int(i) for i in args.indexes))
+    targets = (
+        sorted(config.keys()) if args.all else sorted({int(i) for i in args.indexes})
+    )
 
     chains = {
         str(config[idx]["chain_name"]).lower()

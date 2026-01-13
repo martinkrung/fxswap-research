@@ -21,21 +21,20 @@ from __future__ import annotations
 import argparse
 import logging
 import os
-import sys
 import tempfile
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Dict, Iterable, Optional
 
 import pandas as pd
-
 from update_fxswap_blocks import build_parquet_index, load_config
+
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 DEFAULT_CONFIG = ROOT_DIR / "config" / "fxswaps.json"
 DATA_ROOT = ROOT_DIR / "data"
 
 
-def ensure_parquet_index() -> Dict[str, Path]:
+def ensure_parquet_index() -> dict[str, Path]:
     if not DATA_ROOT.exists():
         raise SystemExit(f"Data directory not found: {DATA_ROOT}")
     return build_parquet_index(DATA_ROOT)
@@ -43,9 +42,9 @@ def ensure_parquet_index() -> Dict[str, Path]:
 
 def locate_parquet_file(
     *,
-    pool: Dict[str, object],
+    pool: dict[str, object],
     index: int,
-    parquet_index: Dict[str, Path],
+    parquet_index: dict[str, Path],
 ) -> Path:
     address = str(pool.get("address", "")).lower()
     chain_name = str(pool.get("chain_name", "")).strip()
@@ -66,7 +65,7 @@ def prune_file(
     before_block: int,
     dry_run: bool,
     backup: bool,
-) -> Dict[str, int]:
+) -> dict[str, int]:
     if not parquet_path.exists():
         logging.warning("Parquet file not found: %s", parquet_path)
         return {"total": 0, "removed": 0, "remaining": 0}
@@ -122,21 +121,45 @@ def prune_file(
     }
 
 
-def parse_args(argv: Optional[Iterable[str]] = None) -> argparse.Namespace:
+def parse_args(argv: Iterable[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--config", default=str(DEFAULT_CONFIG), help="Path to fxswap config JSON file")
-    parser.add_argument("--index", action="append", type=int, dest="indexes", help="Pool index to prune (repeatable)")
-    parser.add_argument("--all", action="store_true", help="Prune every pool listed in the config")
-    parser.add_argument("--before-block", type=int, required=True, help="Delete rows where block_number is less than this value")
-    parser.add_argument("--dry-run", action="store_true", help="Only report what would be removed")
-    parser.add_argument("--backup", action="store_true", help="Preserve original file as <name>.parquet.bak before overwriting")
+    parser.add_argument(
+        "--config", default=str(DEFAULT_CONFIG), help="Path to fxswap config JSON file"
+    )
+    parser.add_argument(
+        "--index",
+        action="append",
+        type=int,
+        dest="indexes",
+        help="Pool index to prune (repeatable)",
+    )
+    parser.add_argument(
+        "--all", action="store_true", help="Prune every pool listed in the config"
+    )
+    parser.add_argument(
+        "--before-block",
+        type=int,
+        required=True,
+        help="Delete rows where block_number is less than this value",
+    )
+    parser.add_argument(
+        "--dry-run", action="store_true", help="Only report what would be removed"
+    )
+    parser.add_argument(
+        "--backup",
+        action="store_true",
+        help="Preserve original file as <name>.parquet.bak before overwriting",
+    )
     parser.add_argument("--verbose", action="store_true", help="Enable verbose logging")
     return parser.parse_args(list(argv) if argv is not None else None)
 
 
-def main(argv: Optional[Iterable[str]] = None) -> None:
+def main(argv: Iterable[str] | None = None) -> None:
     args = parse_args(argv)
-    logging.basicConfig(level=logging.DEBUG if args.verbose else logging.INFO, format="%(levelname)s: %(message)s")
+    logging.basicConfig(
+        level=logging.DEBUG if args.verbose else logging.INFO,
+        format="%(levelname)s: %(message)s",
+    )
 
     if args.before_block < 0:
         raise SystemExit("--before-block must be a non-negative integer")
@@ -147,7 +170,9 @@ def main(argv: Optional[Iterable[str]] = None) -> None:
     config_path = Path(args.config)
     config = load_config(config_path)
 
-    targets = sorted(config.keys()) if args.all else sorted(set(int(i) for i in args.indexes))
+    targets = (
+        sorted(config.keys()) if args.all else sorted({int(i) for i in args.indexes})
+    )
     parquet_index = ensure_parquet_index()
 
     totals = {"total": 0, "removed": 0, "remaining": 0, "processed": 0}
@@ -158,7 +183,9 @@ def main(argv: Optional[Iterable[str]] = None) -> None:
             continue
 
         pool = config[idx]
-        parquet_path = locate_parquet_file(pool=pool, index=idx, parquet_index=parquet_index)
+        parquet_path = locate_parquet_file(
+            pool=pool, index=idx, parquet_index=parquet_index
+        )
         summary = prune_file(
             parquet_path=parquet_path,
             before_block=args.before_block,

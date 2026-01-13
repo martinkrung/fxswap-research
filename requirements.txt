@@ -9,3 +9,5 @@ pyarrow
 parquet-tools
 seaborn
 scipy
+ruff
+pre-commit

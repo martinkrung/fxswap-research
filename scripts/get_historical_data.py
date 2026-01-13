@@ -1,18 +1,19 @@
-from web3 import Web3
-import os
-import json
-import time
-import sys
-from eth_utils import keccak
-from pathlib import Path
-from datetime import datetime, timezone
-import re
 import argparse
+import json
+import os
+import re
+import sys
+import time
+from datetime import UTC, datetime
+from pathlib import Path
+
 import pandas as pd
-import pyarrow.parquet as pq
+from eth_utils import keccak
+from web3 import Web3
+
 
 # Setup
-RPC = os.getenv('RPC')
+RPC = os.getenv("RPC")
 w3 = Web3(Web3.HTTPProvider(RPC))
 
 print(f"RPC: {RPC}")
@@ -24,7 +25,7 @@ print(f"fxswaps_path: {fxswaps_path}")
 fxswap_addresses = {}
 if fxswaps_path.exists():
     try:
-        with open(fxswaps_path, 'r') as f:
+        with open(fxswaps_path) as f:
             fxswap_addresses_raw = json.load(f)
             # Convert string keys to integers (JSON requires string keys)
             fxswap_addresses = {int(k): v for k, v in fxswap_addresses_raw.items()}
@@ -38,9 +39,16 @@ else:
 
 
 # Parse command line arguments
-parser = argparse.ArgumentParser(description='Collect historical data for fxswap pools')
-parser.add_argument('--index', type=int, default=0, help='Index of the pool to query (default: 0)')
-parser.add_argument('--skip-blocks', type=int, default=0, help='Number of blocks to skip from latest before starting (default: 0)')
+parser = argparse.ArgumentParser(description="Collect historical data for fxswap pools")
+parser.add_argument(
+    "--index", type=int, default=0, help="Index of the pool to query (default: 0)"
+)
+parser.add_argument(
+    "--skip-blocks",
+    type=int,
+    default=0,
+    help="Number of blocks to skip from latest before starting (default: 0)",
+)
 args = parser.parse_args()
 
 index = args.index
@@ -53,17 +61,19 @@ fxswap_address = fxswap_addresses[index]["address"]
 name = fxswap_addresses[index]["name"]
 chain_id = fxswap_addresses[index]["chain_id"]
 chain_name = fxswap_addresses[index]["chain_name"]
-print(f"Querying {name} on chain {chain_name} ({chain_id})")    
+print(f"Querying {name} on chain {chain_name} ({chain_id})")
 
-#first_block = fxswap_addresses[index]["first_block"]    
+# first_block = fxswap_addresses[index]["first_block"]
 
 # Find the latest block on Base, rounded down to the nearest multiple of 200
-latest_block = w3.eth.get_block('latest').number
+latest_block = w3.eth.get_block("latest").number
 
 print(f"Latest block: {latest_block}")
 block = w3.eth.get_block(latest_block)
-timestamp = block['timestamp']
-human_readable_time = datetime.fromtimestamp(timestamp, timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')
+timestamp = block["timestamp"]
+human_readable_time = datetime.fromtimestamp(timestamp, UTC).strftime(
+    "%Y-%m-%d %H:%M:%S UTC"
+)
 print(f"Latest block {latest_block} timestamp: {timestamp} ({human_readable_time})")
 
 
@@ -117,6 +127,7 @@ def has_USDC(name):
         return True
     return False
 
+
 def has_EURC(name):
     """
     Returns True if 'EURC' appears anywhere in the input pool name, else returns False.
@@ -139,31 +150,32 @@ def load_cache():
                 # Convert DataFrame to nested dict structure
                 _in_memory_cache = {}
                 for _, row in df.iterrows():
-                    block_str = str(row['block_number'])
+                    block_str = str(row["block_number"])
                     if block_str not in _in_memory_cache:
                         _in_memory_cache[block_str] = {}
-                    _in_memory_cache[block_str][row['function_name']] = {
-                        'value': row['value'],
-                        'epoch': int(row['epoch']),
-                        'human_readable': row['human_readable']
+                    _in_memory_cache[block_str][row["function_name"]] = {
+                        "value": row["value"],
+                        "epoch": int(row["epoch"]),
+                        "human_readable": row["human_readable"],
                     }
             except Exception as e:
                 print(f"Error loading cache from {data_file}: {e}")
                 _in_memory_cache = {}
         else:
             # Try to load from legacy JSON file for backward compatibility
-            json_file = data_file.with_suffix('.json')
+            json_file = data_file.with_suffix(".json")
             if json_file.exists():
                 try:
                     print(f"Found legacy JSON file, loading from {json_file}")
-                    with open(json_file, 'r') as f:
+                    with open(json_file) as f:
                         _in_memory_cache = json.load(f)
-                except (json.JSONDecodeError, IOError) as e:
+                except (OSError, json.JSONDecodeError) as e:
                     print(f"Error loading legacy JSON: {e}")
                     _in_memory_cache = {}
             else:
                 _in_memory_cache = {}
     return _in_memory_cache
+
 
 def save_cache(cache=None, force=False):
     """Save cache to file (only when dirty or forced)"""
@@ -180,78 +192,93 @@ def save_cache(cache=None, force=False):
         for block_number, block_data in cache.items():
             for function_name, function_data in block_data.items():
                 if isinstance(function_data, dict):
-                    records.append({
-                        'block_number': int(block_number),
-                        'function_name': function_name,
-                        'value': function_data.get('value'),
-                        'epoch': function_data.get('epoch'),
-                        'human_readable': function_data.get('human_readable')
-                    })
+                    records.append(
+                        {
+                            "block_number": int(block_number),
+                            "function_name": function_name,
+                            "value": function_data.get("value"),
+                            "epoch": function_data.get("epoch"),
+                            "human_readable": function_data.get("human_readable"),
+                        }
+                    )
 
         df = pd.DataFrame(records)
 
         # Ensure proper data types
         if not df.empty:
-            df['block_number'] = df['block_number'].astype('int64')
-            df['function_name'] = df['function_name'].astype('string')
-            df['value'] = df['value'].astype('float64')
-            df['epoch'] = df['epoch'].astype('int64')
-            df['human_readable'] = df['human_readable'].astype('string')
+            df["block_number"] = df["block_number"].astype("int64")
+            df["function_name"] = df["function_name"].astype("string")
+            df["value"] = df["value"].astype("float64")
+            df["epoch"] = df["epoch"].astype("int64")
+            df["human_readable"] = df["human_readable"].astype("string")
 
         # Save to Parquet
-        df.to_parquet(data_file, engine='pyarrow', compression='snappy', index=False)
+        df.to_parquet(data_file, engine="pyarrow", compression="snappy", index=False)
         _cache_dirty = False
         return True  # Return True if we actually saved
     return False  # Return False if nothing changed, so we didn't save
+
 
 def get_cached_value(fxswap_address, block_number, function_name, cache=None):
     """Get value from cache if exists (uses in-memory cache)"""
     if cache is None:
         cache = load_cache()
     block_str = str(block_number)
-    
+
     if block_str in cache and isinstance(cache[block_str], dict):
         if function_name in cache[block_str]:
             cached_entry = cache[block_str][function_name]
             if isinstance(cached_entry, dict):
-                return cached_entry.get('value')
-    
+                return cached_entry.get("value")
+
     return None
+
 
 def get_cached_entry(fxswap_address, block_number, function_name, cache=None):
     """Get full cached entry (including metadata) (uses in-memory cache)"""
     if cache is None:
         cache = load_cache()
     block_str = str(block_number)
-    
+
     if block_str in cache and isinstance(cache[block_str], dict):
         if function_name in cache[block_str]:
             return cache[block_str][function_name]
-    
+
     return None
 
-def set_cached_value(fxswap_address, block_number, function_name, value, epoch=None, human_readable=None, cache=None, save_now=False):
+
+def set_cached_value(
+    fxswap_address,
+    block_number,
+    function_name,
+    value,
+    epoch=None,
+    human_readable=None,
+    cache=None,
+    save_now=False,
+):
     """Store value in cache with epoch and human-readable date (nested by block number)"""
     global _cache_dirty
     if cache is None:
         cache = load_cache()
     block_str = str(block_number)
-    
+
     # Initialize block_number key if it doesn't exist
     if block_str not in cache:
         cache[block_str] = {}
-    
+
     # Store nested: cache[block_number][function_name]
     cache[block_str][function_name] = {
-        'value': value,
-        'epoch': epoch,
-        'human_readable': human_readable
+        "value": value,
+        "epoch": epoch,
+        "human_readable": human_readable,
     }
     _cache_dirty = True
-    
+
     # Only save immediately if requested (for periodic saves)
     if save_now:
         save_cache(cache, force=True)
+
 
 def get_function_selector_any(func):
     """
@@ -263,20 +290,21 @@ def get_function_selector_any(func):
         fn, param = m.group(1), m.group(2)
         if param == "":
             sig = f"{fn}()"
-            selector = keccak(bytes(sig, 'utf-8'))[:4].hex()
+            selector = keccak(bytes(sig, "utf-8"))[:4].hex()
             return selector, None
         else:
             # Supports single integer param, assumes uint256
             sig = f"{fn}(uint256)"
-            selector = keccak(bytes(sig, 'utf-8'))[:4].hex()
+            selector = keccak(bytes(sig, "utf-8"))[:4].hex()
             # Encode the parameter as uint256 (32 bytes, padded)
             param_value = int(param)
-            encoded_param = param_value.to_bytes(32, 'big').hex()
+            encoded_param = param_value.to_bytes(32, "big").hex()
             return selector, encoded_param
     else:
         # fallback: treat as function()
-        selector = keccak(bytes(f"{func}()", 'utf-8'))[:4].hex()
+        selector = keccak(bytes(f"{func}()", "utf-8"))[:4].hex()
         return selector, None
+
 
 def get_call_data(function_name):
     """
@@ -285,9 +313,10 @@ def get_call_data(function_name):
     """
     selector, encoded_param = get_function_selector_any(function_name)
     if encoded_param:
-        return '0x' + selector + encoded_param
+        return "0x" + selector + encoded_param
     else:
-        return '0x' + selector
+        return "0x" + selector
+
 
 # List of functions to query
 function_names = [
@@ -325,7 +354,9 @@ SAVE_INTERVAL = 100  # Save every 20 blocks processed
 consecutive_cached_blocks = 0
 # Increase threshold to allow more blocks to be processed
 # For Ethereum: 400 iterations * 20 blocks = 8000 blocks ≈ 3 days at 14s block time
-MAX_CONSECUTIVE_CACHED = 5000  # Increased from 10 to allow more cached blocks before stopping
+MAX_CONSECUTIVE_CACHED = (
+    5000  # Increased from 10 to allow more cached blocks before stopping
+)
 
 # override decimals if USDC is in the name
 if has_USDC(name):
@@ -335,7 +366,7 @@ if has_EURC(name):
     token1_decimals = 6
 
 print(f"token0_decimals: {token0_decimals}")
-print(f"token1_decimals: {token1_decimals}")   
+print(f"token1_decimals: {token1_decimals}")
 
 
 # Loop over blocks and functions
@@ -350,9 +381,9 @@ for i in range(3000):
             block_number = block_number - 20
 
     if block_number < min_block_threshold:
-        print(f"\n  STOPPING: Reached minimum block threshold")
+        print("\n  STOPPING: Reached minimum block threshold")
         print(f"  Block {block_number} < min_block_threshold {min_block_threshold}")
-        print(f"  Iteration: {i+1} of {400}")
+        print(f"  Iteration: {i + 1} of {400}")
         # Save before exiting
         save_cache(cache, force=True)
         break
@@ -362,39 +393,45 @@ for i in range(3000):
     # Separate cached and uncached functions (using in-memory cache)
     cached_functions = {}
     uncached_functions = []
-    
+
     for function_name in function_names:
-        cached_value = get_cached_value(fxswap_address, block_number, function_name, cache=cache)
+        cached_value = get_cached_value(
+            fxswap_address, block_number, function_name, cache=cache
+        )
         if cached_value is not None:
             cached_functions[function_name] = cached_value
         else:
             uncached_functions.append(function_name)
-    
+
     # Check if all functions are cached
     if len(uncached_functions) == 0:
         consecutive_cached_blocks += 1
         if consecutive_cached_blocks >= MAX_CONSECUTIVE_CACHED:
-            print("\n" + "="*80)
+            print("\n" + "=" * 80)
             print(" " * 20 + "⚠️  STOPPING: All Functions Cached ⚠️")
-            print("="*80)
+            print("=" * 80)
             print(f"\n  Encountered {MAX_CONSECUTIVE_CACHED} consecutive blocks")
-            print(f"  where ALL functions were already cached!")
+            print("  where ALL functions were already cached!")
             print(f"\n  Last block checked: {block_number}")
-            print(f"  Iteration: {i+1} of {400}")
-            print(f"  Blocks processed: {i+1} blocks")
-            print(f"  This indicates we've reached the end of uncached data.")
+            print(f"  Iteration: {i + 1} of {400}")
+            print(f"  Blocks processed: {i + 1} blocks")
+            print("  This indicates we've reached the end of uncached data.")
             print(f"  All data for blocks >= {block_number} is already in cache.")
-            print("\n" + "="*80)
+            print("\n" + "=" * 80)
             save_cache(cache, force=True)
             break
         elif not SILENT_MODE or (i + 1) % 50 == 0:
-            print(f"  Block {block_number}: All functions cached ({consecutive_cached_blocks}/{MAX_CONSECUTIVE_CACHED} consecutive)")
+            print(
+                f"  Block {block_number}: All functions cached ({consecutive_cached_blocks}/{MAX_CONSECUTIVE_CACHED} consecutive)"
+            )
     else:
         # Reset counter when we find uncached functions
         if consecutive_cached_blocks > 0:
-            print(f"  Block {block_number}: Found {len(uncached_functions)} uncached functions, resetting cached counter")
+            print(
+                f"  Block {block_number}: Found {len(uncached_functions)} uncached functions, resetting cached counter"
+            )
         consecutive_cached_blocks = 0
-    
+
     # Process cached functions first (no network calls needed)
     # Extract epoch and human_readable once per block (from first cached function)
     cached_epoch = None
@@ -402,129 +439,163 @@ for i in range(3000):
     if cached_functions:
         # Get epoch/time from first cached function (all should have same values for same block)
         first_function = list(cached_functions.keys())[0]
-        cached_entry = get_cached_entry(fxswap_address, block_number, first_function, cache=cache)
+        cached_entry = get_cached_entry(
+            fxswap_address, block_number, first_function, cache=cache
+        )
         if isinstance(cached_entry, dict):
-            cached_epoch = cached_entry.get('epoch')
-            cached_human_readable = cached_entry.get('human_readable')
+            cached_epoch = cached_entry.get("epoch")
+            cached_human_readable = cached_entry.get("human_readable")
             if cached_epoch and cached_human_readable:
-                print(f"  Block {block_number}: Cached epoch: {cached_epoch}, time: {cached_human_readable}")
-    
+                print(
+                    f"  Block {block_number}: Cached epoch: {cached_epoch}, time: {cached_human_readable}"
+                )
+
     for function_name, result in cached_functions.items():
         if PRINT_CACHED_VALUES:
             print(f"\n  Function: {function_name}")
             print(f"    Using cached value for {function_name}")
         if PRINT_CACHED_VALUES:
             print(f"    {function_name}: {result}")
-    
+
     # Check if totalSupply is 0 (from cache)
-    total_supply = cached_functions.get('totalSupply')
+    total_supply = cached_functions.get("totalSupply")
     if total_supply is not None and total_supply == 0:
-        print(f"\n  totalSupply is 0 at block {block_number}. Stopping data collection.")
+        print(
+            f"\n  totalSupply is 0 at block {block_number}. Stopping data collection."
+        )
         save_cache(cache, force=True)
         break
-    
+
     # Only fetch block info if we have uncached functions
     if uncached_functions:
         block = w3.eth.get_block(block_number)
-        timestamp = block['timestamp']
-        dt = datetime.fromtimestamp(timestamp, timezone.utc)
+        timestamp = block["timestamp"]
+        dt = datetime.fromtimestamp(timestamp, UTC)
         human_readable = dt.strftime("%Y-%m-%d %H:%M:%S UTC")
         print(f"\n  Block timestamp: {timestamp} ({human_readable})")
-        
+
         # Flag to break out of outer loop if totalSupply is 0
         should_stop = False
-        
+
         # Prioritize totalSupply - fetch it first if it's not cached
         # This allows us to stop early if totalSupply is 0
         function_list = uncached_functions.copy()
-        if 'totalSupply' in function_list:
+        if "totalSupply" in function_list:
             # Move totalSupply to the front
-            function_list.remove('totalSupply')
-            function_list.insert(0, 'totalSupply')
-        
+            function_list.remove("totalSupply")
+            function_list.insert(0, "totalSupply")
+
         # Use Multicall3 for batching all uncached function calls
         # Multicall3 ABI and address
-        multicall3_abi = [{
-            "inputs": [
-                {
-                    "components": [
-                        {"internalType": "address", "name": "target", "type": "address"},
-                        {"internalType": "bool", "name": "allowFailure", "type": "bool"},
-                        {"internalType": "bytes", "name": "callData", "type": "bytes"}
-                    ],
-                    "internalType": "struct Multicall3.Call[]",
-                    "name": "calls",
-                    "type": "tuple[]"
-                }
-            ],
-            "name": "aggregate3",
-            "outputs": [
-                {
-                    "components": [
-                        {"internalType": "bool", "name": "success", "type": "bool"},
-                        {"internalType": "bytes", "name": "returnData", "type": "bytes"}
-                    ],
-                    "internalType": "struct Multicall3.Result[]",
-                    "name": "returnData",
-                    "type": "tuple[]"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        }]
+        multicall3_abi = [
+            {
+                "inputs": [
+                    {
+                        "components": [
+                            {
+                                "internalType": "address",
+                                "name": "target",
+                                "type": "address",
+                            },
+                            {
+                                "internalType": "bool",
+                                "name": "allowFailure",
+                                "type": "bool",
+                            },
+                            {
+                                "internalType": "bytes",
+                                "name": "callData",
+                                "type": "bytes",
+                            },
+                        ],
+                        "internalType": "struct Multicall3.Call[]",
+                        "name": "calls",
+                        "type": "tuple[]",
+                    }
+                ],
+                "name": "aggregate3",
+                "outputs": [
+                    {
+                        "components": [
+                            {"internalType": "bool", "name": "success", "type": "bool"},
+                            {
+                                "internalType": "bytes",
+                                "name": "returnData",
+                                "type": "bytes",
+                            },
+                        ],
+                        "internalType": "struct Multicall3.Result[]",
+                        "name": "returnData",
+                        "type": "tuple[]",
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function",
+            }
+        ]
 
         MULTICALL3_ADDRESS = "0xcA11bde05977b3631167028862bE2a173976CA11"
 
-        multicall3_contract = w3.eth.contract(address=MULTICALL3_ADDRESS, abi=multicall3_abi)
+        multicall3_contract = w3.eth.contract(
+            address=MULTICALL3_ADDRESS, abi=multicall3_abi
+        )
         calls = []
         fn_name_and_index = []
         for function_name in function_list:
             call_data = get_call_data(function_name)
             # allowFailure: True for all calls
-            calls.append({
-                "target": fxswap_address,
-                "allowFailure": True,
-                "callData": call_data
-            })
+            calls.append(
+                {"target": fxswap_address, "allowFailure": True, "callData": call_data}
+            )
             fn_name_and_index.append(function_name)
 
         try:
             # Call aggregate3 with the call array
-            results = multicall3_contract.functions.aggregate3(calls).call(block_identifier=block_number)
+            results = multicall3_contract.functions.aggregate3(calls).call(
+                block_identifier=block_number
+            )
             # Each result is a tuple (success, returnData)
             for idx, (success, result_bytes) in enumerate(results):
                 function_name = fn_name_and_index[idx]
                 if not success:
                     print(f"    ERROR: Call to {function_name} failed")
                     continue
-                
+
                 if not SILENT_MODE:
                     print(f"\n  Function: {function_name}")
                     print(f"    Fetching new data for {function_name} (multicall3)")
-                
+
                 # Parse the result bytes.
                 # All our calls are reading uint values (single return), result is always 32 bytes.
-                result_int = int.from_bytes(result_bytes, 'big')
+                result_int = int.from_bytes(result_bytes, "big")
                 # For last_donation_release_ts, store as integer (timestamp)
                 # For balances(0) (USDC), divide by 10**6 (USDC has 6 decimals)
                 # For other functions, divide by 10**18 (decimal values)
-                if function_name == 'last_donation_release_ts':
+                if function_name == "last_donation_release_ts":
                     result = result_int
-                elif function_name == 'balances(0)':
-                    result = result_int / 10 ** token0_decimals
+                elif function_name == "balances(0)":
+                    result = result_int / 10**token0_decimals
                 else:
-                    result = result_int / 10 ** token1_decimals
+                    result = result_int / 10**token1_decimals
                 set_cached_value(
-                    fxswap_address, block_number, function_name, result,
-                    epoch=timestamp, human_readable=human_readable, cache=cache, save_now=False
+                    fxswap_address,
+                    block_number,
+                    function_name,
+                    result,
+                    epoch=timestamp,
+                    human_readable=human_readable,
+                    cache=cache,
+                    save_now=False,
                 )
                 if not SILENT_MODE:
                     print(f"    {function_name}: {result}")
                 else:
                     print(".", end="", flush=True)
                 # Check if totalSupply is 0 and stop if so
-                if function_name == 'totalSupply' and result == 0:
-                    print(f"\n  totalSupply is 0 at block {block_number}. Stopping data collection.")
+                if function_name == "totalSupply" and result == 0:
+                    print(
+                        f"\n  totalSupply is 0 at block {block_number}. Stopping data collection."
+                    )
                     save_cache(cache, force=True)
                     should_stop = True
                     break
@@ -535,63 +606,78 @@ for i in range(3000):
             # Only save if something actually changed (_cache_dirty will be True if new data was written)
             if (i + 1) % SAVE_INTERVAL == 0:
                 if save_cache(cache, force=False):
-                    print(f"  Saved cache after processing uncached functions (iteration {i + 1}, interval: {SAVE_INTERVAL})")
+                    print(
+                        f"  Saved cache after processing uncached functions (iteration {i + 1}, interval: {SAVE_INTERVAL})"
+                    )
             continue  # Skip the legacy per-function loop below
         except Exception as e:
             print(f"    ERROR in multicall3: {e}")
-            print(f"    Falling back to single-call loop.")
+            print("    Falling back to single-call loop.")
         # Process uncached functions
         for function_name in function_list:
             if not SILENT_MODE:
                 print(f"\n  Function: {function_name}")
                 print(f"    Fetching new data for {function_name}")
-            
+
             call_data = get_call_data(function_name)
             result_bytes = w3.eth.call(
-                {'to': fxswap_address, 'data': call_data},
-                block_identifier=block_number
+                {"to": fxswap_address, "data": call_data}, block_identifier=block_number
             )
             if not SILENT_MODE:
-                print(f"    web3.eth.call params: {{'to': {fxswap_address}, 'data': {call_data}}}, block_identifier: {block_number}")
+                print(
+                    f"    web3.eth.call params: {{'to': {fxswap_address}, 'data': {call_data}}}, block_identifier: {block_number}"
+                )
             # Convert bytes to int
-            result_int = int.from_bytes(result_bytes, 'big')
+            result_int = int.from_bytes(result_bytes, "big")
             # For last_donation_release_ts, store as integer (timestamp)
             # For balances(0) (USDC), divide by 10**6 (USDC has 6 decimals)
             # For other functions, divide by 10**18 (decimal values)
-            if function_name == 'last_donation_release_ts':
+            if function_name == "last_donation_release_ts":
                 result = result_int
-            elif function_name == 'balances(0)':
+            elif function_name == "balances(0)":
                 result = result_int / 10**6
             else:
                 result = result_int / 10**18
             # Cache the result with epoch and human-readable date (don't save immediately)
-            set_cached_value(fxswap_address, block_number, function_name, result, 
-                            epoch=timestamp, human_readable=human_readable, cache=cache, save_now=False)
+            set_cached_value(
+                fxswap_address,
+                block_number,
+                function_name,
+                result,
+                epoch=timestamp,
+                human_readable=human_readable,
+                cache=cache,
+                save_now=False,
+            )
             if not SILENT_MODE:
                 print(f"    {function_name}: {result}")
             else:
                 print(".")
-            
+
             # Check if totalSupply is 0 and stop if so
-            if function_name == 'totalSupply' and result == 0:
-                print(f"\n  totalSupply is 0 at block {block_number}. Stopping data collection.")
+            if function_name == "totalSupply" and result == 0:
+                print(
+                    f"\n  totalSupply is 0 at block {block_number}. Stopping data collection."
+                )
                 # Save cache before breaking
                 save_cache(cache, force=True)
                 should_stop = True
                 break
-            
+
             time.sleep(0.001)
-        
+
         # Save after processing uncached functions if it's time for interval save
         # Only save if something actually changed (_cache_dirty will be True if new data was written)
         if (i + 1) % SAVE_INTERVAL == 0:
             if save_cache(cache, force=False):
-                print(f"  Saved cache after processing uncached functions (iteration {i + 1}, interval: {SAVE_INTERVAL})")
-        
+                print(
+                    f"  Saved cache after processing uncached functions (iteration {i + 1}, interval: {SAVE_INTERVAL})"
+                )
+
         # Break out of outer loop if totalSupply was 0
         if should_stop:
             break
-    
+
     # Save cache periodically (every SAVE_INTERVAL blocks) - constant interval
     # Only save if something actually changed (_cache_dirty will be True if new data was written)
     # Note: If uncached functions were processed above, save already happened there
@@ -601,7 +687,9 @@ for i in range(3000):
     elif (i + 1) % SAVE_INTERVAL == 0:
         # No uncached functions, but check if we should save (only if something changed)
         if save_cache(cache, force=False):
-            print(f"  Saved cache after {i + 1} blocks processed (interval: {SAVE_INTERVAL})")
+            print(
+                f"  Saved cache after {i + 1} blocks processed (interval: {SAVE_INTERVAL})"
+            )
 
 # Save cache at the end
 save_cache(cache, force=True)

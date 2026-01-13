@@ -1,24 +1,25 @@
 #!/usr/bin/env python3
 
-import boa
 import json
 import os
 from getpass import getpass
+
+import boa
 from eth_account import account
-import sys
-import math
 from eth_utils import keccak
+
+
 """
 This script is used to deploy a Curve pool using the stablepool factory contract.
 It unpacks the packed parameters from deployment data and calls the deploy_pool function.
 """
 
 # Load environment variables with `source .env_optimism`
-XSCAN_API_URI = os.getenv('XSCAN_API_URI')
-XSCAN_API_KEY = os.getenv('XSCAN_API_KEY')
-RPC = os.getenv('RPC')
-SINGER = os.getenv('SINGER')
-TWOCRYPTO_FACTORY = os.getenv('TWOCRYPTO_FACTORY')
+XSCAN_API_URI = os.getenv("XSCAN_API_URI")
+XSCAN_API_KEY = os.getenv("XSCAN_API_KEY")
+RPC = os.getenv("RPC")
+SINGER = os.getenv("SINGER")
+TWOCRYPTO_FACTORY = os.getenv("TWOCRYPTO_FACTORY")
 
 print(f"XSCAN_API_KEY: {XSCAN_API_KEY}")
 print(f"XSCAN_API_URI: {XSCAN_API_URI}")
@@ -26,13 +27,18 @@ print(f"RPC: {RPC}")
 print(f"SINGER: {SINGER}")
 print(f"TWOCRYPTO_FACTORY: {TWOCRYPTO_FACTORY}")
 
+
 def account_load(fname):
     if fname == "babe":
-        path = os.path.expanduser(os.path.join('~', '.brownie', 'accounts', fname + '.json'))
+        path = os.path.expanduser(
+            os.path.join("~", ".brownie", "accounts", fname + ".json")
+        )
     else:
-        path = os.path.expanduser(os.path.join('~', '.ape', 'accounts', fname + '.json'))
+        path = os.path.expanduser(
+            os.path.join("~", ".ape", "accounts", fname + ".json")
+        )
     print(f"Loading account from: {path}")
-    with open(path, 'r') as f:
+    with open(path) as f:
         pkey = account.decode_keyfile_json(json.load(f), getpass())
         acc = account.Account.from_key(pkey)
         print(f"Account loaded: {acc.address}")
@@ -43,7 +49,7 @@ signer = account_load(SINGER)
 
 
 SIM = False
-'''
+"""
 if not SIM:
     private_key = decrypt_private_key(os.environ.get("ENCRYPTED_PK"), getpass())
     if not private_key:
@@ -51,44 +57,45 @@ if not SIM:
 else:
     private_key = os.environ.get("WEB3_TESTNET_PK")
 deployer = Account.from_key(private_key)
-'''
+"""
 
 # Setup boa environment
 if SIM:
     boa.fork(RPC)
 else:
-#    boa.fork(RPC)
+    #    boa.fork(RPC)
     boa.set_network_env(RPC)
     boa.env.add_account(signer)
 
 boa.env.eoa = signer.address
 
 print(
-    f"Chain: {boa.env.evm.patch.chain_id}, Deployer: {signer.address}, Balance: {boa.env.get_balance(signer.address)/1e18}"
+    f"Chain: {boa.env.evm.patch.chain_id}, Deployer: {signer.address}, Balance: {boa.env.get_balance(signer.address) / 1e18}"
 )
 
 factory_contract = boa.from_etherscan(
-    TWOCRYPTO_FACTORY,
-    name="factory_contract",
-    chain_id=8453,
-    api_key=XSCAN_API_KEY
+    TWOCRYPTO_FACTORY, name="factory_contract", chain_id=8453, api_key=XSCAN_API_KEY
 )
 
 
 print(factory_contract.admin())
 
-coin0_address = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913" # USDC
-coin1_address = "0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA" # USDbC
+coin0_address = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"  # USDC
+coin1_address = "0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA"  # USDbC
 
 params = {
     "_name": "USDC/USDbC A100-5",
     "_symbol": "USDC/USDbC A100",
     "_coins": [coin0_address, coin1_address],
     "implementation_id": int(keccak(text="fx50").hex(), 16),
-    "A": 100*10000,
+    "A": 100 * 10000,
     "gamma": int(10**18 * 0.001),  # irrelevant for fx pools
-    "mid_fee": int(10**10 * 5 / 10_000),  # in bps pool on Aerodrome has 0.003, so 30 bips
-    "out_fee": int(10**10 * 10 / 10_000),  # in bps pool on Aerodrome has 0.006, so 60 bips
+    "mid_fee": int(
+        10**10 * 5 / 10_000
+    ),  # in bps pool on Aerodrome has 0.003, so 30 bips
+    "out_fee": int(
+        10**10 * 10 / 10_000
+    ),  # in bps pool on Aerodrome has 0.006, so 60 bips
     "fee_gamma": int(10**18 * 0.001),  # 0.003
     "allowed_extra_profit": int(10**18 * 1e-12),  # 1e-12
     "adjustment_step": int(10**18 * 1e-7),  # 1e-7
@@ -96,7 +103,7 @@ params = {
     "initial_price": int(0.9996 * 10**18),  #
 }
 
-print(f"Deploying pool with parameters:")
+print("Deploying pool with parameters:")
 print(f"name: {params['_name']}")
 print(f"symbol: {params['_symbol']}")
 print(f"coins: {params['_coins']}")
@@ -117,7 +124,6 @@ if SIM:
         print(f"Pool deployed to: {pool_address}")
 else:
     pool_address = factory_contract.deploy_pool(
-        **params, 
-        sender=signer.address, 
-        gas=5_500_000)
+        **params, sender=signer.address, gas=5_500_000
+    )
     print(f"Pool deployed to: {pool_address}")

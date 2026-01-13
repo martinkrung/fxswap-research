@@ -49,10 +49,10 @@ import json
 import logging
 import os
 import re
-import sys
+from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, Iterable, Optional, Sequence
+
 
 try:
     import pyarrow.parquet as pq
@@ -64,10 +64,15 @@ except ImportError as exc:  # pragma: no cover - dependency guard
 try:
     from web3 import Web3
     from web3.exceptions import BlockNotFound
+
     try:
-        from web3.middleware import geth_poa_middleware as _poa_middleware  # type: ignore[attr-defined]
+        from web3.middleware import (
+            geth_poa_middleware as _poa_middleware,  # type: ignore[attr-defined]
+        )
     except ImportError:
-        from web3.middleware.proof_of_authority import ExtraDataToPOAMiddleware as _poa_middleware  # type: ignore[import-not-found]
+        from web3.middleware.proof_of_authority import (
+            ExtraDataToPOAMiddleware as _poa_middleware,  # type: ignore[import-not-found]
+        )
 except ImportError as exc:  # pragma: no cover - dependency guard
     raise SystemExit(
         "web3 is required to query deployment blocks. Install it via `pip install web3`."
@@ -80,9 +85,15 @@ DEFAULT_CONFIG = Path("config/fxswaps.json")
 DEFAULT_DATA_DIR = Path("data")
 
 # Mapping of chain_name -> candidate environment variable names for RPC URLs.
-RPC_ENV_HINTS: Dict[str, tuple[str, ...]] = {
+RPC_ENV_HINTS: dict[str, tuple[str, ...]] = {
     "base": ("BASE_RPC_URL", "BASE_RPC", "RPC_BASE", "RPC"),
-    "ethereum": ("ETHEREUM_RPC_URL", "MAINNET_RPC_URL", "ETH_RPC", "RPC_ETHEREUM", "RPC"),
+    "ethereum": (
+        "ETHEREUM_RPC_URL",
+        "MAINNET_RPC_URL",
+        "ETH_RPC",
+        "RPC_ETHEREUM",
+        "RPC",
+    ),
 }
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
@@ -93,8 +104,8 @@ def env_file_for_chain(chain: str) -> Path:
     return ROOT_DIR / f".env_{chain_norm}"
 
 
-def load_env_file(path: Path) -> Dict[str, str]:
-    values: Dict[str, str] = {}
+def load_env_file(path: Path) -> dict[str, str]:
+    values: dict[str, str] = {}
     if not path.exists():
         return values
 
@@ -134,9 +145,9 @@ def candidate_keys_for_chain(chain: str) -> Sequence[str]:
 class PoolMetadata:
     """Computed metadata for a single pool entry."""
 
-    first_block: Optional[int]
-    deployed_at_block: Optional[int]
-    parquet_path: Optional[Path]
+    first_block: int | None
+    deployed_at_block: int | None
+    parquet_path: Path | None
 
 
 class RpcRegistry:
@@ -145,12 +156,12 @@ class RpcRegistry:
     def __init__(self, args: argparse.Namespace, chains: Iterable[str]) -> None:
         self._args = args
         self._chains = {chain.lower() for chain in chains}
-        self._providers: Dict[str, Web3] = {}
-        self._resolved_urls: Dict[str, str] = {}
-        self._env_cache: Dict[str, Dict[str, str]] = {}
+        self._providers: dict[str, Web3] = {}
+        self._resolved_urls: dict[str, str] = {}
+        self._env_cache: dict[str, dict[str, str]] = {}
         self._resolve_urls()
 
-    def _load_chain_env(self, chain: str) -> Dict[str, str]:
+    def _load_chain_env(self, chain: str) -> dict[str, str]:
         if chain not in self._env_cache:
             path = env_file_for_chain(chain)
             self._env_cache[chain] = load_env_file(path)
@@ -204,18 +215,18 @@ class RpcRegistry:
         return self._providers[chain_lower]
 
 
-def build_parquet_index(data_dir: Path) -> Dict[str, Path]:
+def build_parquet_index(data_dir: Path) -> dict[str, Path]:
     """Return mapping of lowercase address -> Parquet file path."""
     if not data_dir.exists():
         raise SystemExit(f"Data directory not found: {data_dir}")
 
-    index: Dict[str, Path] = {}
+    index: dict[str, Path] = {}
     for path in data_dir.rglob("*.parquet"):
         index[path.stem.lower()] = path
     return index
 
 
-def find_first_block(parquet_path: Path) -> Optional[int]:
+def find_first_block(parquet_path: Path) -> int | None:
     """Stream Parquet batches to locate the minimum block number."""
     try:
         parquet_file = pq.ParquetFile(parquet_path)
@@ -226,9 +237,11 @@ def find_first_block(parquet_path: Path) -> Optional[int]:
         logging.error("Failed to open %s: %s", parquet_path, exc)
         return None
 
-    min_block: Optional[int] = None
+    min_block: int | None = None
     try:
-        for batch in parquet_file.iter_batches(columns=["block_number"], batch_size=50_000):
+        for batch in parquet_file.iter_batches(
+            columns=["block_number"], batch_size=50_000
+        ):
             if batch.num_rows == 0:
                 continue
             column = batch.column(0)
@@ -236,7 +249,9 @@ def find_first_block(parquet_path: Path) -> Optional[int]:
                 batch_min = column.min()
             except AttributeError:
                 # Fallback for older pyarrow versions
-                batch_min = min((val for val in column.to_pylist() if val is not None), default=None)
+                batch_min = min(
+                    (val for val in column.to_pylist() if val is not None), default=None
+                )
             if batch_min is None:
                 continue
             candidate = int(batch_min)
@@ -251,7 +266,9 @@ def find_first_block(parquet_path: Path) -> Optional[int]:
     return min_block
 
 
-def contract_deployment_block(web3: Web3, address: str, hint_block: Optional[int] = None) -> Optional[int]:
+def contract_deployment_block(
+    web3: Web3, address: str, hint_block: int | None = None
+) -> int | None:
     """Binary-search the first block containing contract bytecode."""
     checksum = Web3.to_checksum_address(address)
     try:
@@ -276,7 +293,9 @@ def contract_deployment_block(web3: Web3, address: str, hint_block: Optional[int
     if hint_block is not None:
         candidate_high = min(latest_block, max(hint_block, 0))
         try:
-            code_at_candidate = web3.eth.get_code(checksum, block_identifier=candidate_high)
+            code_at_candidate = web3.eth.get_code(
+                checksum, block_identifier=candidate_high
+            )
         except Exception:
             code_at_candidate = None
         if code_at_candidate and len(code_at_candidate) > 0:
@@ -296,10 +315,14 @@ def contract_deployment_block(web3: Web3, address: str, hint_block: Optional[int
             if "header not found" in message or "missing block" in message:
                 high = mid - 1
                 continue
-            logging.error("eth_getCode failed for %s at block %s: %s", checksum, mid, exc)
+            logging.error(
+                "eth_getCode failed for %s at block %s: %s", checksum, mid, exc
+            )
             return deploy_block if deploy_block != latest_block else None
         except Exception as exc:  # pragma: no cover - RPC failure
-            logging.error("eth_getCode failed for %s at block %s: %s", checksum, mid, exc)
+            logging.error(
+                "eth_getCode failed for %s at block %s: %s", checksum, mid, exc
+            )
             return deploy_block if deploy_block != latest_block else None
 
         if code and len(code) > 0:
@@ -311,14 +334,14 @@ def contract_deployment_block(web3: Web3, address: str, hint_block: Optional[int
     return deploy_block
 
 
-def load_config(path: Path) -> Dict[int, Dict[str, object]]:
+def load_config(path: Path) -> dict[int, dict[str, object]]:
     with path.open("r", encoding="utf-8") as fp:
         raw = json.load(fp)
-    config: Dict[int, Dict[str, object]] = {int(k): v for k, v in raw.items()}
+    config: dict[int, dict[str, object]] = {int(k): v for k, v in raw.items()}
     return config
 
 
-def dump_config(path: Path, config: Dict[int, Dict[str, object]], backup: bool) -> None:
+def dump_config(path: Path, config: dict[int, dict[str, object]], backup: bool) -> None:
     ordered = {str(idx): config[idx] for idx in sorted(config.keys())}
     if backup:
         backup_path = path.with_suffix(path.suffix + ".bak")
@@ -346,7 +369,7 @@ def process(args: argparse.Namespace) -> None:
     }
     rpc_registry = RpcRegistry(args, chains)
 
-    metadata_cache: Dict[str, PoolMetadata] = {}
+    metadata_cache: dict[str, PoolMetadata] = {}
 
     for idx in sorted(config.keys()):
         entry = config[idx]
@@ -356,7 +379,9 @@ def process(args: argparse.Namespace) -> None:
             logging.error("Entry #%s is missing an address; skipping", idx)
             continue
         if not chain:
-            logging.error("Entry #%s (%s) has no chain_name; skipping", idx, entry.get("name"))
+            logging.error(
+                "Entry #%s (%s) has no chain_name; skipping", idx, entry.get("name")
+            )
             continue
 
         address_str = str(address)
@@ -382,7 +407,9 @@ def process(args: argparse.Namespace) -> None:
 
         if metadata.deployed_at_block is None:
             w3 = rpc_registry.get(chain_lower)
-            metadata.deployed_at_block = contract_deployment_block(w3, address_str, hint_block=first_block)
+            metadata.deployed_at_block = contract_deployment_block(
+                w3, address_str, hint_block=first_block
+            )
 
         deployment_block = metadata.deployed_at_block
 
@@ -398,7 +425,9 @@ def process(args: argparse.Namespace) -> None:
 
     totals = len(config)
     with_first_block = sum(1 for entry in config.values() if "first_block" in entry)
-    with_deployment = sum(1 for entry in config.values() if "deployed_at_block" in entry)
+    with_deployment = sum(
+        1 for entry in config.values() if "deployed_at_block" in entry
+    )
     logging.info(
         "Computed metadata for %s pools (first_block: %s, deployed_at_block: %s)",
         totals,
@@ -413,14 +442,34 @@ def process(args: argparse.Namespace) -> None:
     dump_config(config_path, config, args.backup)
 
 
-def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
+def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--config", default=str(DEFAULT_CONFIG), help="Path to fxswap config JSON file")
-    parser.add_argument("--data-dir", default=str(DEFAULT_DATA_DIR), help="Root directory containing cached Parquet data")
-    parser.add_argument("--dry-run", action="store_true", help="Compute metadata without writing the config")
-    parser.add_argument("--backup", action="store_true", help="Write <config>.bak before updating the config file")
-    parser.add_argument("--rpc-base", dest="rpc_base", help="RPC endpoint for the Base network")
-    parser.add_argument("--rpc-ethereum", dest="rpc_ethereum", help="RPC endpoint for the Ethereum network")
+    parser.add_argument(
+        "--config", default=str(DEFAULT_CONFIG), help="Path to fxswap config JSON file"
+    )
+    parser.add_argument(
+        "--data-dir",
+        default=str(DEFAULT_DATA_DIR),
+        help="Root directory containing cached Parquet data",
+    )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Compute metadata without writing the config",
+    )
+    parser.add_argument(
+        "--backup",
+        action="store_true",
+        help="Write <config>.bak before updating the config file",
+    )
+    parser.add_argument(
+        "--rpc-base", dest="rpc_base", help="RPC endpoint for the Base network"
+    )
+    parser.add_argument(
+        "--rpc-ethereum",
+        dest="rpc_ethereum",
+        help="RPC endpoint for the Ethereum network",
+    )
     if argv is None:
         return parser.parse_args()
     return parser.parse_args(list(argv))

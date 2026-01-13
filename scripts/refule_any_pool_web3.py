@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 
-from web3 import Web3
 import json
 import os
-from getpass import getpass
-from eth_account import account
 import sys
-import math
-from eth_utils import keccak
-import requests
+from getpass import getpass
 from pathlib import Path
+
+import requests
+from eth_account import account
+from web3 import Web3
+
 
 """
 This script is used to refuel a Curve pool by adding liquidity.
@@ -17,12 +17,12 @@ Rewritten to use web3.py instead of boa.
 """
 
 # Load environment variables with `source .env_optimism`
-XSCAN_API_URI = os.getenv('XSCAN_API_URI')
-XSCAN_API_URI_ONLY = os.getenv('XSCAN_API_URI_ONLY')
-XSCAN_API_KEY = os.getenv('XSCAN_API_KEY')
-XSCAN_CHAIN_ID = os.getenv('XSCAN_CHAIN_ID')
-RPC = os.getenv('RPC')
-SINGER = os.getenv('SINGER')
+XSCAN_API_URI = os.getenv("XSCAN_API_URI")
+XSCAN_API_URI_ONLY = os.getenv("XSCAN_API_URI_ONLY")
+XSCAN_API_KEY = os.getenv("XSCAN_API_KEY")
+XSCAN_CHAIN_ID = os.getenv("XSCAN_CHAIN_ID")
+RPC = os.getenv("RPC")
+SINGER = os.getenv("SINGER")
 
 print(f"XSCAN_API_KEY: {XSCAN_API_KEY}")
 print(f"XSCAN_API_URI: {XSCAN_API_URI}")
@@ -31,10 +31,11 @@ print(f"XSCAN_CHAIN_ID: {XSCAN_CHAIN_ID}")
 print(f"RPC: {RPC}")
 print(f"SINGER: {SINGER}")
 
+
 def account_load(fname):
-    path = os.path.expanduser(os.path.join('~', '.ape', 'accounts', fname + '.json'))
+    path = os.path.expanduser(os.path.join("~", ".ape", "accounts", fname + ".json"))
     print(f"Loading account from: {path}")
-    with open(path, 'r') as f:
+    with open(path) as f:
         pkey = account.decode_keyfile_json(json.load(f), getpass())
         acc = account.Account.from_key(pkey)
         print(f"Account loaded: {acc.address}")
@@ -55,12 +56,10 @@ if not w3.is_connected():
 chain_id = w3.eth.chain_id
 balance = w3.eth.get_balance(signer.address) / 1e18
 
-print(
-    f"Chain: {chain_id}, Deployer: {signer.address}, Balance: {balance}"
-)
+print(f"Chain: {chain_id}, Deployer: {signer.address}, Balance: {balance}")
+
 
 def get_abi_from_etherscan(address):
-
     # The new etherscan v2 API docs: https://docs.etherscan.io/api-endpoints/contracts#get-contract-abi-for-verified-contract-source-codes
     url = f"{XSCAN_API_URI_ONLY}api?module=contract&action=getabi&address={address}&apikey={XSCAN_API_KEY}&chainid={XSCAN_CHAIN_ID}"
 
@@ -70,7 +69,7 @@ def get_abi_from_etherscan(address):
         # v2 API: returns {"status":"1", "message":"OK", "result":{...}} or "result":{abi:[...]} or "result":"[...]"
         if data["status"] == "1" and data["message"] == "OK":
             result = data.get("result")
-            
+
             # Case 1: result is a dict with "abi" key
             if isinstance(result, dict) and "abi" in result:
                 abi = result["abi"]
@@ -78,22 +77,27 @@ def get_abi_from_etherscan(address):
                 if isinstance(abi, str):
                     abi = json.loads(abi)
                 return abi
-            
+
             # Case 2: result is a JSON string (most common case)
             elif isinstance(result, str):
                 abi = json.loads(result)
                 return abi
-            
+
             # Case 3: result is already a list
             elif isinstance(result, list):
                 return result
-            
+
             else:
-                raise ValueError(f"Unexpected result format: {type(result)}, raw: {data}")
+                raise ValueError(
+                    f"Unexpected result format: {type(result)}, raw: {data}"
+                )
         else:
-            raise ValueError(f"Failed to fetch ABI: {data.get('message', 'Unknown error')}, raw: {data}")
+            raise ValueError(
+                f"Failed to fetch ABI: {data.get('message', 'Unknown error')}, raw: {data}"
+            )
     except Exception as e:
-        raise Exception(f"Error fetching ABI from Xscan/Etherscan v2 API: {e}")
+        raise Exception(f"Error fetching ABI from Xscan/Etherscan v2 API: {e}") from e
+
 
 # USDC/AERO A20-15
 fxswap_address = "0x3CeA080D303bD105c48cA4C24D8426da99f75524"
@@ -105,7 +109,7 @@ print(f"fxswaps_path: {fxswaps_path}")
 fxswap_addresses = {}
 if fxswaps_path.exists():
     try:
-        with open(fxswaps_path, 'r') as f:
+        with open(fxswaps_path) as f:
             fxswap_addresses_raw = json.load(f)
             # Convert string keys to integers (JSON requires string keys)
             fxswap_addresses = {int(k): v for k, v in fxswap_addresses_raw.items()}
@@ -125,8 +129,7 @@ fxswap_address = fxswap_addresses[index]["address"]
 # Get fxswap contract ABI and create contract instance
 fxswap_abi = get_abi_from_etherscan(fxswap_address)
 fxswap_contract = w3.eth.contract(
-    address=Web3.to_checksum_address(fxswap_address),
-    abi=fxswap_abi
+    address=Web3.to_checksum_address(fxswap_address), abi=fxswap_abi
 )
 
 # Call name() function
@@ -140,22 +143,22 @@ ERC20_ABI = [
         "inputs": [],
         "name": "name",
         "outputs": [{"name": "", "type": "string"}],
-        "type": "function"
+        "type": "function",
     },
     {
         "constant": True,
         "inputs": [],
         "name": "decimals",
         "outputs": [{"name": "", "type": "uint8"}],
-        "type": "function"
+        "type": "function",
     },
     {
         "constant": True,
         "inputs": [],
         "name": "symbol",
         "outputs": [{"name": "", "type": "string"}],
-        "type": "function"
-    }
+        "type": "function",
+    },
 ]
 
 # Get token addresses from pool
@@ -166,8 +169,12 @@ print(f"Token 0 address: {token0_address}")
 print(f"Token 1 address: {token1_address}")
 
 # Get token info (name and decimals)
-token0_contract = w3.eth.contract(address=Web3.to_checksum_address(token0_address), abi=ERC20_ABI)
-token1_contract = w3.eth.contract(address=Web3.to_checksum_address(token1_address), abi=ERC20_ABI)
+token0_contract = w3.eth.contract(
+    address=Web3.to_checksum_address(token0_address), abi=ERC20_ABI
+)
+token1_contract = w3.eth.contract(
+    address=Web3.to_checksum_address(token1_address), abi=ERC20_ABI
+)
 
 token0_name = token0_contract.functions.name().call()
 token0_decimals = token0_contract.functions.decimals().call()
@@ -205,25 +212,29 @@ token1_price_usd = None
 if token0_is_usdc:
     token0_price_usd = 1.0
     print(f"{token0_name} is USDC, using price: $1.00")
-    
+
     # last_price gives price of token1 in terms of token0 (USDC)
     # So token1_price_usd = price_ratio (since token0 is $1)
     token1_price_usd = price_ratio
-    print(f"Calculated {token1_name} price from pool last_price: ${token1_price_usd:.6f} per {token1_name}")
-    
+    print(
+        f"Calculated {token1_name} price from pool last_price: ${token1_price_usd:.6f} per {token1_name}"
+    )
+
 elif token1_is_usdc:
     token1_price_usd = 1.0
     print(f"{token1_name} is USDC, using price: $1.00")
-    
+
     # last_price gives price of token1 in terms of token0
     # Since token1 is USDC ($1), token0_price_usd = 1 / price_ratio
     token0_price_usd = 1.0 / price_ratio
-    print(f"Calculated {token0_name} price from pool last_price: ${token0_price_usd:.6f} per {token0_name}")
-    
+    print(
+        f"Calculated {token0_name} price from pool last_price: ${token0_price_usd:.6f} per {token0_name}"
+    )
+
 else:
     # Neither token is USDC - ask for both prices
-    print(f"\nNeither token is USDC. Please provide USD prices for both tokens.")
-    
+    print("\nNeither token is USDC. Please provide USD prices for both tokens.")
+
     while token0_price_usd is None:
         try:
             price_input = input(f"Enter USD price for {token0_name}: ").strip()
@@ -233,7 +244,7 @@ else:
                 token0_price_usd = None
         except ValueError:
             print("Invalid price. Please enter a number.")
-    
+
     while token1_price_usd is None:
         try:
             price_input = input(f"Enter USD price for {token1_name}: ").strip()
@@ -274,7 +285,7 @@ print(f"Total: ${lp_token_usd_value:.6f} per 1 LP token\n")
 prompt_val = None
 while prompt_val is None:
     try:
-        prompt_val = float(input(f"Enter USD value you want to refuel: ").strip())
+        prompt_val = float(input("Enter USD value you want to refuel: ").strip())
         if prompt_val <= 0:
             print("Amount must be greater than 0. Please try again.")
             prompt_val = None
@@ -301,21 +312,29 @@ token1_value_usd = (token1_amount / 10**token1_decimals) * token1_price_usd
 total_value_usd = token0_value_usd + token1_value_usd
 
 print(f"\nTotal refuel value: {total_value_usd:.2f} USD")
-print(f"  - {token0_name}: {token0_value_usd:.2f} USD (at ${token0_price_usd:.6f} per {token0_name})")
-print(f"  - {token1_name}: {token1_value_usd:.2f} USD (at ${token1_price_usd:.6f} per {token1_name})")
+print(
+    f"  - {token0_name}: {token0_value_usd:.2f} USD (at ${token0_price_usd:.6f} per {token0_name})"
+)
+print(
+    f"  - {token1_name}: {token1_value_usd:.2f} USD (at ${token1_price_usd:.6f} per {token1_name})"
+)
 
 # Check if refuel value is above 10 USD and prompt for confirmation
 if total_value_usd > 10:
-    print(f"\n⚠️  WARNING: Total refuel value is {total_value_usd:.2f} USD, which is above 10 USD!")
+    print(
+        f"\n⚠️  WARNING: Total refuel value is {total_value_usd:.2f} USD, which is above 10 USD!"
+    )
     response = input("Do you want to continue? (yes/no): ").strip().lower()
-    if response not in ['yes', 'y']:
+    if response not in ["yes", "y"]:
         print("Refuel cancelled by user.")
         sys.exit(0)
     print("Continuing with refuel...")
 
 # Verify: calculate how many LP tokens we'd get by adding these amounts back
-calc_lp_share = fxswap_contract.functions.calc_token_amount([token0_amount, token1_amount], True).call()
-print(f"\nVerification - LP tokens from re-adding:")
+calc_lp_share = fxswap_contract.functions.calc_token_amount(
+    [token0_amount, token1_amount], True
+).call()
+print("\nVerification - LP tokens from re-adding:")
 print(f"  Expected LP tokens: {calc_lp_share / 10**18}")
 print(f"  Target LP tokens: {target_lp_tokens / 10**18}")
 print(f"  Difference: {abs(calc_lp_share - target_lp_tokens) / 10**18}")
@@ -329,14 +348,12 @@ print("\nWithdrawing from pool to get refuel tokens...")
 min_amounts = [0, 0]  # You may want to tighten this in production
 
 remove_liquidity_fn = fxswap_contract.functions.remove_liquidity(
-    int(calc_lp_share),
-    min_amounts,
-    signer.address
+    int(calc_lp_share), min_amounts, signer.address
 )
 
 # Estimate gas for withdrawal
 try:
-    withdraw_gas_estimate = remove_liquidity_fn.estimate_gas({'from': signer.address})
+    withdraw_gas_estimate = remove_liquidity_fn.estimate_gas({"from": signer.address})
     print(f"Estimated gas for withdrawal: {withdraw_gas_estimate}")
     withdraw_gas_limit = int(withdraw_gas_estimate * 1.2)
 except Exception as e:
@@ -345,13 +362,15 @@ except Exception as e:
 
 # Build and sign withdrawal tx
 withdraw_nonce = w3.eth.get_transaction_count(signer.address)
-withdraw_tx = remove_liquidity_fn.build_transaction({
-    'from': signer.address,
-    'nonce': withdraw_nonce,
-    'gas': withdraw_gas_limit,
-    'gasPrice': w3.eth.gas_price,
-    'chainId': chain_id,
-})
+withdraw_tx = remove_liquidity_fn.build_transaction(
+    {
+        "from": signer.address,
+        "nonce": withdraw_nonce,
+        "gas": withdraw_gas_limit,
+        "gasPrice": w3.eth.gas_price,
+        "chainId": chain_id,
+    }
+)
 signed_withdraw_txn = signer.sign_transaction(withdraw_tx)
 
 # Send the withdrawal tx
@@ -372,28 +391,30 @@ else:
 # Token addresses are already retrieved from the pool contract above
 # coin0_address and coin1_address are defined earlier in the script
 
-min_mint_amount = int(calc_lp_share) # no slippage
+min_mint_amount = int(calc_lp_share)  # no slippage
 receiver = "0x0000000000000000000000000000000000000000"
 
-print(f"\nTransaction parameters:")
+print("\nTransaction parameters:")
 print(f"  amounts: [{token0_amount}, {token1_amount}]")
 print(f"  min_mint_amount: {min_mint_amount}")
 print(f"  receiver: {receiver}")
-print(f"  donation: True")
+print("  donation: True")
 
 # Todo: check if approve for pool exists to get token sent
 
 
 if SIM:
     print("WARNING: SIM mode (forking) is not directly supported in web3.py.")
-    print("You would need to use a local node with fork capabilities (e.g., Anvil, Hardhat).")
+    print(
+        "You would need to use a local node with fork capabilities (e.g., Anvil, Hardhat)."
+    )
 
 # Build transaction
 add_liquidity_function = fxswap_contract.functions.add_liquidity(
     [token0_amount, token1_amount],
     min_mint_amount,
     receiver,
-    True  # donation
+    True,  # donation
 )
 
 # Get fresh nonce and gas price after withdrawal (nonce has increased)
@@ -405,7 +426,7 @@ print(f"Using nonce: {nonce} (withdrawal used nonce {withdraw_nonce})")
 
 # Estimate gas
 try:
-    gas_estimate = add_liquidity_function.estimate_gas({'from': signer.address})
+    gas_estimate = add_liquidity_function.estimate_gas({"from": signer.address})
     print(f"Estimated gas: {gas_estimate}")
     gas_limit = int(gas_estimate * 1.2)  # Add 20% buffer
 except Exception as e:
@@ -413,13 +434,15 @@ except Exception as e:
     gas_limit = 300_000  # Use default
 
 # Build transaction
-transaction = add_liquidity_function.build_transaction({
-    'from': signer.address,
-    'nonce': nonce,
-    'gas': gas_limit,
-    'gasPrice': gas_price,
-    'chainId': chain_id,
-})
+transaction = add_liquidity_function.build_transaction(
+    {
+        "from": signer.address,
+        "nonce": nonce,
+        "gas": gas_limit,
+        "gasPrice": gas_price,
+        "chainId": chain_id,
+    }
+)
 
 # Sign transaction
 signed_txn = signer.sign_transaction(transaction)
@@ -434,10 +457,10 @@ print("Waiting for transaction receipt...")
 tx_receipt = w3.eth.wait_for_transaction_receipt(tx_hash, timeout=300)
 
 if tx_receipt.status == 1:
-    print(f"✓ Transaction successful!")
+    print("✓ Transaction successful!")
     print(f"Block number: {tx_receipt.blockNumber}")
     print(f"Gas used: {tx_receipt.gasUsed}")
     print(f"Transaction receipt: {tx_receipt}")
 else:
-    print(f"✗ Transaction failed!")
+    print("✗ Transaction failed!")
     print(f"Transaction receipt: {tx_receipt}")

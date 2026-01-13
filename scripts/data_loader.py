@@ -4,8 +4,9 @@ Provides backward compatibility for reading both formats.
 """
 
 import json
-import pandas as pd
 from pathlib import Path
+
+import pandas as pd
 
 
 def load_fxswap_data(file_path):
@@ -22,33 +23,37 @@ def load_fxswap_data(file_path):
     file_path = Path(file_path)
 
     # Try Parquet first (preferred format)
-    parquet_path = file_path.with_suffix('.parquet')
+    parquet_path = file_path.with_suffix(".parquet")
     if parquet_path.exists():
         df = pd.read_parquet(parquet_path)
         return dataframe_to_nested_dict(df)
 
     # Fall back to JSON for backward compatibility
-    json_path = file_path.with_suffix('.json')
+    json_path = file_path.with_suffix(".json")
     if json_path.exists():
-        with open(json_path, 'r') as f:
+        with open(json_path) as f:
             return json.load(f)
 
     # If neither exists, create an empty parquet file with the correct schema
     # Ensure the directory exists
     parquet_path.parent.mkdir(parents=True, exist_ok=True)
-    
+
     # Create an empty DataFrame with the correct schema and dtypes
-    empty_df = pd.DataFrame({
-        'block_number': pd.Series(dtype='int64'),
-        'function_name': pd.Series(dtype='string'),
-        'value': pd.Series(dtype='float64'),
-        'epoch': pd.Series(dtype='int64'),
-        'human_readable': pd.Series(dtype='string')
-    })
-    
+    empty_df = pd.DataFrame(
+        {
+            "block_number": pd.Series(dtype="int64"),
+            "function_name": pd.Series(dtype="string"),
+            "value": pd.Series(dtype="float64"),
+            "epoch": pd.Series(dtype="int64"),
+            "human_readable": pd.Series(dtype="string"),
+        }
+    )
+
     # Save the empty parquet file
-    empty_df.to_parquet(parquet_path, engine='pyarrow', compression='snappy', index=False)
-    
+    empty_df.to_parquet(
+        parquet_path, engine="pyarrow", compression="snappy", index=False
+    )
+
     # Return empty dict (no data yet)
     return {}
 
@@ -66,14 +71,14 @@ def dataframe_to_nested_dict(df):
     result = {}
 
     for _, row in df.iterrows():
-        block_str = str(row['block_number'])
+        block_str = str(row["block_number"])
         if block_str not in result:
             result[block_str] = {}
 
-        result[block_str][row['function_name']] = {
-            'value': row['value'],
-            'epoch': int(row['epoch']),
-            'human_readable': row['human_readable']
+        result[block_str][row["function_name"]] = {
+            "value": row["value"],
+            "epoch": int(row["epoch"]),
+            "human_readable": row["human_readable"],
         }
 
     return result
@@ -94,22 +99,24 @@ def nested_dict_to_dataframe(data):
     for block_number, block_data in data.items():
         for function_name, function_data in block_data.items():
             if isinstance(function_data, dict):
-                records.append({
-                    'block_number': int(block_number),
-                    'function_name': function_name,
-                    'value': function_data.get('value'),
-                    'epoch': function_data.get('epoch'),
-                    'human_readable': function_data.get('human_readable')
-                })
+                records.append(
+                    {
+                        "block_number": int(block_number),
+                        "function_name": function_name,
+                        "value": function_data.get("value"),
+                        "epoch": function_data.get("epoch"),
+                        "human_readable": function_data.get("human_readable"),
+                    }
+                )
 
     df = pd.DataFrame(records)
 
     # Ensure proper data types
     if not df.empty:
-        df['block_number'] = df['block_number'].astype('int64')
-        df['function_name'] = df['function_name'].astype('string')
-        df['value'] = df['value'].astype('float64')
-        df['epoch'] = df['epoch'].astype('int64')
-        df['human_readable'] = df['human_readable'].astype('string')
+        df["block_number"] = df["block_number"].astype("int64")
+        df["function_name"] = df["function_name"].astype("string")
+        df["value"] = df["value"].astype("float64")
+        df["epoch"] = df["epoch"].astype("int64")
+        df["human_readable"] = df["human_readable"].astype("string")
 
     return df

@@ -8,12 +8,11 @@ This script:
 3. Optionally removes the original JSON files
 """
 
-import json
-import pandas as pd
-import pyarrow as pa
-import pyarrow.parquet as pq
-from pathlib import Path
 import argparse
+import json
+from pathlib import Path
+
+import pandas as pd
 
 
 def json_to_dataframe(json_data):
@@ -28,23 +27,25 @@ def json_to_dataframe(json_data):
     for block_number, block_data in json_data.items():
         for function_name, function_data in block_data.items():
             if isinstance(function_data, dict):
-                records.append({
-                    'block_number': int(block_number),
-                    'function_name': function_name,
-                    'value': function_data.get('value'),
-                    'epoch': function_data.get('epoch'),
-                    'human_readable': function_data.get('human_readable')
-                })
+                records.append(
+                    {
+                        "block_number": int(block_number),
+                        "function_name": function_name,
+                        "value": function_data.get("value"),
+                        "epoch": function_data.get("epoch"),
+                        "human_readable": function_data.get("human_readable"),
+                    }
+                )
 
     df = pd.DataFrame(records)
 
     # Ensure proper data types
     if not df.empty:
-        df['block_number'] = df['block_number'].astype('int64')
-        df['function_name'] = df['function_name'].astype('string')
-        df['value'] = df['value'].astype('float64')
-        df['epoch'] = df['epoch'].astype('int64')
-        df['human_readable'] = df['human_readable'].astype('string')
+        df["block_number"] = df["block_number"].astype("int64")
+        df["function_name"] = df["function_name"].astype("string")
+        df["value"] = df["value"].astype("float64")
+        df["epoch"] = df["epoch"].astype("int64")
+        df["human_readable"] = df["human_readable"].astype("string")
 
     return df
 
@@ -59,14 +60,14 @@ def dataframe_to_json(df):
     result = {}
 
     for _, row in df.iterrows():
-        block_str = str(row['block_number'])
+        block_str = str(row["block_number"])
         if block_str not in result:
             result[block_str] = {}
 
-        result[block_str][row['function_name']] = {
-            'value': row['value'],
-            'epoch': int(row['epoch']),
-            'human_readable': row['human_readable']
+        result[block_str][row["function_name"]] = {
+            "value": row["value"],
+            "epoch": int(row["epoch"]),
+            "human_readable": row["human_readable"],
         }
 
     return result
@@ -87,7 +88,7 @@ def convert_json_to_parquet(json_file_path, remove_json=False):
 
     # Read JSON file
     print(f"Reading {json_file_path}...")
-    with open(json_file_path, 'r') as f:
+    with open(json_file_path) as f:
         json_data = json.load(f)
 
     # Convert to DataFrame
@@ -95,25 +96,24 @@ def convert_json_to_parquet(json_file_path, remove_json=False):
     df = json_to_dataframe(json_data)
 
     # Create Parquet file path (same name, different extension)
-    parquet_file_path = json_file_path.with_suffix('.parquet')
+    parquet_file_path = json_file_path.with_suffix(".parquet")
 
     # Write to Parquet
     print(f"Writing to {parquet_file_path}...")
     df.to_parquet(
-        parquet_file_path,
-        engine='pyarrow',
-        compression='snappy',
-        index=False
+        parquet_file_path, engine="pyarrow", compression="snappy", index=False
     )
 
     # Verify the conversion by reading back and comparing
-    print(f"Verifying conversion...")
+    print("Verifying conversion...")
     df_read = pd.read_parquet(parquet_file_path)
     json_reconstructed = dataframe_to_json(df_read)
 
     # Basic verification: check number of blocks
     if len(json_data) != len(json_reconstructed):
-        print(f"  WARNING: Block count mismatch! Original: {len(json_data)}, Reconstructed: {len(json_reconstructed)}")
+        print(
+            f"  WARNING: Block count mismatch! Original: {len(json_data)}, Reconstructed: {len(json_reconstructed)}"
+        )
     else:
         print(f"  ✓ Verification passed ({len(json_data)} blocks)")
 
@@ -128,20 +128,33 @@ def convert_json_to_parquet(json_file_path, remove_json=False):
 
     # Remove JSON file if requested
     if remove_json:
-        print(f"  Removing original JSON file...")
+        print("  Removing original JSON file...")
         json_file_path.unlink()
 
     return parquet_file_path
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Convert JSON data files to Parquet format')
-    parser.add_argument('--remove-json', action='store_true',
-                        help='Remove original JSON files after conversion')
-    parser.add_argument('--data-dir', type=str, default='data',
-                        help='Base data directory (default: data)')
-    parser.add_argument('--file', type=str, default=None,
-                        help='Convert a specific file instead of all files')
+    parser = argparse.ArgumentParser(
+        description="Convert JSON data files to Parquet format"
+    )
+    parser.add_argument(
+        "--remove-json",
+        action="store_true",
+        help="Remove original JSON files after conversion",
+    )
+    parser.add_argument(
+        "--data-dir",
+        type=str,
+        default="data",
+        help="Base data directory (default: data)",
+    )
+    parser.add_argument(
+        "--file",
+        type=str,
+        default=None,
+        help="Convert a specific file instead of all files",
+    )
     args = parser.parse_args()
 
     data_dir = Path(args.data_dir)
@@ -154,7 +167,7 @@ def main():
     if args.file:
         json_files = [Path(args.file)]
     else:
-        json_files = list(data_dir.rglob('*.json'))
+        json_files = list(data_dir.rglob("*.json"))
 
     if not json_files:
         print(f"No JSON files found in {data_dir}")
@@ -168,7 +181,9 @@ def main():
 
     for json_file in json_files:
         try:
-            print(f"\n[{successful + failed + 1}/{len(json_files)}] Converting {json_file.relative_to(data_dir)}")
+            print(
+                f"\n[{successful + failed + 1}/{len(json_files)}] Converting {json_file.relative_to(data_dir)}"
+            )
             convert_json_to_parquet(json_file, remove_json=args.remove_json)
             successful += 1
         except Exception as e:
@@ -176,12 +191,12 @@ def main():
             failed += 1
 
     print("\n" + "=" * 80)
-    print(f"Conversion complete!")
+    print("Conversion complete!")
     print(f"  Successful: {successful}")
     print(f"  Failed: {failed}")
 
     return 0 if failed == 0 else 1
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     exit(main())
