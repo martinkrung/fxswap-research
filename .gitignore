@@ -10,5 +10,3 @@ __pycache__/
 logs/*.log
 
 # Generated plots
-plots/*
-
