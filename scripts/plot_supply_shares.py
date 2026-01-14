@@ -70,7 +70,7 @@ except FileNotFoundError as e:
 token0_decimals = 18
 token1_decimals = 18
 
-# Parse the data from JSON
+# Parse the data
 donation_shares_data = []
 user_supply_data = []
 total_supply_data = []
@@ -79,7 +79,7 @@ balance_1_data = []
 last_prices_data = []
 fee_data = []
 
-# Process each block in the JSON
+# Process each block in the data
 for _block_number, block_data in sorted(data.items(), key=lambda x: int(x[0])):
     # Get timestamp from any field
     timestamp = None

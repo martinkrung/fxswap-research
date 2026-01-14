@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Refuel Analysis Overview</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #333; max-width: 1400px; margin: 0 auto; padding: 20px; background: #f5f5f5; }
+        h1 { text-align: center; margin-bottom: 40px; }
+        .market-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 25px; }
+        .market-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.2s; text-decoration: none; color: inherit; display: flex; flex-direction: column; height: 100%; }
+        .market-card:hover { transform: translateY(-5px); box-shadow: 0 8px 12px rgba(0,0,0,0.15); }
+        .thumbnail-container { width: 100%; height: 200px; overflow: hidden; background: #eee; border-bottom: 1px solid #eee; }
+        .thumbnail-container img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+        .market-info { padding: 15px; flex-grow: 1; }
+        .market-name { font-weight: bold; font-size: 1.2em; margin-bottom: 5px; color: #3465A4; }
+        .market-meta { font-size: 0.85em; color: #666; }
+        .filter-container { margin-bottom: 30px; display: flex; gap: 10px; justify-content: center; }
+        input[type="text"] { padding: 10px 20px; border-radius: 25px; border: 1px solid #ccc; width: 100%; max-width: 400px; font-size: 1em; }
+    </style>
+</head>
+<body>
+    <h1>FxSwap Refuel Analysis</h1>
+    
+    <div class="filter-container">
+        <input type="text" id="marketSearch" placeholder="Search markets (name or chain)..." onkeyup="filterMarkets()">
+    </div>
+
+    <div class="market-grid" id="marketGrid">
+
+        <div class="market-item" data-name="crvusd/zchf" data-chain="ethereum">
+            <a href="ethereum/crvUSD_ZCHF/index.html" class="market-card">
+                <div class="thumbnail-container">
+                    <img src="ethereum/crvUSD_ZCHF/week_2026_W03_2026-01-12.png" alt="crvUSD/ZCHF" loading="lazy">
+                </div>
+                <div class="market-info">
+                    <div class="market-name">crvUSD/ZCHF</div>
+                    <div class="market-meta">Chain: Ethereum</div>
+                </div>
+            </a>
+        </div>
+
+        <div class="market-item" data-name="yb crvusd/tbtc" data-chain="ethereum">
+            <a href="ethereum/YB_crvUSD_tBTC/index.html" class="market-card">
+                <div class="thumbnail-container">
+                    <img src="ethereum/YB_crvUSD_tBTC/week_2026_W03_2026-01-12.png" alt="YB crvUSD/tBTC" loading="lazy">
+                </div>
+                <div class="market-info">
+                    <div class="market-name">YB crvUSD/tBTC</div>
+                    <div class="market-meta">Chain: Ethereum</div>
+                </div>
+            </a>
+        </div>
+
+        <div class="market-item" data-name="yb crvusd/tbtc new" data-chain="ethereum">
+            <a href="ethereum/YB_crvUSD_tBTC_new/index.html" class="market-card">
+                <div class="thumbnail-container">
+                    <img src="ethereum/YB_crvUSD_tBTC_new/week_2026_W03_2026-01-12.png" alt="YB crvUSD/tBTC new" loading="lazy">
+                </div>
+                <div class="market-info">
+                    <div class="market-name">YB crvUSD/tBTC new</div>
+                    <div class="market-meta">Chain: Ethereum</div>
+                </div>
+            </a>
+        </div>
+
+        <div class="market-item" data-name="usdc/weth a20-5 ng" data-chain="base">
+            <a href="base/USDC_WETH_A20_5_ng/index.html" class="market-card">
+                <div class="thumbnail-container">
+                    <img src="base/USDC_WETH_A20_5_ng/week_2026_W03_2026-01-12.png" alt="USDC/WETH A20-5 ng" loading="lazy">
+                </div>
+                <div class="market-info">
+                    <div class="market-name">USDC/WETH A20-5 ng</div>
+                    <div class="market-meta">Chain: Base</div>
+                </div>
+            </a>
+        </div>
+
+        <div class="market-item" data-name="usdc/brz" data-chain="base">
+            <a href="base/USDC_BRZ/index.html" class="market-card">
+                <div class="thumbnail-container">
+                    <img src="base/USDC_BRZ/week_2026_W03_2026-01-12.png" alt="USDC/BRZ" loading="lazy">
+                </div>
+                <div class="market-info">
+                    <div class="market-name">USDC/BRZ</div>
+                    <div class="market-meta">Chain: Base</div>
+                </div>
+            </a>
+        </div>
+
+        <div class="market-item" data-name="usdc/eurc a50-5" data-chain="base">
+            <a href="base/USDC_EURC_A50_5/index.html" class="market-card">
+                <div class="thumbnail-container">
+                    <img src="base/USDC_EURC_A50_5/week_2026_W03_2026-01-12.png" alt="USDC/EURC A50-5" loading="lazy">
+                </div>
+                <div class="market-info">
+                    <div class="market-name">USDC/EURC A50-5</div>
+                    <div class="market-meta">Chain: Base</div>
+                </div>
+            </a>
+        </div>
+
+        <div class="market-item" data-name="usdc/weth a05-5 ng" data-chain="base">
+            <a href="base/USDC_WETH_A05_5_ng/index.html" class="market-card">
+                <div class="thumbnail-container">
+                    <img src="base/USDC_WETH_A05_5_ng/week_2026_W03_2026-01-12.png" alt="USDC/WETH A05-5 ng" loading="lazy">
+                </div>
+                <div class="market-info">
+                    <div class="market-name">USDC/WETH A05-5 ng</div>
+                    <div class="market-meta">Chain: Base</div>
+                </div>
+            </a>
+        </div>
+
+        <div class="market-item" data-name="usdc/weth a20-5" data-chain="base">
+            <a href="base/USDC_WETH_A20_5/index.html" class="market-card">
+                <div class="thumbnail-container">
+                    <img src="base/USDC_WETH_A20_5/week_2026_W03_2026-01-12.png" alt="USDC/WETH A20-5" loading="lazy">
+                </div>
+                <div class="market-info">
+                    <div class="market-name">USDC/WETH A20-5</div>
+                    <div class="market-meta">Chain: Base</div>
+                </div>
+            </a>
+        </div>
+
+        <div class="market-item" data-name="usdc/weth a5-5" data-chain="base">
+            <a href="base/USDC_WETH_A5_5/index.html" class="market-card">
+                <div class="thumbnail-container">
+                    <img src="base/USDC_WETH_A5_5/week_2026_W03_2026-01-12.png" alt="USDC/WETH A5-5" loading="lazy">
+                </div>
+                <div class="market-info">
+                    <div class="market-name">USDC/WETH A5-5</div>
+                    <div class="market-meta">Chain: Base</div>
+                </div>
+            </a>
+        </div>
+
+        <div class="market-item" data-name="usdc/weth a40-5" data-chain="base">
+            <a href="base/USDC_WETH_A40_5/index.html" class="market-card">
+                <div class="thumbnail-container">
+                    <img src="base/USDC_WETH_A40_5/week_2026_W03_2026-01-12.png" alt="USDC/WETH A40-5" loading="lazy">
+                </div>
+                <div class="market-info">
+                    <div class="market-name">USDC/WETH A40-5</div>
+                    <div class="market-meta">Chain: Base</div>
+                </div>
+            </a>
+        </div>
+
+        <div class="market-item" data-name="usdc/weth a10-5 ng" data-chain="base">
+            <a href="base/USDC_WETH_A10_5_ng/index.html" class="market-card">
+                <div class="thumbnail-container">
+                    <img src="base/USDC_WETH_A10_5_ng/week_2026_W03_2026-01-12.png" alt="USDC/WETH A10-5 ng" loading="lazy">
+                </div>
+                <div class="market-info">
+                    <div class="market-name">USDC/WETH A10-5 ng</div>
+                    <div class="market-meta">Chain: Base</div>
+                </div>
+            </a>
+        </div>
+
+        <div class="market-item" data-name="usdc/weth a80-5 2" data-chain="base">
+            <a href="base/USDC_WETH_A80_5_2/index.html" class="market-card">
+                <div class="thumbnail-container">
+                    <img src="base/USDC_WETH_A80_5_2/week_2025_W46_2025-11-10.png" alt="USDC/WETH A80-5 2" loading="lazy">
+                </div>
+                <div class="market-info">
+                    <div class="market-name">USDC/WETH A80-5 2</div>
+                    <div class="market-meta">Chain: Base</div>
+                </div>
+            </a>
+        </div>
+
+        <div class="market-item" data-name="usdc/idrx" data-chain="base">
+            <a href="base/USDC_IDRX/index.html" class="market-card">
+                <div class="thumbnail-container">
+                    <img src="base/USDC_IDRX/week_2026_W03_2026-01-12.png" alt="USDC/IDRX" loading="lazy">
+                </div>
+                <div class="market-info">
+                    <div class="market-name">USDC/IDRX</div>
+                    <div class="market-meta">Chain: Base</div>
+                </div>
+            </a>
+        </div>
+
+        <div class="market-item" data-name="usdc/weth a40-5 ng" data-chain="base">
+            <a href="base/USDC_WETH_A40_5_ng/index.html" class="market-card">
+                <div class="thumbnail-container">
+                    <img src="base/USDC_WETH_A40_5_ng/week_2026_W03_2026-01-12.png" alt="USDC/WETH A40-5 ng" loading="lazy">
+                </div>
+                <div class="market-info">
+                    <div class="market-name">USDC/WETH A40-5 ng</div>
+                    <div class="market-meta">Chain: Base</div>
+                </div>
+            </a>
+        </div>
+
+        <div class="market-item" data-name="usdc/weth a2-5" data-chain="base">
+            <a href="base/USDC_WETH_A2_5/index.html" class="market-card">
+                <div class="thumbnail-container">
+                    <img src="base/USDC_WETH_A2_5/week_2026_W03_2026-01-12.png" alt="USDC/WETH A2-5" loading="lazy">
+                </div>
+                <div class="market-info">
+                    <div class="market-name">USDC/WETH A2-5</div>
+                    <div class="market-meta">Chain: Base</div>
+                </div>
+            </a>
+        </div>
+
+        <div class="market-item" data-name="usdc/weth a80-5" data-chain="base">
+            <a href="base/USDC_WETH_A80_5/index.html" class="market-card">
+                <div class="thumbnail-container">
+                    <img src="base/USDC_WETH_A80_5/week_2026_W03_2026-01-12.png" alt="USDC/WETH A80-5" loading="lazy">
+                </div>
+                <div class="market-info">
+                    <div class="market-name">USDC/WETH A80-5</div>
+                    <div class="market-meta">Chain: Base</div>
+                </div>
+            </a>
+        </div>
+
+        <div class="market-item" data-name="usdc/weth a03-5 ng" data-chain="base">
+            <a href="base/USDC_WETH_A03_5_ng/index.html" class="market-card">
+                <div class="thumbnail-container">
+                    <img src="base/USDC_WETH_A03_5_ng/week_2026_W03_2026-01-12.png" alt="USDC/WETH A03-5 ng" loading="lazy">
+                </div>
+                <div class="market-info">
+                    <div class="market-name">USDC/WETH A03-5 ng</div>
+                    <div class="market-meta">Chain: Base</div>
+                </div>
+            </a>
+        </div>
+
+        <div class="market-item" data-name="usdc/aero a20-15" data-chain="base">
+            <a href="base/USDC_AERO_A20_15/index.html" class="market-card">
+                <div class="thumbnail-container">
+                    <img src="base/USDC_AERO_A20_15/week_2026_W03_2026-01-12.png" alt="USDC/AERO A20-15" loading="lazy">
+                </div>
+                <div class="market-info">
+                    <div class="market-name">USDC/AERO A20-15</div>
+                    <div class="market-meta">Chain: Base</div>
+                </div>
+            </a>
+        </div>
+
+    </div>
+
+    <script>
+        function filterMarkets() {
+            const input = document.getElementById('marketSearch');
+            const filter = input.value.toLowerCase();
+            const grid = document.getElementById('marketGrid');
+            const items = grid.getElementsByClassName('market-item');
+
+            for (let i = 0; i < items.length; i++) {
+                const name = items[i].getAttribute('data-name');
+                const chain = items[i].getAttribute('data-chain');
+                if (name.includes(filter) || chain.includes(filter)) {
+                    items[i].style.display = "";
+                } else {
+                    items[i].style.display = "none";
+                }
+            }
+        }
+    </script>
+</body>
+</html>

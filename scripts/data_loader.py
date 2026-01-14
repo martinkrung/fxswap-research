@@ -1,9 +1,7 @@
 """
-Helper module for loading fxswap data from Parquet or JSON files.
-Provides backward compatibility for reading both formats.
+Helper module for loading fxswap data from Parquet files.
 """
 
-import json
 from pathlib import Path
 
 import pandas as pd
@@ -11,30 +9,24 @@ import pandas as pd
 
 def load_fxswap_data(file_path):
     """
-    Load fxswap data from Parquet or JSON file.
-    Creates empty files if they don't exist.
+    Load fxswap data from Parquet file.
+    Creates empty file if it doesn't exist.
 
     Args:
-        file_path: Path to the data file (can be .parquet or .json)
+        file_path: Path to the data file (can be .parquet or .json, but only .parquet is used)
 
     Returns:
         dict: Nested dictionary structure {block_number: {function_name: {value, epoch, human_readable}}}
     """
     file_path = Path(file_path)
 
-    # Try Parquet first (preferred format)
+    # Use Parquet (preferred and now only format)
     parquet_path = file_path.with_suffix(".parquet")
     if parquet_path.exists():
         df = pd.read_parquet(parquet_path)
         return dataframe_to_nested_dict(df)
 
-    # Fall back to JSON for backward compatibility
-    json_path = file_path.with_suffix(".json")
-    if json_path.exists():
-        with open(json_path) as f:
-            return json.load(f)
-
-    # If neither exists, create an empty parquet file with the correct schema
+    # If it doesn't exist, create an empty parquet file with the correct schema
     # Ensure the directory exists
     parquet_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -70,7 +62,7 @@ def dataframe_to_nested_dict(df):
     """
     result = {}
 
-    for _, row in df.iterrows():
+    for row in df.to_dict("records"):
         block_str = str(row["block_number"])
         if block_str not in result:
             result[block_str] = {}

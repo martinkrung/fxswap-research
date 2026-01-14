@@ -119,7 +119,7 @@ except ValueError:
     print(f"Error: Path traversal detected! Refusing to access: {data_file_path}")
     exit(1)
 
-# Load data (supports both Parquet and JSON for backward compatibility)
+# Load data (now only Parquet)
 try:
     data = load_fxswap_data(data_file_path)
 except FileNotFoundError as e:

@@ -16,6 +16,7 @@ from datetime import UTC
 from pathlib import Path
 
 import pandas as pd
+from data_loader import dataframe_to_nested_dict
 
 
 def print_schema(df):
@@ -189,16 +190,7 @@ Examples:
         if export_path.suffix == ".json":
             if args.nested:
                 # Convert to nested structure
-                result = {}
-                for _, row in filtered_df.iterrows():
-                    block_str = str(row["block_number"])
-                    if block_str not in result:
-                        result[block_str] = {}
-                    result[block_str][row["function_name"]] = {
-                        "value": row["value"],
-                        "epoch": int(row["epoch"]),
-                        "human_readable": row["human_readable"],
-                    }
+                result = dataframe_to_nested_dict(filtered_df)
                 import json
 
                 with open(export_path, "w") as f:

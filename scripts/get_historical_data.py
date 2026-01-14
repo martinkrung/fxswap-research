@@ -11,6 +11,8 @@ import pandas as pd
 from eth_utils import keccak
 from web3 import Web3
 
+from data_loader import load_fxswap_data, nested_dict_to_dataframe
+
 
 # Setup
 RPC = os.getenv("RPC")
@@ -143,37 +145,7 @@ def load_cache():
     """Load cache from file (only called once at startup)"""
     global _in_memory_cache
     if _in_memory_cache is None:
-        if data_file.exists():
-            try:
-                # Read from Parquet file
-                df = pd.read_parquet(data_file)
-                # Convert DataFrame to nested dict structure
-                _in_memory_cache = {}
-                for _, row in df.iterrows():
-                    block_str = str(row["block_number"])
-                    if block_str not in _in_memory_cache:
-                        _in_memory_cache[block_str] = {}
-                    _in_memory_cache[block_str][row["function_name"]] = {
-                        "value": row["value"],
-                        "epoch": int(row["epoch"]),
-                        "human_readable": row["human_readable"],
-                    }
-            except Exception as e:
-                print(f"Error loading cache from {data_file}: {e}")
-                _in_memory_cache = {}
-        else:
-            # Try to load from legacy JSON file for backward compatibility
-            json_file = data_file.with_suffix(".json")
-            if json_file.exists():
-                try:
-                    print(f"Found legacy JSON file, loading from {json_file}")
-                    with open(json_file) as f:
-                        _in_memory_cache = json.load(f)
-                except (OSError, json.JSONDecodeError) as e:
-                    print(f"Error loading legacy JSON: {e}")
-                    _in_memory_cache = {}
-            else:
-                _in_memory_cache = {}
+        _in_memory_cache = load_fxswap_data(data_file)
     return _in_memory_cache
 
 
@@ -187,30 +159,7 @@ def save_cache(cache=None, force=False):
 
     # Only save if dirty or forced - this prevents saving when nothing changed
     if force or _cache_dirty:
-        # Convert nested dict to DataFrame
-        records = []
-        for block_number, block_data in cache.items():
-            for function_name, function_data in block_data.items():
-                if isinstance(function_data, dict):
-                    records.append(
-                        {
-                            "block_number": int(block_number),
-                            "function_name": function_name,
-                            "value": function_data.get("value"),
-                            "epoch": function_data.get("epoch"),
-                            "human_readable": function_data.get("human_readable"),
-                        }
-                    )
-
-        df = pd.DataFrame(records)
-
-        # Ensure proper data types
-        if not df.empty:
-            df["block_number"] = df["block_number"].astype("int64")
-            df["function_name"] = df["function_name"].astype("string")
-            df["value"] = df["value"].astype("float64")
-            df["epoch"] = df["epoch"].astype("int64")
-            df["human_readable"] = df["human_readable"].astype("string")
+        df = nested_dict_to_dataframe(cache)
 
         # Save to Parquet
         df.to_parquet(data_file, engine="pyarrow", compression="snappy", index=False)
