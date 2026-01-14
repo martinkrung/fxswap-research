@@ -8,3 +8,7 @@ __pycache__/
 
 # Logs
 logs/*.log
+
+# Generated plots
+plots/
+
