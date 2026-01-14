@@ -3,6 +3,7 @@ source .env_ethereum
 
 # then get data
 
+python scripts/fill_missing_fxswap_data.py --index 18
 python scripts/fill_missing_fxswap_data.py --index 8
 python scripts/fill_missing_fxswap_data.py --index 13
 python scripts/fill_missing_fxswap_data.py --index 7

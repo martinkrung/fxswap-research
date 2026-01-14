@@ -160,5 +160,14 @@
         "explorer": "https://basescan.org/address/0xbc2c6645431F7C4A96748f2c9f290B909F8A1113",
         "curve": "https://www.curve.finance/dex/base/pools/factory-twocrypto-240/deposit",
         "first_block": 40596396
+    },
+    "18": {
+        "name": "YB crvUSD/WETH",
+        "chain_name": "ethereum",
+        "chain_id": 1,
+        "address": "0x6e5492F8ea2370844EE098A56DD88e1717e4A9C2",
+        "explorer": "https://etherscan.io/address/0x6e5492F8ea2370844EE098A56DD88e1717e4A9C2",
+        "curve": "",
+        "first_block": 24183747
     }
 }
