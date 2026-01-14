@@ -5,11 +5,12 @@ This repository uses GitHub Actions to automatically collect FXSwap pool data fr
 ## Overview
 
 The automated data collection workflow:
-- **Runs hourly** at the top of each hour (cron: `0 * * * *`)
+- **Runs hourly** at minute 19 (cron: `19 9-18/2 * * *`)
 - Can be **manually triggered** via GitHub's Actions tab
 - Collects data for all configured pools in `config/fxswaps.json`
+- Uses specialized tools in the `tools/` directory for each chain
 - Stores data as Parquet files in `data/{chain_name}/{pool_address}.parquet`
-- Automatically commits and pushes updated data files
+- Automatically commits and pushes updated data files and configuration
 - Uploads execution logs as artifacts (retained for 30 days)
 
 ## Setup Instructions
@@ -44,72 +45,21 @@ To manually trigger a data collection:
 
 ### Data Collection Process
 
-The workflow iterates through all configured pool indices and:
-1. Runs `scripts/get_historical_data.py --index={pool_index}`
-2. Collects historical blockchain data via Alchemy RPC
-3. Updates existing Parquet files with new data
-4. Implements smart caching to avoid redundant API calls
+The workflow uses the following tools:
+1. `tools/get_data_base.py`: Iterates through all Base pools and fills missing data.
+2. `tools/get_data_ethereum.py`: Iterates through all Ethereum pools and fills missing data.
+3. `scripts/update_fxswap_blocks.py`: Updates `config/fxswaps.json` with the latest block metadata.
 
-### Pools Monitored
-
-Based on `config/fxswaps.json`, the following pools are monitored:
-- **Pool 0**: USDC/WETH A2-5 (Base)
-- **Pool 1**: USDC/WETH A5-5 (Base)
-- **Pool 2**: USDC/WETH A20-5 (Base)
-- **Pool 3**: USDC/WETH A40-5 (Base)
-- **Pool 4**: USDC/AERO A20-15 (Base)
-- **Pool 5**: USDC/WETH A80-5 (Base)
-- **Pool 6**: USDC/WETH A80-5 2 (Base)
-- **Pool 9**: USDC/EURC A50-5 (Base)
-- **Pool 10**: USDC/BRZ (Base)
-- **Pool 11**: USDC/IDRX (Base)
-- **Pool 12**: YB crvUSD/tBTC new (Ethereum)
+These tools internally utilize `scripts/fill_missing_fxswap_data.py` for efficient back-filling via Multicall.
 
 ### Commit Behavior
 
-The workflow only creates a commit if there are actual changes to the data files:
+The workflow only creates a commit if there are actual changes to the data files or configuration:
 - **Commit message format**: `chore: automated data collection - {timestamp}`
-- **Changed files**: Only updated `*.parquet` files in the `data/` directory
+- **Changed files**: 
+  - Updated `*.parquet` files in the `data/` directory
+  - Updated `config/fxswaps.json`
 - **Logs**: Not committed (available as workflow artifacts)
-
-### Logs and Artifacts
-
-Each workflow run produces a log file that includes:
-- Start/end timestamps
-- Data collection status for each pool
-- Success/failure counts
-- Detailed output from the collection script
-
-Logs are uploaded as GitHub Actions artifacts and retained for 30 days.
-
-## Monitoring
-
-### Check Workflow Status
-
-1. Go to the **Actions** tab
-2. View recent workflow runs
-3. Click on a run to see detailed logs
-4. Download log artifacts for offline analysis
-
-### Troubleshooting
-
-**Workflow fails with authentication errors:**
-- Verify the `ALCHEMY_RPC_URL` secret is correctly set
-- Check that the Alchemy API key is valid and has sufficient quota
-
-**No data changes committed:**
-- This is normal if the cache already contains recent data
-- The script implements smart caching to avoid redundant queries
-- Check workflow logs to confirm data collection completed successfully
-
-**Rate limiting issues:**
-- The workflow includes a 2-second delay between pool queries
-- If rate limiting persists, adjust the delay in `.github/workflows/collect-data.yml`
-
-**Specific pool failures:**
-- Check the workflow artifacts for detailed error logs
-- Verify the pool configuration in `config/fxswaps.json`
-- Ensure the RPC endpoint supports the required chain (Base or Ethereum)
 
 ## Files Structure
 
@@ -118,6 +68,9 @@ Logs are uploaded as GitHub Actions artifacts and retained for 30 days.
 ├── .github/
 │   └── workflows/
 │       └── collect-data.yml          # GitHub Actions workflow definition
+├── tools/
+│   ├── get_data_base.py              # Base chain collection tool
+│   └── get_data_ethereum.py          # Ethereum chain collection tool
 ├── config/
 │   └── fxswaps.json                  # Pool configurations
 ├── data/
@@ -125,77 +78,22 @@ Logs are uploaded as GitHub Actions artifacts and retained for 30 days.
 │   │   └── {pool_address}.parquet    # Parquet files per pool
 │   └── ethereum/                     # Ethereum chain data
 │       └── {pool_address}.parquet    # Parquet files per pool
-├── logs/                             # Local logs (not committed)
-│   └── data_collection_*.log         # Timestamped log files
 ├── scripts/
-│   └── get_historical_data.py        # Data collection script
+│   ├── fill_missing_fxswap_data.py   # Core back-fill logic
+│   └── update_fxswap_blocks.py       # Metadata update script
 └── requirements.txt                  # Python dependencies
-```
-
-## Cost Considerations
-
-- **GitHub Actions**: 2,000 minutes/month free for public repos
-- **Hourly runs**: ~5-10 minutes per run = ~150-240 hours/month
-- **Alchemy API**: Check your plan's request limits
-
-## Customization
-
-### Adjust Collection Frequency
-
-Edit `.github/workflows/collect-data.yml`:
-
-```yaml
-on:
-  schedule:
-    - cron: '0 */2 * * *'  # Every 2 hours
-    # - cron: '0 0 * * *'  # Daily at midnight
-```
-
-### Add/Remove Pools
-
-1. Update `config/fxswaps.json` with pool configurations
-2. Update `POOL_INDICES` array in `.github/workflows/collect-data.yml`
-
-### Change Python Version
-
-Edit the workflow file:
-
-```yaml
-- name: Set up Python
-  uses: actions/setup-python@v5
-  with:
-    python-version: '3.11'  # or your preferred version
 ```
 
 ## Local Testing
 
-To test data collection locally before deploying:
+To test data collection locally:
 
 ```bash
 # Set up environment
-source .venv/bin/activate
-export RPC="your_alchemy_rpc_url"
+export RPC_BASE="your_base_rpc_url"
+export RPC_ETHEREUM="your_eth_rpc_url"
 
-# Test single pool
-python scripts/get_historical_data.py --index=0
-
-# Test all pools
-for i in 0 1 2 3 4 5 6 9 10 11 12; do
-  python scripts/get_historical_data.py --index=$i
-done
+# Run collection tools
+python tools/get_data_base.py
+python tools/get_data_ethereum.py
 ```
-
-## Security Notes
-
-- **Never commit** your Alchemy API key or RPC URL to the repository
-- Always use GitHub Secrets for sensitive credentials
-- The `.env*` pattern is already in `.gitignore` to prevent accidental commits
-- Review workflow permissions regularly
-
-## Support
-
-For issues or questions:
-1. Check workflow run logs in the Actions tab
-2. Review the artifact logs for detailed error information
-3. Ensure all prerequisites are met (secrets configured, Actions enabled)
-4. Verify Alchemy API quota and rate limits

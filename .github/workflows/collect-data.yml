@@ -2,7 +2,7 @@ name: Collect FXSwap Data Hourly
 
 on:
   schedule:
-    # Run every hour at minute 0
+    # Run every hour at minute 19
     - cron: '19 9-18/2 * * *'
   workflow_dispatch:  # Allow manual triggering
 
@@ -37,7 +37,8 @@ jobs:
 
       - name: Collect data for all pools
         env:
-          RPC: ${{ secrets.ALCHEMY_RPC_URL }}
+          RPC_BASE: ${{ secrets.ALCHEMY_RPC_URL }}
+          RPC_ETHEREUM: ${{ secrets.ALCHEMY_RPC_URL }}
         run: |
           # Create a log file with timestamp
           LOG_FILE="logs/data_collection_$(date +%Y%m%d_%H%M%S).log"
@@ -46,40 +47,18 @@ jobs:
           echo "Starting data collection at $(date)" | tee -a "$LOG_FILE"
           echo "========================================" | tee -a "$LOG_FILE"
 
-          # Array of pool indices to collect data for
-          # Based on config/fxswaps.json: pools 0-12
-          POOL_INDICES=(0 1 2 3 4 5 6 9 10 11 13 14 15 16 17)
+          echo "Running Base data collection..." | tee -a "$LOG_FILE"
+          python tools/get_data_base.py 2>&1 | tee -a "$LOG_FILE"
 
-          # Track success/failure
-          SUCCESS_COUNT=0
-          FAILED_POOLS=()
+          echo "Running Ethereum data collection..." | tee -a "$LOG_FILE"
+          python tools/get_data_ethereum.py 2>&1 | tee -a "$LOG_FILE"
 
-          for index in "${POOL_INDICES[@]}"; do
-            echo "" | tee -a "$LOG_FILE"
-            echo "Collecting data for pool index $index..." | tee -a "$LOG_FILE"
-            echo "----------------------------------------" | tee -a "$LOG_FILE"
-
-            if python scripts/get_historical_data.py --index=$index 2>&1 | tee -a "$LOG_FILE"; then
-              echo "✓ Successfully collected data for pool index $index" | tee -a "$LOG_FILE"
-              SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
-            else
-              echo "✗ Failed to collect data for pool index $index" | tee -a "$LOG_FILE"
-              FAILED_POOLS+=($index)
-            fi
-
-            # Small delay between collections to avoid rate limiting
-            sleep 2
-          done
+          echo "Updating fxswap config blocks..." | tee -a "$LOG_FILE"
+          python scripts/update_fxswap_blocks.py 2>&1 | tee -a "$LOG_FILE"
 
           echo "" | tee -a "$LOG_FILE"
           echo "========================================" | tee -a "$LOG_FILE"
           echo "Data collection completed at $(date)" | tee -a "$LOG_FILE"
-          echo "Successful collections: $SUCCESS_COUNT/${#POOL_INDICES[@]}" | tee -a "$LOG_FILE"
-
-          if [ ${#FAILED_POOLS[@]} -gt 0 ]; then
-            echo "Failed pools: ${FAILED_POOLS[*]}" | tee -a "$LOG_FILE"
-            # Don't fail the workflow, just report failures
-          fi
 
           # Save log file path for later use
           echo "LOG_FILE=$LOG_FILE" >> $GITHUB_ENV
@@ -100,13 +79,14 @@ jobs:
       - name: Commit and push changes
         if: steps.check_changes.outputs.has_changes == 'true'
         run: |
-          # Add all parquet files (logs are kept as artifacts only)
+          # Add all parquet files and config changes
           git add data/**/*.parquet
+          git add config/fxswaps.json
 
           # Create commit with timestamp
           TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
           git commit -m "chore: automated data collection - $TIMESTAMP" \
-                     -m "Collected data for all configured FXSwap pools" \
+                     -m "Collected data for all configured FXSwap pools and updated block metadata" \
                      -m "Workflow run: ${{ github.run_number }}"
 
           # Push changes
