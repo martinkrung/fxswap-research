@@ -4,6 +4,8 @@ import re
 from datetime import datetime, timedelta
 from pathlib import Path
 
+import matplotlib
+matplotlib.use('Agg')  # Headless mode for CI
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -323,8 +325,6 @@ def update_global_overview(all_pool_configs):
             latest_plot = pngs[-1]
             
             # Try to find matching pool info by slug
-            # We can find the pool name from the index.html or by slug match
-            # For simplicity, we search for a pool whose slug matches this folder
             matched_info = None
             for p_info in all_pool_configs.values():
                 if slugify(p_info["name"]) == slug_dir.name and p_info["chain_name"] == chain_dir.name:
