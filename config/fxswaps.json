@@ -169,5 +169,14 @@
         "explorer": "https://etherscan.io/address/0x6e5492F8ea2370844EE098A56DD88e1717e4A9C2",
         "curve": "",
         "first_block": 24183747
+    },
+    "19": {
+        "name": "YB crvUSD/WBTC",
+        "chain_name": "ethereum",
+        "chain_id": 1,
+        "address": "0xD9FF8396554A0d18B2CFbeC53e1979b7ecCe8373",
+        "explorer": "https://etherscan.io/address/0xD9FF8396554A0d18B2CFbeC53e1979b7ecCe8373",
+        "curve": "",
+        "first_block": 23433543
     }
 }
