@@ -34,8 +34,19 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Verify Secrets
+        run: |
+          MISSING_SECRETS=0
+          if [ -z "${{ secrets.CLOUDFLARE_API_TOKEN }}" ]; then echo "❌ CLOUDFLARE_API_TOKEN is missing"; MISSING_SECRETS=1; fi
+          if [ -z "${{ secrets.CLOUDFLARE_ACCOUNT_ID }}" ]; then echo "❌ CLOUDFLARE_ACCOUNT_ID is missing"; MISSING_SECRETS=1; fi
+          if [ -z "${{ secrets.CLOUDFLARE_PROJECT_NAME }}" ]; then echo "❌ CLOUDFLARE_PROJECT_NAME is missing"; MISSING_SECRETS=1; fi
+          if [ $MISSING_SECRETS -eq 1 ]; then exit 1; fi
+          echo "✅ All required secrets are present."
+
       - name: Generate Plots and HTML
         run: |
+          # Ensure plots directory exists
+          mkdir -p plots
           python scripts/plot_refule.py --all
 
       - name: Deploy to Cloudflare Pages
@@ -43,4 +54,6 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy plots --project-name=${{ secrets.CLOUDFLARE_PROJECT_NAME }}
+          projectName: ${{ secrets.CLOUDFLARE_PROJECT_NAME }}
+          directory: plots
+          branch: ${{ github.ref_name }}
