@@ -39,6 +39,7 @@ import logging
 import os
 import re
 import tempfile
+import time
 from collections import defaultdict
 from collections.abc import Iterable, Sequence
 from datetime import UTC, datetime
@@ -252,6 +253,7 @@ def fetch_block_snapshot(
 ) -> list[dict[str, object]] | None:
     try:
         block_data = w3.eth.get_block(block_number)
+        time.sleep(0.01)  # Throttle per block call as requested
     except BlockNotFound:
         logging.warning("Block %s not found; skipping", block_number)
         return None
@@ -287,6 +289,7 @@ def fetch_block_snapshot(
                     {"to": address, "data": FUNCTION_CALL_DATA[fn]},
                     block_identifier=block_number,
                 )
+                time.sleep(0.01)  # Throttle per block call as requested
                 results.append((True, raw))
             except Exception as call_exc:
                 logging.error(
@@ -484,6 +487,7 @@ def process_pool(
                 fetched_blocks.add(block)
             else:
                 failures[block] += 1
+            time.sleep(0.01)  # Throttle to avoid 429 errors
         if chunk_records:
             existing_df = write_updates(
                 parquet_path=parquet_path,
