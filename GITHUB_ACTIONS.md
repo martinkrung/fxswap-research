@@ -50,7 +50,7 @@ The workflow uses the following tools:
 2. `tools/get_data_ethereum.py`: Iterates through all Ethereum pools and fills missing data.
 3. `scripts/update_fxswap_blocks.py`: Updates `config/fxswaps.json` with the latest block metadata.
 
-These tools internally utilize `scripts/fill_missing_fxswap_data.py` for efficient back-filling via Multicall.
+These tools internally utilize `scripts/update_data.py` for efficient back-filling via Multicall. `update_data.py` loops backwards from the latest block and only fetches missing snapshots in batches of 200 to ensure data integrity and resilience against interruptions.
 
 ### Commit Behavior
 
@@ -79,7 +79,7 @@ The workflow only creates a commit if there are actual changes to the data files
 │   └── ethereum/                     # Ethereum chain data
 │       └── {pool_address}.parquet    # Parquet files per pool
 ├── scripts/
-│   ├── fill_missing_fxswap_data.py   # Core back-fill logic
+│   ├── update_data.py                # Core data collection and gap filling
 │   └── update_fxswap_blocks.py       # Metadata update script
 └── requirements.txt                  # Python dependencies
 ```

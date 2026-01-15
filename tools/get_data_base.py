@@ -22,7 +22,7 @@ def main():
         print(f"--- Processing Index {idx} ---")
         try:
             subprocess.run(
-                ["python3", "scripts/fill_missing_fxswap_data.py", "--index", str(idx)],
+                ["python3", "scripts/update_data.py", "--index", str(idx)],
                 check=True,
             )
         except subprocess.CalledProcessError as e:
