@@ -15,16 +15,18 @@ The automated data collection workflow:
 
 ## Setup Instructions
 
-### 1. Configure GitHub Secret
+### 1. Configure GitHub Secrets
 
-The workflow requires an Alchemy RPC URL to be stored as a GitHub secret:
+The workflow requires Alchemy RPC URLs for both Base and Ethereum to be stored as GitHub secrets:
 
 1. Go to your repository on GitHub
 2. Navigate to **Settings** → **Secrets and variables** → **Actions**
 3. Click **New repository secret**
-4. Add a secret with:
-   - **Name**: `ALCHEMY_RPC_URL`
-   - **Value**: Your Alchemy RPC endpoint URL (e.g., `https://base-mainnet.g.alchemy.com/v2/YOUR_API_KEY`)
+4. Add two secrets:
+   - **Name**: `ALCHEMY_RPC_URL_BASE`
+     - **Value**: Your Alchemy RPC endpoint URL for **Base** (e.g., `https://base-mainnet.g.alchemy.com/v2/YOUR_API_KEY`)
+   - **Name**: `ALCHEMY_RPC_URL_ETHEREUM`
+     - **Value**: Your Alchemy RPC endpoint URL for **Ethereum** (e.g., `https://eth-mainnet.g.alchemy.com/v2/YOUR_API_KEY`)
 
 ### 2. Enable GitHub Actions
 

@@ -37,8 +37,8 @@ jobs:
 
       - name: Collect data for all pools
         env:
-          RPC_BASE: ${{ secrets.ALCHEMY_RPC_URL }}
-          RPC_ETHEREUM: ${{ secrets.ALCHEMY_RPC_URL }}
+          RPC_BASE: ${{ secrets.ALCHEMY_RPC_URL_BASE }}
+          RPC_ETHEREUM: ${{ secrets.ALCHEMY_RPC_URL_ETHEREUM }}
         run: |
           # Create a log file with timestamp
           LOG_FILE="logs/data_collection_$(date +%Y%m%d_%H%M%S).log"
