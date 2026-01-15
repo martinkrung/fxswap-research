@@ -3,7 +3,7 @@ name: FXSwap Update & Deploy Pipeline
 on:
   schedule:
     # Run at minute 19 every 2nd hour from 9 to 18
-    - cron: '19 9-18/2 * * *'
+    # - cron: '19 9-18/2 * * *'
   workflow_dispatch:  # Manual trigger
 
 jobs:
