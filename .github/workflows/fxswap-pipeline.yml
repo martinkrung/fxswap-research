@@ -1,0 +1,99 @@
+name: FXSwap Update & Deploy Pipeline
+
+on:
+  schedule:
+    # Run at minute 19 every 2nd hour from 9 to 18
+    - cron: '19 9-18/2 * * *'
+  workflow_dispatch:  # Manual trigger
+
+jobs:
+  update-and-deploy:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Configure git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: 1. Data Collection
+        env:
+          RPC_BASE: ${{ secrets.ALCHEMY_RPC_URL_BASE }}
+          RPC_ETHEREUM: ${{ secrets.ALCHEMY_RPC_URL_ETHEREUM }}
+        run: |
+          echo "🚀 Starting data collection..."
+          python tools/get_data_base.py
+          python tools/get_data_ethereum.py
+          echo "✅ Data collection complete."
+
+      - name: 2. Update Metadata
+        run: |
+          echo "📝 Updating pool metadata..."
+          python scripts/update_fxswap_blocks.py
+          echo "✅ Metadata updated."
+
+      - name: 3. Generate Plots and HTML
+        run: |
+          echo "📊 Generating plots and HTML..."
+          mkdir -p plots
+          python scripts/plot_refule.py --all
+          echo "✅ Generation complete."
+
+      - name: 4. Atomic Commit and Push
+        run: |
+          echo "📂 Staging changes..."
+          git add data/**/*.parquet
+          git add config/fxswaps.json
+          git add plots/
+          
+          if git diff --cached --quiet; then
+            echo "ℹ️ No changes detected."
+          else
+            TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
+            echo "📤 Committing and pushing updates..."
+            git commit -m "chore: automated pipeline update - $TIMESTAMP" \
+                       -m "Includes data, metadata, and plot updates." \
+                       -m "Workflow run: ${{ github.run_number }}"
+            git push origin main
+            echo "✅ Repository updated."
+          fi
+
+      - name: 5. Verify Cloudflare Secrets
+        run: |
+          MISSING_SECRETS=0
+          if [ -z "${{ secrets.CLOUDFLARE_API_TOKEN }}" ]; then echo "❌ CLOUDFLARE_API_TOKEN missing"; MISSING_SECRETS=1; fi
+          if [ -z "${{ secrets.CLOUDFLARE_ACCOUNT_ID }}" ]; then echo "❌ CLOUDFLARE_ACCOUNT_ID missing"; MISSING_SECRETS=1; fi
+          if [ -z "${{ secrets.CLOUDFLARE_PROJECT_NAME }}" ]; then echo "❌ CLOUDFLARE_PROJECT_NAME missing"; MISSING_SECRETS=1; fi
+          if [ $MISSING_SECRETS -eq 1 ]; then exit 1; fi
+          echo "✅ Cloudflare secrets verified."
+
+      - name: 6. Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy plots --project-name=${{ secrets.CLOUDFLARE_PROJECT_NAME }} --branch=main
