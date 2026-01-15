@@ -13,9 +13,8 @@ from data_loader import load_fxswap_data
 from html_generator import generate_market_page, generate_overview_page
 
 # Plotting constants
-PIXELS_PER_DAY = 288  # 1 day = 288 pixels width in the actual plot area
-_INTERNAL_DPI = 100  # Used only to convert pixels to cm for matplotlib figsize
-PLOT_AREA_RATIO = 0.87  # Plot area takes up 87% of figure width with our margins
+_INTERNAL_DPI = 100  # Used to convert pixels to cm for matplotlib figsize
+PLOT_AREA_RATIO = 0.87  # Plot area takes up approx 87% of figure width with margins
 FIGURE_HEIGHT_CM = 35  # Fixed height in cm
 MARKER_SIZE = 1  # Size of markers for all data points
 MAKER = "."  # Use this constant instead of the literal maker string
@@ -138,7 +137,7 @@ def process_pool(pool_info, force=False):
             return 0
         
         donation_shares_df["delta_usd"] = donation_shares_df.apply(calc_delta_usd, axis=1)
-        donation_shares_df["delta_usd_ma"] = donation_shares_df.set_index("timestamp")["delta_usd"].rolling(window="2h", min_periods=1).mean().to_numpy()
+        donation_shares_df["delta_usd_ma"] = donation_shares_df.set_index("timestamp")["delta_usd"].rolling(window="2h", min_periods=1).mean().values
 
     all_ts = []
     for df in [last_prices_df, price_scale_df, donation_shares_df]:
@@ -153,9 +152,17 @@ def process_pool(pool_info, force=False):
     output_dir = Path("plots") / chain_name / pool_slug
     output_dir.mkdir(parents=True, exist_ok=True)
     
-    plot_area_width_pixels = 7 * PIXELS_PER_DAY
-    figure_width_pixels = plot_area_width_pixels / PLOT_AREA_RATIO
-    figure_width_cm = (figure_width_pixels / _INTERNAL_DPI) * 2.54
+    # Stride determines the number of pixels per day roughly
+    stride = 100 if pool_info["chain_id"] == 8453 else 20
+    # On Base (stride 100, 2s blocks) -> ~432 points per day
+    # On Ethereum (stride 20, 12s blocks) -> ~360 points per day
+    # But user wants "one block = one pixel". So we use the maximum theoretical points per week.
+    points_per_week = (7 * 24 * 3600) // (stride * (2 if pool_info["chain_id"] == 8453 else 12))
+    # We'll use a fixed pixels_per_day based on the stride
+    if pool_info["chain_id"] == 8453:
+        pixels_per_day = 432 # 86400 / 200
+    else:
+        pixels_per_day = 360 # 86400 / 240
 
     plot_files = []
     while current_week_start <= last_ts:
@@ -178,9 +185,15 @@ def process_pool(pool_info, force=False):
                 current_week_start = week_end
                 continue
 
+            # Calculate width: 1 pixel per data point (theoretical)
+            # Area width = 7 days * pixels_per_day
+            area_width = 7 * pixels_per_day
+            figure_width_pixels = area_width / PLOT_AREA_RATIO
+            figure_width_cm = (figure_width_pixels / _INTERNAL_DPI) * 2.54
+
             create_refuel_chart(
                 w_lp, w_ps, w_xp, w_vp, w_ds, w_dp, w_resets,
-                figure_width_cm, name, filepath, current_week_start, week_end
+                figure_width_cm, name, filepath, current_week_start, week_end, pixels_per_day
             )
             
         plot_files.append(filepath)
@@ -189,7 +202,7 @@ def process_pool(pool_info, force=False):
     generate_market_page(pool_info, [str(f.relative_to(output_dir)) for f in plot_files], output_dir)
     return plot_files
 
-def create_refuel_chart(lp_df, ps_df, xp_df, vp_df, ds_df, dp_df, resets, width_cm, pool_name, output_path, start_time, end_time):
+def create_refuel_chart(lp_df, ps_df, xp_df, vp_df, ds_df, dp_df, resets, width_cm, pool_name, output_path, start_time, end_time, pixels_per_day):
     fig, axes = plt.subplots(5, 1, figsize=(width_cm / 2.54, FIGURE_HEIGHT_CM / 2.54), sharex=True,
                              height_ratios=[18, 18, 2, 18, 18])
     ax0, ax1, ax2, ax3, ax4 = axes
@@ -229,7 +242,7 @@ def create_refuel_chart(lp_df, ps_df, xp_df, vp_df, ds_df, dp_df, resets, width_
     if not ds_df.empty:
         usage = ds_df[ds_df["delta_filtered"] != 0]
         if not usage.empty:
-            bar_w = timedelta(days=2/PIXELS_PER_DAY)
+            bar_w = timedelta(days=2/pixels_per_day)
             ax3.bar(usage["timestamp"], usage["delta_filtered"], width=bar_w, color="purple", label="refuel in USD")
             for _, row in usage.iterrows():
                 if row["delta_filtered"] < -0.001 and row.get("delta_usd", 0) > 0:
