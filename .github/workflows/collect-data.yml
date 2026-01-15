@@ -53,9 +53,6 @@ jobs:
           echo "Running Ethereum data collection..." | tee -a "$LOG_FILE"
           python tools/get_data_ethereum.py 2>&1 | tee -a "$LOG_FILE"
 
-          echo "Updating fxswap config blocks..." | tee -a "$LOG_FILE"
-          python scripts/update_fxswap_blocks.py 2>&1 | tee -a "$LOG_FILE"
-
           echo "" | tee -a "$LOG_FILE"
           echo "========================================" | tee -a "$LOG_FILE"
           echo "Data collection completed at $(date)" | tee -a "$LOG_FILE"
