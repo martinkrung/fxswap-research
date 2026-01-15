@@ -203,27 +203,27 @@ def process_pool(pool_idx, pool_info, rpc_urls):
     
     decimals = resolve_decimals(name)
     batch_records = []
-    processed_count = 0
+    batch_count = 0
+    total_missing = len(missing_blocks)
     
-    for block in missing_blocks:
+    for i, block in enumerate(missing_blocks, 1):
         data = fetch_block_data(w3, multicall, address, block, decimals)
         if data:
             batch_records.extend(data)
-            processed_count += 1
+            batch_count += 1
         
         time.sleep(0.01) # Throttle
         
-        if processed_count >= 200:
+        if batch_count >= 200:
             save_batch(parquet_path, batch_records)
-            logging.info(f"Saved batch of 200 blocks for {name}. Progress: {processed_count}/{len(missing_blocks)}")
+            logging.info(f"Saved batch of 200 blocks for {name}. Progress: {i}/{total_missing}")
             batch_records = []
-            processed_count = 0
-            # Note: processed_count reset here only for batching, need separate total if reporting total progress
+            batch_count = 0
             
     # Final save
     if batch_records:
         save_batch(parquet_path, batch_records)
-        logging.info(f"Final save for {name}.")
+        logging.info(f"Final save for {name}. Progress: {total_missing}/{total_missing}")
 
 def main():
     logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
