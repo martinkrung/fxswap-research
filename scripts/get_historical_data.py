@@ -548,7 +548,7 @@ for i in range(3000):
                     save_cache(cache, force=True)
                     should_stop = True
                     break
-                time.sleep(0.001)
+                time.sleep(0.01)
             if should_stop:
                 break
             # Save after processing uncached functions if it's time for interval save
@@ -613,7 +613,7 @@ for i in range(3000):
                 should_stop = True
                 break
 
-            time.sleep(0.001)
+            time.sleep(0.01)
 
         # Save after processing uncached functions if it's time for interval save
         # Only save if something actually changed (_cache_dirty will be True if new data was written)
