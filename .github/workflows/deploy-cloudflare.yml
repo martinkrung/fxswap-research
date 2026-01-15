@@ -48,28 +48,33 @@ jobs:
 
       - name: Generate Plots and HTML
         run: |
-          # Ensure plots directory exists
+          echo "🚀 Starting plot and HTML generation..."
           mkdir -p plots
           python scripts/plot_refule.py --all
+          echo "✅ Generation complete."
 
       - name: Commit and push plots
         run: |
+          echo "📝 Checking for plot updates to commit..."
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
-          # Add plots directory
           git add plots/
           
-          # Check if there are changes to commit
           if git diff --cached --quiet; then
-            echo "No changes to plots to commit"
+            echo "ℹ️ No changes to plots to commit."
           else
             TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
+            echo "📤 Committing and pushing updates..."
             git commit -m "chore: update plots and html - $TIMESTAMP"
             git push
+            echo "✅ Pushed to repository."
           fi
 
       - name: Deploy to Cloudflare Pages
+        run: echo "🌐 Deploying to Cloudflare Pages..."
+
+      - name: Wrangler Deploy
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
