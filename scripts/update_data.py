@@ -7,6 +7,11 @@ import time
 from datetime import UTC, datetime
 from pathlib import Path
 
+try:
+    from tqdm import tqdm
+except ImportError:
+    tqdm = None
+
 import pandas as pd
 import pyarrow.parquet as pq
 from eth_utils.crypto import keccak
@@ -66,6 +71,8 @@ STRIDES = {
     8453: 100,  # Base
     1: 20,      # Ethereum
 }
+
+SLEEP_TIME = 0.001 # 1ms
 
 # Mapping of chain_name -> candidate environment variable names for RPC URLs.
 RPC_ENV_HINTS = {
@@ -166,7 +173,7 @@ def save_batch(parquet_path, new_records):
     df_combined.to_parquet(temp_path, index=False, compression="snappy")
     temp_path.replace(parquet_path)
 
-def process_pool(pool_idx, pool_info, rpc_urls):
+def process_pool(pool_idx, pool_info, rpc_urls, no_progress=False):
     chain_name = pool_info["chain_name"]
     address = pool_info["address"]
     name = pool_info["name"]
@@ -206,20 +213,33 @@ def process_pool(pool_idx, pool_info, rpc_urls):
     batch_count = 0
     total_missing = len(missing_blocks)
     
-    for i, block in enumerate(missing_blocks, 1):
+    iterator = missing_blocks
+    pbar = None
+    if tqdm and not no_progress:
+        pbar = tqdm(total=total_missing, desc=f"Updating {name}", unit="block")
+        iterator = missing_blocks
+
+    for i, block in enumerate(iterator, 1):
         data = fetch_block_data(w3, multicall, address, block, decimals)
         if data:
             batch_records.extend(data)
             batch_count += 1
         
-        time.sleep(0.01) # Throttle
+        if pbar:
+            pbar.update(1)
+        
+        time.sleep(SLEEP_TIME) # Throttle
         
         if batch_count >= 200:
             save_batch(parquet_path, batch_records)
-            logging.info(f"Saved batch of 200 blocks for {name}. Progress: {i}/{total_missing}")
+            if not pbar:
+                logging.info(f"Saved batch of 200 blocks for {name}. Progress: {i}/{total_missing}")
             batch_records = []
             batch_count = 0
             
+    if pbar:
+        pbar.close()
+
     # Final save
     if batch_records:
         save_batch(parquet_path, batch_records)
@@ -230,6 +250,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--index", type=int, help="Pool index")
     parser.add_argument("--all", action="store_true", help="Process all pools")
+    parser.add_argument("--no-progress", action="store_true", help="Disable progress bar")
     args = parser.parse_args()
 
     config_path = Path("config/fxswaps.json")
@@ -244,7 +265,7 @@ def main():
     
     for idx in targets:
         if idx in config:
-            process_pool(idx, config[idx], rpc_urls)
+            process_pool(idx, config[idx], rpc_urls, no_progress=args.no_progress)
 
 if __name__ == "__main__":
     main()

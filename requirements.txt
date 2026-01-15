@@ -11,3 +11,4 @@ seaborn
 scipy
 ruff
 pre-commit
+tqdm
