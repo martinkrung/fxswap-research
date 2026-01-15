@@ -12,6 +12,9 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     
+    permissions:
+      contents: write
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -48,6 +51,23 @@ jobs:
           # Ensure plots directory exists
           mkdir -p plots
           python scripts/plot_refule.py --all
+
+      - name: Commit and push plots
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Add plots directory
+          git add plots/
+          
+          # Check if there are changes to commit
+          if git diff --cached --quiet; then
+            echo "No changes to plots to commit"
+          else
+            TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
+            git commit -m "chore: update plots and html - $TIMESTAMP"
+            git push
+          fi
 
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
