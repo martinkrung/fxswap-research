@@ -147,6 +147,7 @@ def process_pool(pool_info, force=False):
     
     first_ts = min(all_ts)
     last_ts = max(all_ts)
+    this_week_start = get_week_start(datetime.now())
     current_week_start = get_week_start(first_ts)
     
     output_dir = Path("plots") / chain_name / pool_slug
@@ -172,7 +173,9 @@ def process_pool(pool_info, force=False):
         filename = f"week_{iso_year}_W{iso_week:02d}_{monday_str}.png"
         filepath = output_dir / filename
         
-        if not filepath.exists() or force:
+        is_current_week = (current_week_start == this_week_start)
+        
+        if not filepath.exists() or force or is_current_week:
             w_lp = last_prices_df[(last_prices_df["timestamp"] >= current_week_start) & (last_prices_df["timestamp"] < week_end)]
             w_ps = price_scale_df[(price_scale_df["timestamp"] >= current_week_start) & (price_scale_df["timestamp"] < week_end)]
             w_ds = donation_shares_df[(donation_shares_df["timestamp"] >= current_week_start) & (donation_shares_df["timestamp"] < week_end)] if not donation_shares_df.empty else pd.DataFrame()

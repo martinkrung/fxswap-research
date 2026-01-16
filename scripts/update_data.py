@@ -192,7 +192,6 @@ def process_pool(pool_idx, pool_info, rpc_urls, no_progress=False):
     
     # Absolute floor for data collection
     floor_block = int(pool_info.get("first_liq_block") or pool_info.get("deployed_at_block", 0))
-    
     if floor_block % stride != 0:
         floor_block += (stride - (floor_block % stride))
 
@@ -200,17 +199,17 @@ def process_pool(pool_idx, pool_info, rpc_urls, no_progress=False):
     parquet_path.parent.mkdir(parents=True, exist_ok=True)
     
     existing_blocks = load_existing_blocks(parquet_path)
+    existing_max = max(existing_blocks) if existing_blocks else 0
     
-    # Incremental update: fetch from latest back to the newest existing block.
-    # If no data exists, fetch back to the absolute floor.
-    existing_max = max(existing_blocks) if existing_blocks else (floor_block - stride)
-    
-    # Generate list of target blocks backwards from latest down to existing_max
-    target_blocks = list(range(latest_aligned, existing_max, -stride))
+    # Generate list of target blocks backwards from latest down to the absolute floor.
+    target_blocks = list(range(latest_aligned, floor_block - 1, -stride))
     missing_blocks = [b for b in target_blocks if b not in existing_blocks]
     
+    logging.info(f"Pool {name}: on_chain={latest_block}, aligned={latest_aligned}, newest_local={existing_max}, missing={len(missing_blocks)}")
+    
     if not missing_blocks:
-        logging.info(f"Pool {name}: Already up to date.")
+        if latest_aligned > existing_max and existing_max > 0:
+             logging.info(f"Pool {name}: Should fetch {latest_aligned} but it might be caught in stride.")
         return
 
     logging.info(f"Pool {name}: Fetching {len(missing_blocks)} blocks.")
@@ -253,6 +252,7 @@ def process_pool(pool_idx, pool_info, rpc_urls, no_progress=False):
         logging.info(f"Final save for {name}. Progress: {total_missing}/{total_missing}")
 
 def main():
+    print("DEBUG: update_data.py is starting...")
     logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
     parser = argparse.ArgumentParser()
     parser.add_argument("--index", type=int, help="Pool index")
