@@ -86,8 +86,8 @@
         "address": "0x027B40F5917FCd0eac57d7015e120096A5F92ca9",
         "explorer": "https://etherscan.io/address/0x027B40F5917FCd0eac57d7015e120096A5F92ca9",
         "curve": "https://www.curve.finance/dex/base/pools/factory-twocrypto-276/deposit",
-        "first_block": 9,
-        "deployed_at_block": 23588550
+        "deployed_at_block": 23588550,
+        "first_block": 23632017
     },
     "9": {
         "name": "USDC/EURC A50-5",

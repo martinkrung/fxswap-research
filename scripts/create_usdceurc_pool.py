@@ -72,8 +72,8 @@ factory_contract = boa.from_etherscan(
 
 print(factory_contract.admin())
 
-coin0_address = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"
-coin1_address = "0x60a3E35Cc302bFA44Cb288Bc5a4F316Fdb1adb42"
+coin0_address = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913" # USDC
+coin1_address = "0x60a3E35Cc302bFA44Cb288Bc5a4F316Fdb1adb42" # EURC
 
 params = {
     "_name": "USDC/EURC A50-5",
