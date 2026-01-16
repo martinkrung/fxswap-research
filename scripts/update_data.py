@@ -189,7 +189,10 @@ def process_pool(pool_idx, pool_info, rpc_urls, no_progress=False):
     
     latest_block = w3.eth.block_number
     latest_aligned = latest_block - (latest_block % stride)
-    floor_block = int(pool_info.get("first_block", 0))
+    
+    # Absolute floor for data collection
+    floor_block = int(pool_info.get("first_liq_block") or pool_info.get("deployed_at_block", 0))
+    
     if floor_block % stride != 0:
         floor_block += (stride - (floor_block % stride))
 
@@ -198,8 +201,12 @@ def process_pool(pool_idx, pool_info, rpc_urls, no_progress=False):
     
     existing_blocks = load_existing_blocks(parquet_path)
     
-    # Generate list of target blocks backwards
-    target_blocks = list(range(latest_aligned, floor_block - 1, -stride))
+    # Incremental update: fetch from latest back to the newest existing block.
+    # If no data exists, fetch back to the absolute floor.
+    existing_max = max(existing_blocks) if existing_blocks else (floor_block - stride)
+    
+    # Generate list of target blocks backwards from latest down to existing_max
+    target_blocks = list(range(latest_aligned, existing_max, -stride))
     missing_blocks = [b for b in target_blocks if b not in existing_blocks]
     
     if not missing_blocks:

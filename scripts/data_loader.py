@@ -7,6 +7,17 @@ from pathlib import Path
 import pandas as pd
 
 
+def build_parquet_index(data_dir: Path) -> dict[str, Path]:
+    """Return mapping of lowercase address -> Parquet file path."""
+    if not data_dir.exists():
+        return {}
+
+    index: dict[str, Path] = {}
+    for path in data_dir.rglob("*.parquet"):
+        index[path.stem.lower()] = path
+    return index
+
+
 def load_fxswap_data(file_path):
     """
     Load fxswap data from Parquet file.

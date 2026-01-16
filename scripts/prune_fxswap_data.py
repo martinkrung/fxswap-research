@@ -26,7 +26,8 @@ from collections.abc import Iterable
 from pathlib import Path
 
 import pandas as pd
-from update_fxswap_blocks import build_parquet_index, load_config
+from update_fxswap_blocks import load_config
+from data_loader import build_parquet_index
 
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
