@@ -3,7 +3,7 @@ name: Collect FXSwap Data Daily
 on:
   schedule:
     # Run daily at 00:00 UTC
-    # - cron: '0 0 * * *'
+    - cron: '0 0 * * *'
   workflow_dispatch:  # Allow manual triggering
 
 jobs:
@@ -75,7 +75,6 @@ jobs:
         run: |
           # Add all parquet files and config changes
           git add data/**/*.parquet
-          git add config/fxswaps.json
 
           # Create commit with timestamp
           TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
