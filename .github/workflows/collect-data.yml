@@ -37,8 +37,8 @@ jobs:
 
       - name: Collect data for all pools
         env:
-          RPC_BASE: ${{ secrets.ALCHEMY_RPC_URL_BASE }}
-          RPC_ETHEREUM: ${{ secrets.ALCHEMY_RPC_URL_ETHEREUM }}
+          BASE_RPC: ${{ secrets.ALCHEMY_RPC_URL_BASE }}
+          ETHEREUM_RPC: ${{ secrets.ALCHEMY_RPC_URL_ETHEREUM }}
         run: |
           # Create a log file with timestamp
           LOG_FILE="logs/data_collection_$(date +%Y%m%d_%H%M%S).log"
@@ -48,13 +48,7 @@ jobs:
           echo "========================================" | tee -a "$LOG_FILE"
 
           echo "Running Base data collection..." | tee -a "$LOG_FILE"
-          python tools/get_data_base.py 2>&1 | tee -a "$LOG_FILE"
-
-          echo "Running Ethereum data collection..." | tee -a "$LOG_FILE"
-          python tools/get_data_ethereum.py 2>&1 | tee -a "$LOG_FILE"
-
-          echo "Updating fxswap config blocks..." | tee -a "$LOG_FILE"
-          python scripts/update_fxswap_blocks.py 2>&1 | tee -a "$LOG_FILE"
+          python scripts/update_data.py --all 2>&1 | tee -a "$LOG_FILE"
 
           echo "" | tee -a "$LOG_FILE"
           echo "========================================" | tee -a "$LOG_FILE"

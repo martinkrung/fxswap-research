@@ -69,6 +69,24 @@ FUNCTION_NAMES = [
     "balances(1)",
 ]
 
+def _build_call_data():
+    """Build function call data (selector + args) for each function."""
+    data = {}
+    for fn in FUNCTION_NAMES:
+        if fn.startswith("balances("):
+            # balances(uint256) with argument
+            idx = int(fn.split("(")[1].rstrip(")"))
+            selector = keccak(b"balances(uint256)")[:4]
+            arg = idx.to_bytes(32, "big")
+            data[fn] = selector + arg
+        else:
+            # No-argument functions
+            selector = keccak(f"{fn}()".encode())[:4]
+            data[fn] = selector
+    return data
+
+FUNCTION_CALL_DATA = _build_call_data()
+
 STRIDES = {
     8453: 100,  # Base
     1: 20,      # Ethereum
