@@ -1,5 +1,7 @@
 # first source load environment variables
-source .env_base
+source .env
+export RPC=$BASE_RPC
+export XSCAN_API_KEY=$BASE_XSCAN_API_KEY
 
 # then plot data
 python scripts/plot_refule.py --index=17

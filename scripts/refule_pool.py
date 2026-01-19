@@ -7,13 +7,15 @@ from getpass import getpass
 
 import boa
 from eth_account import account
-
+from env_utils import setup_env_for_chain
 
 """
 This script is used to refule a USD a pool.
 """
 
-# Load environment variables with `source .env_optimism`
+# Load environment variables for Base
+setup_env_for_chain("base")
+
 XSCAN_API_URI = os.getenv("XSCAN_API_URI")
 XSCAN_API_KEY = os.getenv("XSCAN_API_KEY")
 RPC = os.getenv("RPC")

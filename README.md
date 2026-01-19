@@ -38,7 +38,7 @@ After installation, make sure your virtual environment is activated. Copy exampl
 
 ```bash
 source .venv/bin/activate
-source .env_base
+source .env
 ```
 
 ## add the pool to plot data on config/fxswap.json

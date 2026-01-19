@@ -17,7 +17,10 @@ import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import pandas as pd
 from data_loader import load_fxswap_data
+from env_utils import load_env
 
+# Load environment variables
+load_env()
 
 DATA_DIR = Path(os.getenv("DATA_DIR", "data"))
 

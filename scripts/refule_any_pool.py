@@ -12,25 +12,15 @@ import requests
 from eth_account import account
 from web3 import Web3
 
+from env_utils import load_env, get_env_for_chain
 
 """
 This script is used to refuel a Curve FXSwap pool by adding liquidity.
 """
 
-# Load environment variables with `source .env_optimism`
-XSCAN_API_URI = os.getenv("XSCAN_API_URI")
-XSCAN_API_URI_ONLY = os.getenv("XSCAN_API_URI_ONLY")
-XSCAN_API_KEY = os.getenv("XSCAN_API_KEY")
-XSCAN_CHAIN_ID = os.getenv("XSCAN_CHAIN_ID")
-RPC = os.getenv("RPC")
-SINGER = os.getenv("SINGER")
+# Load environment variables
+load_env()
 
-print(f"XSCAN_API_KEY: {XSCAN_API_KEY}")
-print(f"XSCAN_API_URI: {XSCAN_API_URI}")
-print(f"XSCAN_API_URI_ONLY: {XSCAN_API_URI_ONLY}")
-print(f"XSCAN_CHAIN_ID: {XSCAN_CHAIN_ID}")
-print(f"RPC: {RPC}")
-print(f"SINGER: {SINGER}")
 
 # Parse command line arguments
 parser = argparse.ArgumentParser(
@@ -45,94 +35,30 @@ parser.add_argument(
 )
 args = parser.parse_args()
 
-
-def account_load(fname):
-    path = os.path.expanduser(os.path.join("~", ".ape", "accounts", fname + ".json"))
-    print(f"Loading account from: {path}")
-    with open(path) as f:
-        pkey = account.decode_keyfile_json(json.load(f), getpass())
-        acc = account.Account.from_key(pkey)
-        print(f"Account loaded: {acc.address}")
-        return acc
-
-
-# Setup web3
-w3 = Web3(Web3.HTTPProvider(RPC))
-if not w3.is_connected():
-    raise ConnectionError(f"Failed to connect to RPC: {RPC}")
-
-chain_id = w3.eth.chain_id
-
-
-def get_abi_from_etherscan(address):
-    # The new etherscan v2 API docs: https://docs.etherscan.io/api-endpoints/contracts#get-contract-abi-for-verified-contract-source-codes
-    url = f"{XSCAN_API_URI_ONLY}api?module=contract&action=getabi&address={address}&apikey={XSCAN_API_KEY}&chainid={XSCAN_CHAIN_ID}"
-
-    try:
-        response = requests.get(url)
-        data = response.json()
-        # v2 API: returns {"status":"1", "message":"OK", "result":{...}} or "result":{abi:[...]} or "result":"[...]"
-        if data["status"] == "1" and data["message"] == "OK":
-            result = data.get("result")
-
-            # Case 1: result is a dict with "abi" key
-            if isinstance(result, dict) and "abi" in result:
-                abi = result["abi"]
-                # Etherscan returns JSON string, Basescan returns already-parsed list
-                if isinstance(abi, str):
-                    abi = json.loads(abi)
-                return abi
-
-            # Case 2: result is a JSON string (most common case)
-            elif isinstance(result, str):
-                abi = json.loads(result)
-                return abi
-
-            # Case 3: result is already a list
-            elif isinstance(result, list):
-                return result
-
-            else:
-                raise ValueError(
-                    f"Unexpected result format: {type(result)}, raw: {data}"
-                )
-        else:
-            raise ValueError(
-                f"Failed to fetch ABI: {data.get('message', 'Unknown error')}, raw: {data}"
-            )
-    except Exception as e:
-        raise Exception(f"Error fetching ABI from Xscan/Etherscan v2 API: {e}") from e
-
-
-# USDC/AERO A20-15
-fxswap_address = "0x3CeA080D303bD105c48cA4C24D8426da99f75524"
-# https://basescan.org/address/0x3CeA080D303bD105c48cA4C24D8426da99f75524
-
-# Load fxswap_addresses from fxswaps.json if file exists, else use default.
+# Load fxswap_addresses from fxswaps.json
 fxswaps_path = Path(__file__).parent.parent / "config" / "fxswaps.json"
 print(f"fxswaps_path: {fxswaps_path}")
-fxswap_addresses = {}
-if fxswaps_path.exists():
-    try:
-        with open(fxswaps_path) as f:
-            fxswap_addresses_raw = json.load(f)
-            # Convert string keys to integers (JSON requires string keys)
-            fxswap_addresses = {int(k): v for k, v in fxswap_addresses_raw.items()}
-        print(f"Loaded {len(fxswap_addresses)} pools from fxswaps.json")
-    except (json.JSONDecodeError, ValueError, KeyError) as e:
-        print(f"Error loading fxswaps.json: {e}")
-        print("Using empty fxswap_addresses dictionary")
-        fxswap_addresses = {}
-else:
-    print(f"fxswaps.json not found at {fxswaps_path}, using empty dictionary")
-    fxswap_addresses = {}
+with open(fxswaps_path) as f:
+    fxswap_addresses = {int(k): v for k, v in json.load(f).items()}
 
-# Validate the provided index
 if args.index not in fxswap_addresses:
     print(f"Error: Pool index {args.index} not found in fxswaps.json")
-    available = sorted(fxswap_addresses.keys())
-    print(f"Available indices: {available}")
     sys.exit(1)
+
+pool_info = fxswap_addresses[args.index]
+chain_name = pool_info["chain_name"]
+
+# Set up variables for this chain
+RPC = get_env_for_chain(chain_name, "RPC")
+XSCAN_API_KEY = get_env_for_chain(chain_name, "XSCAN_API_KEY")
+XSCAN_API_URI_ONLY = get_env_for_chain(chain_name, "XSCAN_API_URI_ONLY") or "https://api.etherscan.io/v2/"
+XSCAN_CHAIN_ID = get_env_for_chain(chain_name, "XSCAN_CHAIN_ID")
+SINGER = os.getenv("SINGER")
+
+print(f"Chain: {chain_name}")
+print(f"RPC: {RPC}")
+print(f"SINGER: {SINGER}")
+
 
 # Check chain ID match
 if fxswap_addresses[args.index]["chain_id"] != chain_id:

@@ -26,6 +26,7 @@ from collections.abc import Iterable
 from pathlib import Path
 
 import pandas as pd
+from env_utils import load_env
 from update_fxswap_blocks import load_config
 from data_loader import build_parquet_index
 
@@ -156,6 +157,7 @@ def parse_args(argv: Iterable[str] | None = None) -> argparse.Namespace:
 
 
 def main(argv: Iterable[str] | None = None) -> None:
+    load_env()
     args = parse_args(argv)
     logging.basicConfig(
         level=logging.DEBUG if args.verbose else logging.INFO,

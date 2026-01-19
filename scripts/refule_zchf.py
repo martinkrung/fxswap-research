@@ -6,13 +6,15 @@ from getpass import getpass
 
 import boa
 from eth_account import account
-
+from env_utils import setup_env_for_chain
 
 """
 This script is used to refuel a Curve pool using the stablepool factory contract.
 """
 
-# Load environment variables with `source .env_optimism`
+# Load environment variables for Ethereum
+setup_env_for_chain("ethereum")
+
 XSCAN_API_URI = os.getenv("XSCAN_API_URI")
 XSCAN_API_KEY = os.getenv("XSCAN_API_KEY")
 XSCAN_CHAIN_ID = os.getenv("XSCAN_CHAIN_ID")

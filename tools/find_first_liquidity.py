@@ -11,7 +11,7 @@ from web3 import Web3
 
 # Add scripts directory to path to import local modules
 sys.path.append(str(Path(__file__).resolve().parent.parent / "scripts"))
-from update_fxswap_blocks import load_env_file
+from env_utils import load_env, get_env_for_chain
 
 # Setup logging
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
@@ -22,12 +22,12 @@ CONFIG_PATH = ROOT_DIR / "config" / "fxswaps.json"
 METHOD_ID_ADD_LIQUIDITY = "0x0b4c7e4d"
 
 def get_api_config(chain_name):
-    env_path = ROOT_DIR / f".env_{chain_name.lower()}"
-    env = load_env_file(env_path)
+    load_env()
+    chain_upper = chain_name.upper()
     
-    api_key = env.get("XSCAN_API_KEY") or os.getenv("XSCAN_API_KEY")
-    api_uri = "https://api.etherscan.io/v2/api" # Use V2 for all
-    chain_id = env.get("XSCAN_CHAIN_ID") or os.getenv("XSCAN_CHAIN_ID")
+    api_key = get_env_for_chain(chain_name, "XSCAN_API_KEY")
+    api_uri = get_env_for_chain(chain_name, "XSCAN_API_URI_ONLY") or "https://api.etherscan.io/v2/api"
+    chain_id = get_env_for_chain(chain_name, "XSCAN_CHAIN_ID")
     
     if not chain_id:
         if "base" in chain_name.lower():

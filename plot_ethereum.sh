@@ -1,5 +1,7 @@
-# first source .env_ethereum
-source .env_ethereum
+# first source load environment variables
+source .env
+export RPC=$ETHEREUM_RPC
+export XSCAN_API_KEY=$ETHEREUM_XSCAN_API_KEY
 
 # then plot data
 python scripts/plot_refule.py --index=8

@@ -18,6 +18,8 @@ from eth_utils.crypto import keccak
 from web3 import Web3
 from web3.exceptions import BlockNotFound
 
+from env_utils import load_env
+
 # Constants
 MULTICALL3_ADDRESS = Web3.to_checksum_address("0xcA11bde05977b3631167028862bE2a173976CA11")
 MULTICALL3_ABI = [
@@ -76,30 +78,13 @@ SLEEP_TIME = 0.001 # 1ms
 
 # Mapping of chain_name -> candidate environment variable names for RPC URLs.
 RPC_ENV_HINTS = {
-    "base": ("BASE_RPC_URL", "BASE_RPC", "RPC_BASE", "RPC"),
-    "ethereum": ("ETHEREUM_RPC_URL", "MAINNET_RPC_URL", "ETH_RPC", "RPC_ETHEREUM", "RPC"),
+    "base": ("BASE_RPC", "BASE_RPC_URL", "RPC_BASE", "RPC"),
+    "ethereum": ("ETHEREUM_RPC", "ETHEREUM_RPC_URL", "MAINNET_RPC_URL", "ETH_RPC", "RPC_ETHEREUM", "RPC"),
 }
 
-def get_function_selector(func):
-    import re
-    matcher = re.match(r"(\w+)\((.*?)\)$", func)
-    if matcher:
-        fn_name, params = matcher.group(1), matcher.group(2)
-        if params == "":
-            signature = f"{fn_name}()"
-            selector = keccak(text=signature)[:4].hex()
-            return selector, None
-        signature = f"{fn_name}(uint256)"
-        selector = keccak(text=signature)[:4].hex()
-        encoded_param = int(params).to_bytes(32, "big").hex()
-        return selector, encoded_param
-    signature = f"{func}()"
-    selector = keccak(text=signature)[:4].hex()
-    return selector, None
-
-FUNCTION_CALL_DATA = {name: "0x" + get_function_selector(name)[0] + (get_function_selector(name)[1] or "") for name in FUNCTION_NAMES}
-
 def get_rpc_url(chain_name):
+
+    load_env()
     hints = RPC_ENV_HINTS.get(chain_name.lower(), ("RPC",))
     for hint in hints:
         url = os.getenv(hint)

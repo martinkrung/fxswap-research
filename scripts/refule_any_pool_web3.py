@@ -10,19 +10,15 @@ import requests
 from eth_account import account
 from web3 import Web3
 
+from env_utils import load_env, get_env_for_chain, setup_env_for_chain
 
 """
 This script is used to refuel a Curve pool by adding liquidity.
 Rewritten to use web3.py instead of boa.
 """
 
-# Load environment variables with `source .env_optimism`
-XSCAN_API_URI = os.getenv("XSCAN_API_URI")
-XSCAN_API_URI_ONLY = os.getenv("XSCAN_API_URI_ONLY")
-XSCAN_API_KEY = os.getenv("XSCAN_API_KEY")
-XSCAN_CHAIN_ID = os.getenv("XSCAN_CHAIN_ID")
-RPC = os.getenv("RPC")
-SINGER = os.getenv("SINGER")
+# Load environment variables
+load_env()
 
 print(f"XSCAN_API_KEY: {XSCAN_API_KEY}")
 print(f"XSCAN_API_URI: {XSCAN_API_URI}")
@@ -103,28 +99,32 @@ def get_abi_from_etherscan(address):
 fxswap_address = "0x3CeA080D303bD105c48cA4C24D8426da99f75524"
 # https://basescan.org/address/0x3CeA080D303bD105c48cA4C24D8426da99f75524
 
-# Load fxswap_addresses from fxswaps.json if file exists, else use default.
+# Load fxswap_addresses from fxswaps.json
 fxswaps_path = Path(__file__).parent.parent / "config" / "fxswaps.json"
 print(f"fxswaps_path: {fxswaps_path}")
-fxswap_addresses = {}
-if fxswaps_path.exists():
-    try:
-        with open(fxswaps_path) as f:
-            fxswap_addresses_raw = json.load(f)
-            # Convert string keys to integers (JSON requires string keys)
-            fxswap_addresses = {int(k): v for k, v in fxswap_addresses_raw.items()}
-        print(f"Loaded {len(fxswap_addresses)} pools from fxswaps.json")
-    except (json.JSONDecodeError, ValueError, KeyError) as e:
-        print(f"Error loading fxswaps.json: {e}")
-        print("Using empty fxswap_addresses dictionary")
-        fxswap_addresses = {}
-else:
-    print(f"fxswaps.json not found at {fxswaps_path}, using empty dictionary")
-    fxswap_addresses = {}
-
+with open(fxswaps_path) as f:
+    fxswap_addresses = {int(k): v for k, v in json.load(f).items()}
 
 index = 9
-fxswap_address = fxswap_addresses[index]["address"]
+pool_info = fxswap_addresses[index]
+chain_name = pool_info["chain_name"]
+
+# Setup environment for this chain
+setup_env_for_chain(chain_name)
+
+XSCAN_API_URI = os.getenv("XSCAN_API_URI")
+XSCAN_API_URI_ONLY = os.getenv("XSCAN_API_URI_ONLY")
+XSCAN_API_KEY = os.getenv("XSCAN_API_KEY")
+XSCAN_CHAIN_ID = os.getenv("XSCAN_CHAIN_ID")
+RPC = os.getenv("RPC")
+SINGER = os.getenv("SINGER")
+
+print(f"XSCAN_API_KEY: {XSCAN_API_KEY}")
+print(f"XSCAN_API_URI: {XSCAN_API_URI}")
+print(f"XSCAN_API_URI_ONLY: {XSCAN_API_URI_ONLY}")
+print(f"XSCAN_CHAIN_ID: {XSCAN_CHAIN_ID}")
+print(f"RPC: {RPC}")
+print(f"SINGER: {SINGER}")
 
 # Get fxswap contract ABI and create contract instance
 fxswap_abi = get_abi_from_etherscan(fxswap_address)
