@@ -90,6 +90,7 @@ FUNCTION_CALL_DATA = _build_call_data()
 STRIDES = {
     8453: 100,  # Base
     1: 20,      # Ethereum
+    100: 40,    # Gnosis
 }
 
 SLEEP_TIME = 0.001 # 1ms
@@ -98,6 +99,7 @@ SLEEP_TIME = 0.001 # 1ms
 RPC_ENV_HINTS = {
     "base": ("BASE_RPC", "BASE_RPC_URL", "RPC_BASE", "RPC"),
     "ethereum": ("ETHEREUM_RPC", "ETHEREUM_RPC_URL", "MAINNET_RPC_URL", "ETH_RPC", "RPC_ETHEREUM", "RPC"),
+    "gnosis": ("GNOSIS_RPC", "GNOSIS_RPC_URL", "RPC_GNOSIS", "RPC"),
 }
 
 def get_rpc_url(chain_name):

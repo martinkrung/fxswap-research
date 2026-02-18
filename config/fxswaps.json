@@ -196,5 +196,14 @@
         "curve": "",
         "deployed_at_block": 23433430,
         "first_liq_block": 23433543
+    },
+    "20": {
+        "name": "Gnosis Pay EURe/USDC.e",
+        "chain_name": "gnosis",
+        "chain_id": 100,
+        "address": "0xaCDc85AFCD8B83Eb171AFFCbe29FaD204F6ae45C",
+        "explorer": "https://gnosisscan.io/address/0xaCDc85AFCD8B83Eb171AFFCbe29FaD204F6ae45C",
+        "curve": "",
+        "first_liq_block": 44440975
     }
 }

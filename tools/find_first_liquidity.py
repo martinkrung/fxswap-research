@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import argparse
 import json
 import logging
 import os
@@ -112,6 +113,10 @@ def find_first_liquidity(address, chain_name, start_block=0):
         return None
 
 def main():
+    parser = argparse.ArgumentParser(description="Find first add_liquidity block for FX swap pools")
+    parser.add_argument("--index", type=str, help="Only process the pool with this index")
+    args = parser.parse_args()
+
     if not CONFIG_PATH.exists():
         logging.error(f"Config file not found at {CONFIG_PATH}")
         return
@@ -119,10 +124,15 @@ def main():
     with open(CONFIG_PATH, "r") as f:
         config = json.load(f)
 
+    if args.index:
+        if args.index not in config:
+            logging.error(f"Pool index {args.index} not found in config")
+            return
+        indices = [args.index]
+    else:
+        indices = sorted(config.keys(), key=int)
+
     updated = False
-    # Sort indices to process consistently
-    indices = sorted(config.keys(), key=int)
-    
     for idx in indices:
         pool = config[idx]
         if "first_liq_block" in pool and pool["first_liq_block"] is not None:
