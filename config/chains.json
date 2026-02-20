@@ -1,0 +1,20 @@
+{
+    "base": {
+        "chain_id": 8453,
+        "stride": 100,
+        "block_time": 2,
+        "rpc_env_hints": ["BASE_RPC", "BASE_RPC_URL", "RPC_BASE", "RPC"]
+    },
+    "ethereum": {
+        "chain_id": 1,
+        "stride": 20,
+        "block_time": 12,
+        "rpc_env_hints": ["ETHEREUM_RPC", "ETHEREUM_RPC_URL", "MAINNET_RPC_URL", "ETH_RPC", "RPC_ETHEREUM", "RPC"]
+    },
+    "gnosis": {
+        "chain_id": 100,
+        "stride": 40,
+        "block_time": 5,
+        "rpc_env_hints": ["GNOSIS_RPC", "GNOSIS_RPC_URL", "RPC_GNOSIS", "RPC"]
+    }
+}

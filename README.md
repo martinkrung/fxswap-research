@@ -93,23 +93,24 @@ export NEWCHAIN_RPC="https://your-rpc-url"
 export XSCAN_API_KEY="yourapikey"
 ```
 
-Then add entries to `scripts/update_data.py`:
+Add the new chain to **`config/chains.json`** — this is the single source of truth for all chain parameters:
 
-- **`STRIDES`** — blocks between data points (e.g. `100` for fast chains, `20` for Ethereum):
-  ```python
-  STRIDES = {
-      8453: 100,  # Base
-      1: 20,      # Ethereum
-      100: 20,    # Gnosis  <-- add new chain
-  }
-  ```
-- **`RPC_ENV_HINTS`** — env var names the script checks for the RPC URL:
-  ```python
-  RPC_ENV_HINTS = {
-      ...
-      "gnosis": ("GNOSIS_RPC", "GNOSIS_RPC_URL", "RPC_GNOSIS", "RPC"),  # <-- add new chain
-  }
-  ```
+```json
+"newchain": {
+    "chain_id": 12345,
+    "stride": 40,
+    "block_time": 5,
+    "rpc_env_hints": ["NEWCHAIN_RPC", "NEWCHAIN_RPC_URL", "RPC_NEWCHAIN", "RPC"]
+}
+```
+
+- **`stride`** — blocks between data samples (tune so `stride × block_time ≈ 200 s`)
+- **`block_time`** — average block time in seconds
+- **`rpc_env_hints`** — env var names to try for the RPC URL, in priority order
+
+`pixels_per_day` is derived automatically as `86400 / (stride × block_time)`.
+
+No script changes are needed — `update_data.py`, `plot_refule.py`, and `update_fxswap_blocks.py` all load `config/chains.json` at startup.
 
 ### 3. Find the first liquidity block
 

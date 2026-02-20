@@ -4,6 +4,10 @@ import re
 from datetime import datetime, timedelta
 from pathlib import Path
 
+_CHAINS_CONFIG_PATH = Path(__file__).parent.parent / "config" / "chains.json"
+with open(_CHAINS_CONFIG_PATH) as _f:
+    CHAINS_CONFIG: dict = json.load(_f)
+
 import matplotlib
 matplotlib.use('Agg')  # Headless mode for CI
 import matplotlib.dates as mdates
@@ -153,17 +157,10 @@ def process_pool(pool_info, force=False):
     output_dir = Path("plots") / chain_name / pool_slug
     output_dir.mkdir(parents=True, exist_ok=True)
     
-    # Stride determines the number of pixels per day roughly
-    stride = 100 if pool_info["chain_id"] == 8453 else 20
-    # On Base (stride 100, 2s blocks) -> ~432 points per day
-    # On Ethereum (stride 20, 12s blocks) -> ~360 points per day
-    # But user wants "one block = one pixel". So we use the maximum theoretical points per week.
-    points_per_week = (7 * 24 * 3600) // (stride * (2 if pool_info["chain_id"] == 8453 else 12))
-    # We'll use a fixed pixels_per_day based on the stride
-    if pool_info["chain_id"] == 8453:
-        pixels_per_day = 432 # 86400 / 200
-    else:
-        pixels_per_day = 360 # 86400 / 240
+    chain_cfg = CHAINS_CONFIG.get(chain_name, {"stride": 20, "block_time": 12})
+    stride = chain_cfg["stride"]
+    block_time = chain_cfg["block_time"]
+    pixels_per_day = 86400 // (stride * block_time)
 
     plot_files = []
     while current_week_start <= last_ts:

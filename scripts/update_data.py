@@ -87,25 +87,16 @@ def _build_call_data():
 
 FUNCTION_CALL_DATA = _build_call_data()
 
-STRIDES = {
-    8453: 100,  # Base
-    1: 20,      # Ethereum
-    100: 40,    # Gnosis
-}
+_CHAINS_CONFIG_PATH = Path(__file__).parent.parent / "config" / "chains.json"
+with open(_CHAINS_CONFIG_PATH) as _f:
+    CHAINS_CONFIG: dict = json.load(_f)
 
 SLEEP_TIME = 0.001 # 1ms
-
-# Mapping of chain_name -> candidate environment variable names for RPC URLs.
-RPC_ENV_HINTS = {
-    "base": ("BASE_RPC", "BASE_RPC_URL", "RPC_BASE", "RPC"),
-    "ethereum": ("ETHEREUM_RPC", "ETHEREUM_RPC_URL", "MAINNET_RPC_URL", "ETH_RPC", "RPC_ETHEREUM", "RPC"),
-    "gnosis": ("GNOSIS_RPC", "GNOSIS_RPC_URL", "RPC_GNOSIS", "RPC"),
-}
 
 def get_rpc_url(chain_name):
 
     load_env()
-    hints = RPC_ENV_HINTS.get(chain_name.lower(), ("RPC",))
+    hints = CHAINS_CONFIG.get(chain_name.lower(), {}).get("rpc_env_hints", ["RPC"])
     for hint in hints:
         url = os.getenv(hint)
         if url:
@@ -182,7 +173,7 @@ def process_pool(pool_idx, pool_info, rpc_urls, no_progress=False):
     chain_name = pool_info["chain_name"]
     address = pool_info["address"]
     name = pool_info["name"]
-    stride = STRIDES.get(pool_info["chain_id"], 100)
+    stride = CHAINS_CONFIG.get(pool_info["chain_name"], {}).get("stride", 100)
     
     rpc_url = rpc_urls.get(chain_name)
     if not rpc_url:
