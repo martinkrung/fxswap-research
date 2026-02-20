@@ -118,12 +118,12 @@ No script changes are needed — `update_data.py`, `plot_refule.py`, and `update
 python tools/find_first_liquidity.py --index=21
 ```
 
-This binary-searches for the first block where `totalSupply > 0`. Copy the result into `first_liq_block` in `config/fxswaps.json`.
+This binary-searches for the first block where `totalSupply > 0` and stores the result into `first_liq_block` in `config/fxswaps.json`.
 
 ### 4. Fetch historical data
 
 ```bash
-python scripts/get_historical_data.py --index=21
+python scripts/update_data.py --index=21
 ```
 
 Data is saved as a Parquet file under `data/<chain_name>/<address>.parquet`.

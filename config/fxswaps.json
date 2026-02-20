@@ -205,5 +205,14 @@
         "explorer": "https://gnosisscan.io/address/0xaCDc85AFCD8B83Eb171AFFCbe29FaD204F6ae45C",
         "curve": "",
         "first_liq_block": 44440975
+    },
+    "21": {
+        "name": "KRWQ/frxUSD",
+        "chain_name": "ethereum",
+        "chain_id": 1,
+        "address": "0x26D85588B9eD20abA4Fa8Fb9b3C8977C4aAd133C",
+        "explorer": "https://etherscan.io/address/0x26D85588B9eD20abA4Fa8Fb9b3C8977C4aAd133C",
+        "curve": "",
+        "first_liq_block": 24481218
     }
 }
